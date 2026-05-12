@@ -1,6 +1,6 @@
 # MCP Universe benchmarks (template)
 
-Monorepo for **MCP-backed agent benchmarks**: domains live under `domains/`, execution goes through the bundled CLI submodule, and tools ship in the mothership submodule. See [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md) and [REPO_LAYOUT.md](REPO_LAYOUT.md) for what is core versus optional dashboard/API code (`frontend/`, `backend/`).
+Monorepo for **MCP-backed agent benchmarks**: domains live under `domains/`, execution goes through the bundled CLI submodule, and tools ship in the mothership submodule. See [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md), [REPO_LAYOUT.md](REPO_LAYOUT.md), and [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md) (submodules, CI/CD, extend, test, gaps).
 
 ## 🚀 Quick Start
 

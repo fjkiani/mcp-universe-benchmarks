@@ -6,4 +6,5 @@
 [submodule "lbx_mcp_universe_mcp_servers_mothership"]
 	path = lbx_mcp_universe_mcp_servers_mothership
 	url = https://github.com/Alignerr-Code-Labeling/lbx_mcp_universe_mcp_servers_mothership.git
-	branch = main
+	# Upstream main does not yet include healthcare servers; keep this branch for twilio_hipaa, assemblyai, videosdk, nexhealth.
+	branch = feature/healthcare-servers

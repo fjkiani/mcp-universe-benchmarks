@@ -33,4 +33,10 @@ Extra remotes may exist for historical domain repos (e.g. investments, grant app
 - Reference domain: `domains/web_search/`
 - Structured evaluators pattern: `domains/gitlab_mlops/`
 - Server discovery expects the mothership submodule layout documented in `STRUCTURE_GUIDE.md`
+- **Extend / test / CI / submodule pins (including GitHub “grey” submodules):** [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md)
 - Remove transient IDE or chat-export folders before committing; they are ignored via `.gitignore` / `.cursorignore`
+
+## Submodules (summary)
+
+- ** CLI:** pin to **`main`** — validation, linter, agent runner.
+- **Mothership:** pin follows **`feature/healthcare-servers`** until those servers merge to upstream `main`; see extension guide for why and how to fork if you want default-branch-only pins.
