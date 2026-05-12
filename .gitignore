@@ -48,6 +48,10 @@ Thumbs.db
 # Git
 .git/
 
+# Local runtime / SQLite (never commit)
+*.pid
+backend/*.db
+
 # Logs
 *.log
 log/
