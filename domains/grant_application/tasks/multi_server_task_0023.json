@@ -1,0 +1,33 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "An NSF grant requires 20% cost-share ($200K total grant, $40K cost-share needed). Create a Google Sheet named 'Cost_Share_Tracker' identifying potential university contribution sources: Faculty salary (25%), Graduate RA time (30%), Equipment access (25%), Computing resources (20%). Track commitment letters needed and create calendar reminders for quarterly cost-share verification meetings with the sponsored programs office.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_name": "Cost_Share_Tracker",
+        "total_grant": "$200,000",
+        "cost_share_required": "$40,000",
+        "sources": [
+            {"source": "Faculty salary", "amount": "[25% of $40K]", "commitment_letter_needed": true},
+            {"source": "Graduate RA time", "amount": "[30% of $40K]", "commitment_letter_needed": true}
+        ],
+        "calendar_events_created": true,
+        "verification_meetings": "[Number of quarterly meetings]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-sheets"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "budget_cap": 200000,
+            "cost_share_percentage": 0.20,
+            "cost_share_amount": 40000,
+            "required_sources": ["Faculty salary", "Graduate RA time", "Equipment access", "Computing resources"],
+            "expected_calendar_events": 4
+        }
+    }]
+}
+

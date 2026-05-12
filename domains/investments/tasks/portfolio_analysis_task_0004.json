@@ -1,0 +1,101 @@
+{
+  "category": "Portfolio Analysis",
+  "question": "Generate a comprehensive portfolio performance report including valuation, performance metrics, sector allocation, top holdings, and risk indicators using multiple MCP servers.\n\nPortfolio Holdings:\n- AAPL: 100 shares (purchased 2023-01-15 at $130.50)\n- GOOGL: 50 shares (purchased 2023-06-10 at $120.30)\n- MSFT: 75 shares (purchased 2023-09-05 at $315.20)\n- TSLA: 25 shares (purchased 2024-01-10 at $240.00)\n- JPM: 60 shares (purchased 2024-02-20 at $175.50)\n\nReport Type: quarterly_review",
+  "output_format": {
+    "description": "Return your response as valid JSON. Use simple flat structure where possible.",
+    "example": {
+      "google_sheets_url": "https://docs.google.com/spreadsheets/d/abc123",
+      "pdf_report_url": "https://storage.googleapis.com/reports/portfolio_q1.pdf",
+      "executive_summary": "Portfolio gained 12.4% in Q1, outperforming S&P 500 by 2.2%",
+      "beta": 1.05,
+      "volatility": 0.18,
+      "sharpe_ratio": 1.45,
+      "max_drawdown": -8.2,
+      "next_review_date": "2025-04-01",
+      "calendar_event_created": true,
+      "report_generated": true
+    }
+  },
+  "expected_output": {
+    "google_sheets_url": "string",
+    "pdf_report_url": "string",
+    "executive_summary": "string",
+    "beta": "numeric",
+    "volatility": "numeric",
+    "sharpe_ratio": "numeric",
+    "max_drawdown": "numeric",
+    "next_review_date": "string",
+    "calendar_event_created": "boolean",
+    "report_generated": "boolean"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {
+      "name": "stock-portfolio"
+    },
+    {
+      "name": "google-sheets"
+    },
+    {
+      "name": "pdf-generator"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "investments.validate_portfolio_analysis",
+      "op_args": {
+        "task_input": {
+          "holdings": [
+            {
+              "ticker": "AAPL",
+              "shares": 100,
+              "purchase_date": "2023-01-15",
+              "purchase_price": 130.5
+            },
+            {
+              "ticker": "GOOGL",
+              "shares": 50,
+              "purchase_date": "2023-06-10",
+              "purchase_price": 120.3
+            },
+            {
+              "ticker": "MSFT",
+              "shares": 75,
+              "purchase_date": "2023-09-05",
+              "purchase_price": 315.2
+            },
+            {
+              "ticker": "TSLA",
+              "shares": 25,
+              "purchase_date": "2024-01-10",
+              "purchase_price": 240.0
+            },
+            {
+              "ticker": "JPM",
+              "shares": 60,
+              "purchase_date": "2024-02-20",
+              "purchase_price": 175.5
+            }
+          ],
+          "report_type": "quarterly_review"
+        },
+        "expected_output": {
+          "google_sheets_url": "string",
+          "pdf_report_url": "string",
+          "executive_summary": "string",
+          "beta": "numeric",
+          "volatility": "numeric",
+          "sharpe_ratio": "numeric",
+          "max_drawdown": "numeric",
+          "next_review_date": "string",
+          "calendar_event_created": "boolean",
+          "report_generated": "boolean"
+        }
+      }
+    }
+  ]
+}

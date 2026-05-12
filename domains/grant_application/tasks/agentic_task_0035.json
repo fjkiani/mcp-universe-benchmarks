@@ -1,0 +1,31 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A research team has 3 members: (1) Tenured full professor (30 years post-PhD), (2) Tenure-track assistant professor (3 years post-PhD), (3) Research scientist (soft-money, 5 years post-PhD). For NSF CAREER, NIH R01, NIH K99, and DOE Early Career, determine which team members qualify for each program as PI. Recommend optimal team compositions to maximize grant opportunities.",
+    "output_format": {
+        "eligibility_matrix": {
+            "NSF_CAREER": {"eligible_members": ["[Member #]"], "reasoning": "[Why each qualifies or doesn't]"},
+            "NIH_R01": {"eligible_members": ["[Member #]"], "reasoning": "[Why each qualifies or doesn't]"},
+            "NIH_K99": {"eligible_members": ["[Member #]"], "reasoning": "[Why each qualifies or doesn't]"},
+            "DOE_Early_Career": {"eligible_members": ["[Member #]"], "reasoning": "[Why each qualifies or doesn't]"}
+        },
+        "team_composition_recommendations": [
+            {"grant": "[Program]", "pi": "[Member #]", "co_pis": ["[Member #s]"], "rationale": "[Why this composition]"}
+        ]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "eligibility_optimization",
+            "constraint": "multi_pi_team",
+            "num_team_members": 3,
+            "num_programs": 4,
+            "must_recommend_compositions": true
+        }
+    }]
+}
+

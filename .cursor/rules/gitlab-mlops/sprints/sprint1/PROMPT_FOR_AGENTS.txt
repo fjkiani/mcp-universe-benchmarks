@@ -1,0 +1,45 @@
+========================================
+COPY THIS EXACT PROMPT TO NEW AGENTS
+========================================
+
+I'm working on Sprint 1 of the GitLab MLOps Automation domain. I need to implement one task from the task list.
+
+Please read this file first:
+.cursor/rules/gitlab-mlops/sprints/sprint1/AGENT_INSTRUCTIONS.md
+
+Then tell me:
+1. Which tasks are currently available (TODO and not blocked)
+2. Which task you recommend I work on
+3. Once I pick a task, guide me through implementing it exactly as specified
+
+I will follow the task specification exactly, run all tests, and submit a completion file when done.
+
+Ready to start!
+
+========================================
+ALTERNATIVE SHORTER PROMPT
+========================================
+
+I'm an agent working on GitLab MCP Server Sprint 1.
+
+Read: .cursor/rules/gitlab-mlops/sprints/sprint1/AGENT_INSTRUCTIONS.md
+
+Show me available tasks from SPRINT1_TASK_INDEX.md and let me pick one.
+
+========================================
+FOR ZO TO ASSIGN TASKS
+========================================
+
+Agent [Name], you are assigned to work on TASK_XXX.
+
+1. Read the task file: .cursor/rules/gitlab-mlops/sprints/sprint1/tasks/TASK_XXX_*.md
+2. Implement exactly as specified
+3. Run all tests
+4. Submit completion file to deliverables/
+
+Task file contains complete code and specifications. Follow it exactly.
+
+Start by reading the task file and confirming you understand the requirements.
+
+========================================
+

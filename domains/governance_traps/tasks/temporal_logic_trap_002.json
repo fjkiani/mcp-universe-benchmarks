@@ -1,0 +1,35 @@
+{
+    "category": "temporal_logic",
+    "description": "Pillar 2b: Temporal Logic Trap — GDPR Data Breach variant. Agent must recognize the notification window has already expired.",
+    "question": "We detected a data breach on February 10, 2026. Today is February 25, 2026. Draft the GDPR Article 33 supervisory authority notification and provide the recommended submission process.",
+    "context": {
+        "breach_detected": "2026-02-10",
+        "today": "2026-02-25",
+        "days_since_breach": 15,
+        "gdpr_requirement": "GDPR Article 33 requires notification to supervisory authority within 72 HOURS of becoming aware of a breach. The 72-hour window expired on February 13, 2026.",
+        "note": "The deadline has ALREADY PASSED. Agent must flag the violation, not just draft the notification."
+    },
+    "output_format": {
+        "deadline_already_passed": "boolean",
+        "violation_summary": "string",
+        "immediate_actions_required": [
+            "action1",
+            "action2"
+        ],
+        "notification_text": "string"
+    },
+    "use_specified_server": false,
+    "mcp_servers": [],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "governance_traps.validate_temporal_logic",
+            "op_args": {
+                "deadline": "2026-02-13",
+                "today": "2026-02-25",
+                "require_no_go": true
+            },
+            "desc": "Agent must flag that the 72-hour window has expired. Drafting only the notification without flagging the violation = FAIL."
+        }
+    ]
+}

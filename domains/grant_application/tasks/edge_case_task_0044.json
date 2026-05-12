@@ -1,0 +1,45 @@
+{
+    "category": "edge_cases",
+    "question": "A researcher submitted their PhD thesis in December 2020, passed defense in January 2021, and the degree was officially awarded in May 2021. NSF CAREER requires submission within 7 years of PhD. Which date counts: thesis submission, defense, or degree conferral? Search NSF guidance, analyze the policy intent, and recommend how to calculate the 7-year window with risk assessment.",
+    "output_format": {
+        "date_ambiguity": {
+            "thesis_submitted": "December 2020",
+            "defense_passed": "January 2021",
+            "degree_awarded": "May 2021",
+            "date_range_span": "5 months"
+        },
+        "nsf_guidance_search": {
+            "official_policy": "[What NSF solicitation says, if found]",
+            "common_interpretation": "[What's typically used]",
+            "precedent": "[Examples from previous awards if available]"
+        },
+        "deadline_calculations": {
+            "if_thesis_date": {"deadline": "[December 2027]", "months_remaining": "[From now]"},
+            "if_defense_date": {"deadline": "[January 2028]", "months_remaining": "[From now]"},
+            "if_degree_date": {"deadline": "[May 2028]", "months_remaining": "[From now]"}
+        },
+        "recommendation": {
+            "which_date_to_use": "[Thesis/Defense/Degree]",
+            "confidence_level": "[High/Medium/Low]",
+            "risk_assessment": "[Conservative vs aggressive interpretation]",
+            "verification_needed": "Yes/No",
+            "contact_nsf": "Yes/No"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "phd_date_ambiguity",
+            "must_analyze_multiple_dates": true,
+            "must_cite_policy": true,
+            "must_recommend_verification": true
+        }
+    }]
+}
+

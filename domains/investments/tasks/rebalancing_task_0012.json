@@ -1,0 +1,84 @@
+{
+  "id": "rebalancing_0012",
+  "question": "Recommend specific rebalancing trades to restore the target asset allocation given current portfolio drift from target weights.",
+  "category": "Rebalancing Recommendations",
+  "difficulty": "hard",
+  "description": "Recommend rebalancing trades to restore target asset allocation",
+  "input": {
+    "current_holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 150,
+        "current_value": 28500
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 80,
+        "current_value": 14400
+      },
+      {
+        "ticker": "JNJ",
+        "shares": 100,
+        "current_value": 16000
+      },
+      {
+        "ticker": "GLD",
+        "shares": 50,
+        "current_value": 9600
+      }
+    ],
+    "current_total_value": 68500,
+    "target_allocation": {
+      "Stocks": 0.7,
+      "Healthcare": 0.2,
+      "Commodities": 0.1
+    },
+    "current_allocation": {
+      "Stocks": 0.626,
+      "Healthcare": 0.234,
+      "Commodities": 0.14
+    },
+    "rebalancing_threshold": 0.05
+  },
+  "expected_output": {
+    "trade_1_action": "string",
+    "trade_1_ticker": "string",
+    "trade_1_shares": "numeric",
+    "trade_2_action": "string",
+    "trade_2_ticker": "string",
+    "trade_2_shares": "numeric",
+    "total_trades": "numeric",
+    "rebalance_complete": "boolean",
+    "new_allocation_summary": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio"
+  ],
+  "task_type": "asset_allocation_rebalancing",
+  "evaluation_criteria": {
+    "drift_calculation_accuracy": "Correct allocation drift calculations",
+    "rebalancing_logic": "Correctly identify which assets to buy/sell",
+    "trade_sizing": "Accurate share calculations to hit target allocation",
+    "cost_estimation": "Realistic cost estimates for trades",
+    "post_rebalance_accuracy": "New allocation should be within 1% of target",
+    "execution_practicality": "Recommend sensible trade execution order"
+  },
+  "test_data_note": "Standard rebalancing task - medium complexity",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "trade_1_action": "SELL",
+      "trade_1_ticker": "AAPL",
+      "trade_1_shares": 25,
+      "trade_2_action": "BUY",
+      "trade_2_ticker": "JPM",
+      "trade_2_shares": 40,
+      "total_trades": 2,
+      "rebalance_complete": true,
+      "new_allocation_summary": "Reduced tech from 60% to 50%, increased financials to 20%"
+    }
+  }
+}
+
+
+

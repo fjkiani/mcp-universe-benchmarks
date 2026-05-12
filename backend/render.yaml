@@ -1,0 +1,26 @@
+services:
+  # The Identity Backend (FastAPI)
+  - type: web
+    name: zeta-identity-engine
+    env: docker
+    region: ohio
+    plan: starter
+    # Render overrides the CMD in the Dockerfile if you specify one here,
+    # but since Dockerfile runs Gunicorn natively we just leave it to Docker.
+    dockerCommand: ""
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: zeta-identity-db
+          property: connectionString
+      - key: DEMO_MOCK_MODE
+        value: "false"
+      - key: OPENAI_API_KEY
+        sync: false # User must provide this in the Render dashboard manually
+
+databases:
+  # The PostgreSQL Database
+  - name: zeta-identity-db
+    region: ohio
+    plan: free # Free tier Postgres
+    postgresMajorVersion: 15

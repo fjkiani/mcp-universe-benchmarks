@@ -1,0 +1,46 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for newly posted grants (within the last 7 days) in any STEM field from NSF, NIH, or DOE. Add each new grant to a tracking spreadsheet with columns: Date Posted, Agency, Program, Grant Number, Deadline, Budget Range, and a 'New' flag. Then compile a weekly digest email with 3-5 opportunities, organized by agency, with a brief description of each program and why it might be of interest.",
+    "output_format": {
+        "sheet_updated": true,
+        "sheet_url": "[Google Sheets URL]",
+        "new_grants_count": "[number]",
+        "sheet_data": [
+            {
+                "date_posted": "[YYYY-MM-DD]",
+                "agency": "[NSF/NIH/DOE]",
+                "program": "[Program Name]",
+                "grant_number": "[ID]",
+                "deadline": "[YYYY-MM-DD]",
+                "budget_range": "[Min-Max]",
+                "new_flag": true
+            }
+        ],
+        "email_sent": true,
+        "email_digest": "[Weekly digest organized by agency with 3-5 opportunities]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"},
+        {"name": "email"}
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_multi_server_orchestration",
+            "op_args": {
+                "question": "Weekly grant alert system with recent grants filter",
+                "required_steps": ["search_recent", "sheet_update", "digest_creation", "email_send"],
+                "max_days_old": 7,
+                "required_sheet_columns": ["date_posted", "agency", "program", "grant_number", "deadline", "budget_range", "new_flag"],
+                "digest_opportunities_min": 3,
+                "digest_opportunities_max": 5,
+                "email_organization": "by_agency",
+                "email_must_include": ["brief description", "interest reasoning"],
+                "min_email_sentences": 12
+            }
+        }
+    ]
+}
+

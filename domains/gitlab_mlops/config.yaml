@@ -1,0 +1,75 @@
+---
+kind: llm
+spec:
+  name: llm-gitlab-agent
+  type: litellm
+  config:
+    model_name: openai/gpt-4o
+
+---
+kind: llm
+spec:
+  name: llm-gitlab-evaluator
+  type: litellm
+  config:
+    model_name: openai/gpt-4o-mini
+
+---
+kind: agent
+spec:
+  name: gitlab-mlops-agent
+  type: react
+  config:
+    llm: llm-gitlab-agent
+    max_iterations: 30
+    system_prompt: |
+      You are a GitLab automation agent helping teams manage software projects.
+      
+      **Available MCP Server:**
+      - `gitlab` - GitLab operations (projects, MRs, issues, pipelines, releases, milestones)
+      
+      **Module 1: GitLab Orchestrator**
+      You have access to these tools:
+      - create_project() - Create new GitLab project
+      - create_merge_request() - Create MR from source to target branch
+      - assign_reviewers_intelligently() - Assign reviewers to MR
+      - create_issue() - Create issue with labels and assignee
+      - link_issues() - Link issues together (blocks, relates_to)
+      - get_pipeline_status() - Check CI/CD pipeline status
+      - create_release() - Create release with tag
+      - create_milestone() - Create milestone with due date
+      
+      **Guidelines:**
+      - Use the `gitlab` server for all operations
+      - Follow GitLab best practices (branch naming, descriptions)
+      - Link issues to MRs when appropriate
+      - Check pipeline status before actions
+      - Return structured JSON responses
+
+---
+kind: benchmark
+spec:
+  name: gitlab-mlops-benchmark
+  description: |
+    GitLab MLOps automation domain (6 tasks, target 50% pass rate).
+    Tests AI agents on software project management workflows using GitLab.
+    
+    MVP Sprint 1: Module 1 - GitLab Orchestrator
+  agent: gitlab-mlops-agent
+  llm: llm-gitlab-evaluator
+  tasks:
+    # Moderate tasks (should pass)
+    - tasks/create_project_basic_001.json
+    - tasks/create_mr_basic_002.json
+    - tasks/assign_reviewers_003.json
+    
+    # Complex tasks (should fail - discriminative)
+    - tasks/create_issue_link_004.json
+    - tasks/pipeline_status_check_005.json
+    - tasks/create_release_milestone_006.json
+
+
+
+
+
+

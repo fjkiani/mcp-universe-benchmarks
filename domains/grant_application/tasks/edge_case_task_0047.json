@@ -1,0 +1,46 @@
+{
+    "category": "edge_cases",
+    "question": "A grant announcement states 'rolling submissions accepted' but provides no final deadline or end date. A researcher wants to know: (1) Is there urgency to submit early? (2) Will funding run out? (3) When is the latest safe submission date? Search for information about this program and similar rolling programs to develop a submission strategy with risk analysis.",
+    "output_format": {
+        "missing_information": {
+            "what_is_missing": "Final deadline or program end date",
+            "impact": "[How this affects strategy]"
+        },
+        "rolling_submission_analysis": {
+            "typical_duration": "[What's common for rolling programs]",
+            "funding_depletion_risk": "[How often do rolling programs run out of money]",
+            "early_vs_late_submission": {
+                "early_advantages": ["[Benefits]"],
+                "early_disadvantages": ["[Drawbacks]"],
+                "late_advantages": ["[Benefits]"],
+                "late_disadvantages": ["[Drawbacks]"]
+            }
+        },
+        "recommended_strategy": {
+            "target_submission_timeframe": "[When to submit]",
+            "rationale": "[Why]",
+            "risk_factors": ["[What could go wrong]"],
+            "mitigation": ["[How to reduce risk]"]
+        },
+        "information_needed": {
+            "questions_for_program_officer": ["[Specific questions]"],
+            "priority": "High/Medium/Low"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "incomplete_rfp_missing_deadline",
+            "must_identify_missing_info": true,
+            "must_provide_strategy": true,
+            "must_assess_risk": true
+        }
+    }]
+}
+

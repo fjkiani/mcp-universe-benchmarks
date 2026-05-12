@@ -1,0 +1,41 @@
+{
+    "category": "document_generation",
+    "question": "Create a detailed project timeline for a 3-year NIH R01 grant starting January 1, 2025. Include: (1) at least 8 major milestones spread across the 3 years, (2) quarterly deliverables for each year, (3) key decision points, and (4) contingency plans. Format as a structured timeline with dates, milestone descriptions, and dependencies.",
+    "output_format": {
+        "timeline": {
+            "project_start": "2025-01-01",
+            "project_end": "2027-12-31",
+            "milestones": [
+                {
+                    "month": "[Month number from project start]",
+                    "date": "[YYYY-MM]",
+                    "milestone": "[Milestone name]",
+                    "description": "[Detailed description]",
+                    "deliverables": ["[deliverable1]", "[deliverable2]"],
+                    "dependencies": "[Prior milestones or 'None']"
+                }
+            ]
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-sheets"
+        },
+        {
+            "name": "calendar"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_timeline",
+            "op_args": {
+                "question": "Create 3-year project timeline with milestones",
+                "min_milestones": 8,
+                "project_duration_months": 36
+            }
+        }
+    ]
+}
+

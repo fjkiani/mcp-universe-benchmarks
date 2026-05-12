@@ -1,0 +1,42 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for 5 NSF grants in 'artificial intelligence for education' with budgets over $300K. Save the results to a Google Sheet with columns: Grant Number, Title, Agency, Deadline, Budget Range, Eligibility, and Link. Then send an email summary to the PI highlighting the top 3 recommendations with brief reasoning for each.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_url": "[Google Sheets URL]",
+        "sheet_data": [
+            {
+                "grant_number": "[ID]",
+                "title": "[Title]",
+                "agency": "[Agency]",
+                "deadline": "[YYYY-MM-DD]",
+                "budget_range": "[Min-Max]",
+                "eligibility": "[Requirements]",
+                "link": "[URL]"
+            }
+        ],
+        "email_sent": true,
+        "email_summary": "[Email content with top 3 recommendations and reasoning]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"},
+        {"name": "email"}
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_multi_server_orchestration",
+            "op_args": {
+                "question": "Grant Discovery Pipeline with search, sheets, and email",
+                "required_steps": ["search", "sheet_creation", "email_send"],
+                "min_results": 5,
+                "required_sheet_columns": ["grant_number", "title", "agency", "deadline", "budget_range", "eligibility", "link"],
+                "email_must_include": ["top 3", "reasoning", "recommendations"],
+                "min_email_sentences": 10
+            }
+        }
+    ]
+}
+

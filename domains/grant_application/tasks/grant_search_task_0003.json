@@ -1,0 +1,50 @@
+{
+    "category": "grant_search",
+    "question": "Compare eligibility requirements across these three grant programs: NSF CAREER, NIH R01, and DOE Early Career Research Program. Create a comparison table showing: (1) minimum years of experience, (2) institution requirements, (3) budget caps, (4) project duration limits, and (5) citizenship/residency requirements.",
+    "output_format": {
+        "comparison": {
+            "NSF_CAREER": {
+                "min_experience": "[years or description]",
+                "institution_requirements": "[requirements]",
+                "budget_cap": "[amount]",
+                "duration_limit": "[years]",
+                "citizenship": "[requirements]"
+            },
+            "NIH_R01": {
+                "min_experience": "[years or description]",
+                "institution_requirements": "[requirements]",
+                "budget_cap": "[amount]",
+                "duration_limit": "[years]",
+                "citizenship": "[requirements]"
+            },
+            "DOE_Early_Career": {
+                "min_experience": "[years or description]",
+                "institution_requirements": "[requirements]",
+                "budget_cap": "[amount]",
+                "duration_limit": "[years]",
+                "citizenship": "[requirements]"
+            }
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_requirements_extraction",
+            "op_args": {
+                "question": "Compare eligibility requirements across three grant programs",
+                "expected_structure": {
+                    "NSF_CAREER": {"budget_cap": "$500,000"},
+                    "NIH_R01": {"duration_limit": 5},
+                    "DOE_Early_Career": {"min_experience": "within 10 years"}
+                }
+            }
+        }
+    ]
+}
+

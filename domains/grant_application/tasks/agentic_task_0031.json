@@ -1,0 +1,30 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher works at a Primarily Undergraduate Institution (PUI) with limited research infrastructure. Many NSF and NIH programs explicitly require or strongly prefer R1 research universities. Search for grants specifically available to PUI faculty, rank them by funding level and competitiveness, and recommend a 3-year application strategy.",
+    "output_format": {
+        "pui_eligible_grants": [
+            {"program": "[Name]", "agency": "[NSF/NIH/etc]", "max_funding": "[Amount]", "competitiveness": "[Low/Medium/High]", "why_good_fit": "[Reason]"}
+        ],
+        "three_year_strategy": {
+            "year_1": {"target_grants": ["[Grants]"], "rationale": "[Why start here]"},
+            "year_2": {"target_grants": ["[Grants]"], "rationale": "[Building on Year 1]"},
+            "year_3": {"target_grants": ["[Grants]"], "rationale": "[Progression]"}
+        },
+        "success_factors": ["[Key strategies for PUI researchers]"]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "eligibility_optimization",
+            "constraint": "PUI_only",
+            "min_grants_identified": 5,
+            "must_have_strategy": true
+        }
+    }]
+}
+

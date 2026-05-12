@@ -1,0 +1,35 @@
+{
+  "category": "ci_cd",
+  "question": "Check the status of pipeline #789 in project 'ml-model-training' (project_id: 12345). If the pipeline is 'failed', analyze which jobs failed and return detailed information: failed_jobs (list of job names), failure_reasons, and recommendations for fixes. If pipeline is 'running', return estimated completion time. If 'success', return job durations. Return comprehensive JSON with pipeline_id, status, and relevant details based on status.",
+  "output_format": {
+    "pipeline_id": 789,
+    "status": "failed",
+    "failed_jobs": ["test:unit", "build:docker"],
+    "failure_reasons": {
+      "test:unit": "Test case test_preprocessing failed: AssertionError",
+      "build:docker": "Docker build failed: base image not found"
+    },
+    "recommendations": [
+      "Fix failing unit test in test_preprocessing.py",
+      "Update Dockerfile base image to python:3.9-slim"
+    ],
+    "total_duration": "5m 32s"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_pipeline_status_check",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

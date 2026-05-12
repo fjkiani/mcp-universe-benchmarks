@@ -1,0 +1,37 @@
+{
+    "category": "requirements_extraction",
+    "question": "Parse the NIH R01 budget guidelines and extract: (1) maximum direct costs per year, (2) whether modular budget format is allowed, (3) modular budget cap if applicable, (4) allowable categories for direct costs (list at least 5), and (5) any specific restrictions on equipment purchases over $5000.",
+    "output_format": {
+        "max_direct_costs_per_year": "[amount or 'varies']",
+        "modular_budget_allowed": "[yes/no]",
+        "modular_budget_cap": "[amount if applicable]",
+        "allowable_direct_cost_categories": [
+            "[category1]",
+            "[category2]",
+            "[category3]",
+            "[category4]",
+            "[category5]"
+        ],
+        "equipment_restrictions": "[description of restrictions for equipment >$5000]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_requirements_extraction",
+            "op_args": {
+                "question": "Parse NIH R01 budget guidelines",
+                "expected_structure": {
+                    "modular_budget_cap": "$250,000",
+                    "allowable_direct_cost_categories_count": 5
+                }
+            }
+        }
+    ]
+}
+

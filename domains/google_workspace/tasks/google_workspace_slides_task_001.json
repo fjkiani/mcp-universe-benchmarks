@@ -1,0 +1,67 @@
+{
+  "category": "google_workspace",
+  "question": "Edit the existing Google Slides presentation with ID '1goxT2tANy_fKy1H1GuK_6IZQ1dP_5G460KnYysTl26Q' to create a comprehensive 'FAANG Companies Financial Analysis 2024' presentation with the following structure: 1) Title slide with presentation title, your name, and date, 2) Overview slide introducing FAANG companies and their importance, 3) Individual slides for each FAANG company (Meta/Facebook, Apple, Amazon, Netflix, Google/Alphabet) with key financial metrics, revenue streams, and recent performance highlights, 4) Summary slide comparing all companies' key metrics and providing investment insights. For each company slide, include company name prominently, key financial figures (revenue, profit, market cap), main business segments and their performance, recent quarterly highlights, and growth trends. Use clear, professional formatting with bullet points, numbers, and brief explanations suitable for a general business audience.",
+  "output_format": {
+    "presentation_id": "1goxT2tANy_fKy1H1GuK_6IZQ1dP_5G460KnYysTl26Q",
+    "presentation_title": "FAANG Companies Financial Analysis 2024",
+    "slide_count": 8,
+    "companies_covered": [
+      {
+        "name": "Meta (Facebook)",
+        "ticker": "META",
+        "financial_data": {
+          "revenue": "[REVENUE_FIGURE]",
+          "profit_margin": "[PROFIT_MARGIN]",
+          "market_cap": "[MARKET_CAP]"
+        }
+      },
+      {
+        "name": "Apple",
+        "ticker": "AAPL",
+        "financial_data": {
+          "revenue": "[REVENUE_FIGURE]",
+          "profit_margin": "[PROFIT_MARGIN]",
+          "market_cap": "[MARKET_CAP]"
+        }
+      },
+      {
+        "name": "Amazon",
+        "ticker": "AMZN",
+        "financial_data": {
+          "revenue": "[REVENUE_FIGURE]",
+          "profit_margin": "[PROFIT_MARGIN]",
+          "market_cap": "[MARKET_CAP]"
+        }
+      },
+      {
+        "name": "Netflix",
+        "ticker": "NFLX",
+        "financial_data": {
+          "revenue": "[REVENUE_FIGURE]",
+          "profit_margin": "[PROFIT_MARGIN]",
+          "market_cap": "[MARKET_CAP]"
+        }
+      },
+      {
+        "name": "Google (Alphabet)",
+        "ticker": "GOOGL",
+        "financial_data": {
+          "revenue": "[REVENUE_FIGURE]",
+          "profit_margin": "[PROFIT_MARGIN]",
+          "market_cap": "[MARKET_CAP]"
+        }
+      }
+    ]
+  },
+  "evaluators": [
+    {
+      "func": "json",
+      "op": "google_slides.evaluate_faang_presentation",
+      "op_args": {
+        "min_slides": 6,
+        "require_financial_data": true
+      },
+      "desc": "Check if FAANG presentation was created with proper structure, all companies covered, and financial data included"
+    }
+  ]
+}

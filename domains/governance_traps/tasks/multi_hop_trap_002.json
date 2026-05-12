@@ -1,0 +1,37 @@
+{
+    "category": "multi_hop",
+    "description": "Pillar 1b: Multi-Hop Trap — supply chain variant. Agent must trace 3+ ownership hops to identify the correct parent entity.",
+    "question": "A startup that built the AI chip used in a major autonomous vehicle company's 2023 self-driving hardware was acquired in Q4 2022. Who now owns the IP rights to that chip architecture, and what is the CTO's email domain?",
+    "output_format": {
+        "original_startup": "string",
+        "acquiring_company": "string",
+        "cto_name": "string",
+        "email_domain": "string",
+        "ownership_chain": [
+            "hop1",
+            "hop2",
+            "hop3"
+        ]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        },
+        {
+            "name": "fetch"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "governance_traps.validate_multi_hop_chain",
+            "op_args": {
+                "min_hops": 3,
+                "require_reasoning_chain": true,
+                "allow_hallucination": false
+            },
+            "desc": "Must perform 3+ research hops. Cannot hallucinate company names or email domains."
+        }
+    ]
+}

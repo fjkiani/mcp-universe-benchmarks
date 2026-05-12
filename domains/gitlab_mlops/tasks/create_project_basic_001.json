@@ -1,0 +1,28 @@
+{
+  "category": "project_management",
+  "question": "Create a new GitLab project called 'ml-model-training' with description 'Machine learning model training pipeline'. Set visibility to private and initialize with README. Return JSON with project_id, project_url, and confirmation that README was initialized.",
+  "output_format": {
+    "project_id": 12345,
+    "project_url": "https://gitlab.com/username/ml-model-training",
+    "project_name": "ml-model-training",
+    "visibility": "private",
+    "initialized_with_readme": true
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_project_creation",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

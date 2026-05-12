@@ -1,0 +1,61 @@
+{
+  "id": "stock_research_0006",
+  "question": "Perform technical analysis on this stock including price trends, moving averages (50-day, 200-day), RSI, MACD, and support/resistance levels.",
+  "category": "Stock Research & Valuation",
+  "difficulty": "hard",
+  "description": "Perform technical analysis with indicators and chart patterns",
+  "input": {
+    "ticker": "NVDA",
+    "timeframe": "3_months",
+    "indicators_requested": [
+      "SMA_50",
+      "SMA_200",
+      "RSI",
+      "MACD",
+      "Bollinger_Bands"
+    ]
+  },
+  "expected_output": {
+    "sma_50": "numeric",
+    "sma_200": "numeric",
+    "rsi_14": "numeric",
+    "macd": "numeric",
+    "macd_signal": "numeric",
+    "bollinger_upper": "numeric",
+    "bollinger_lower": "numeric",
+    "volume_avg": "numeric",
+    "trend": "string",
+    "recommendation": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio"
+  ],
+  "task_type": "technical_analysis",
+  "evaluation_criteria": {
+    "indicator_calculation_accuracy": "Correct SMA, RSI, MACD, Bollinger calculations",
+    "trend_identification": "Valid trend analysis based on indicators",
+    "signal_interpretation": "Correct bullish/bearish signal logic",
+    "pattern_recognition": "Accurately identify chart patterns if present",
+    "risk_management": "Reasonable stop-loss and target price levels",
+    "actionable_trade_setup": "Clear entry/exit strategy"
+  },
+  "test_data_note": "Requires historical price data for indicator calculations",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "sma_50": 245.3,
+      "sma_200": 238.15,
+      "rsi_14": 58.2,
+      "macd": 3.45,
+      "macd_signal": 2.8,
+      "bollinger_upper": 255.0,
+      "bollinger_lower": 235.0,
+      "volume_avg": 125000000,
+      "trend": "Bullish",
+      "recommendation": "Buy signal from technical indicators"
+    }
+  }
+}
+
+
+

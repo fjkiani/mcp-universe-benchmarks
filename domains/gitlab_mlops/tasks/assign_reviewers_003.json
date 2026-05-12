@@ -1,0 +1,30 @@
+{
+  "category": "merge_requests",
+  "question": "Assign reviewers to merge request #1 in project 'ml-model-training' (project_id: 12345). Assign user IDs: 100 (senior ML engineer) and 101 (DevOps engineer). Use intelligent assignment based on: 1) Code changes involve training scripts (ML expertise needed), 2) Pipeline configuration changes (DevOps expertise needed). Return JSON confirming reviewer assignment with reviewer_ids and their roles.",
+  "output_format": {
+    "mr_id": 1,
+    "reviewers_assigned": true,
+    "reviewer_ids": [100, 101],
+    "assignments": [
+      {"user_id": 100, "role": "ML Engineer", "reason": "Training script changes"},
+      {"user_id": 101, "role": "DevOps Engineer", "reason": "Pipeline configuration"}
+    ]
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_reviewer_assignment",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

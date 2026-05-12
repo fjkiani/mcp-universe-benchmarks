@@ -1,0 +1,9 @@
+[submodule "lbx_mcp_universe_cli"]
+	path = lbx_mcp_universe_cli
+	url = https://github.com/Alignerr-Code-Labeling/lbx_mcp_universe_cli.git
+	branch = main
+
+[submodule "lbx_mcp_universe_mcp_servers_mothership"]
+	path = lbx_mcp_universe_mcp_servers_mothership
+	url = https://github.com/Alignerr-Code-Labeling/lbx_mcp_universe_mcp_servers_mothership.git
+	branch = main

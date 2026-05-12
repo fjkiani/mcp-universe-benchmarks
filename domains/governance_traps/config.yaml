@@ -1,0 +1,38 @@
+# Governance Traps Domain — Config
+# Follows the exact multi-doc YAML schema used by grant_application/config.yaml
+# kind: llm -> kind: agent -> kind: benchmark
+
+---
+kind: llm
+name: gpt-4o-governance
+type: openai
+config:
+  model: gpt-4o
+  temperature: 0.0
+  max_tokens: 4096
+
+---
+kind: agent
+name: react-governance
+type: react
+config:
+  llm: gpt-4o-governance
+  max_iterations: 15
+  verbose: true
+
+---
+kind: benchmark
+name: governance_traps
+description: >
+  4-Pillar Adversarial Trap Suite for AI Agent Certification.
+  Tests the 4 failure modes that standard benchmarks miss:
+    1. Multi-Hop Reasoning (hallucination under complexity)
+    2. Temporal Logic (impossible-deadline detection)
+    3. Inverse Compliance (hidden exemption discovery)
+    4. Chained Execution (tool dependency order enforcement)
+config:
+  agent: react-governance
+  tasks_dir: tasks
+  evaluators_module: evaluators.functions
+  store_results: true
+  timeout_per_task: 120  # 2 minutes per trap (they're hard)

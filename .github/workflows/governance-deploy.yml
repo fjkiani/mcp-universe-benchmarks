@@ -1,0 +1,263 @@
+name: Governance Engine — Deploy & Test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'domains/**'
+      - 'domains/governance_traps/**'
+
+  # Manual trigger for testing specific components
+  workflow_dispatch:
+    inputs:
+      run_scoring_tests:
+        description: "Run scoring engine tests"
+        required: false
+        type: boolean
+        default: true
+      deploy_to_render:
+        description: "Trigger Render deploy after tests"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: governance-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  checks: write
+
+jobs:
+  # ── 1. Python lint & import check ─────────────────────────────────
+  lint:
+    name: Lint Backend Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: |
+          pip install -r backend/requirements.txt
+          pip install ruff
+
+      - name: Lint with ruff
+        run: ruff check backend/ --ignore E501,E402
+
+      - name: Verify all imports resolve
+        run: |
+          cd backend
+          python3 -c "
+          from database.models import RegisteredAgent, CertificationRun, TaskResult
+          from services.scoring_engine import compute_certification_score
+          from services.report_parser import parse_yaml_reports
+          from services.certification_service import CertificationEngine
+          from api.routers.certification import router
+          print('✅ All governance imports clean')
+          "
+
+  # ── 2. Scoring engine unit tests ───────────────────────────────────
+  test-scoring:
+    name: Scoring Engine Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt pytest
+
+      - name: Run scoring engine tests
+        run: |
+          cd backend
+          python3 -c "
+          from services.scoring_engine import compute_certification_score
+
+          # Test 1: Perfect score → CERTIFIED
+          results = [
+              {'level': 'L1', 'passed': True, 'error': None},
+              {'level': 'L2', 'passed': True, 'error': None},
+              {'level': 'L3', 'passed': True, 'error': None},
+              {'level': 'L4', 'passed': True, 'error': None},
+          ]
+          score = compute_certification_score(results)
+          assert score.grade == 'CERTIFIED', f'Expected CERTIFIED, got {score.grade}'
+          assert score.overall_score == 100
+          print('✅ Test 1 PASSED: Perfect score = CERTIFIED')
+
+          # Test 2: Weak L3 → CONDITIONAL
+          results = [
+              {'level': 'L1', 'passed': True, 'error': None},
+              {'level': 'L2', 'passed': True, 'error': None},
+              {'level': 'L3', 'passed': False, 'error': None},
+              {'level': 'L4', 'passed': True, 'error': None},
+          ]
+          score = compute_certification_score(results)
+          assert score.grade == 'CONDITIONAL', f'Expected CONDITIONAL, got {score.grade}'
+          print('✅ Test 2 PASSED: Weak L3 = CONDITIONAL')
+
+          # Test 3: All fail → FAILED
+          results = [{'level': 'L' + str(i), 'passed': False, 'error': None} for i in range(1, 5)]
+          score = compute_certification_score(results)
+          assert score.grade == 'FAILED', f'Expected FAILED, got {score.grade}'
+          print('✅ Test 3 PASSED: All fail = FAILED')
+
+          # Test 4: Error with < 5 tasks → INCONCLUSIVE
+          results = [{'level': 'L1', 'passed': False, 'error': 'Error code: 400 - invalid model ID'}]
+          score = compute_certification_score(results)
+          assert score.grade == 'INCONCLUSIVE', f'Expected INCONCLUSIVE, got {score.grade}'
+          print('✅ Test 4 PASSED: Error with <5 tasks = INCONCLUSIVE')
+
+          print()
+          print('=== ALL SCORING TESTS PASSED ✅ ===')
+          "
+        env:
+          DEMO_MOCK_MODE: "true"
+
+  # ── 3. API endpoint integration test ──────────────────────────────
+  test-api:
+    name: API Endpoint Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    services:
+      # Use SQLite for CI (no PostgreSQL needed)
+      {}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt httpx
+
+      - name: Test governance endpoints
+        run: |
+          cd backend
+          python3 -c "
+          import os
+          os.environ['DEMO_MOCK_MODE'] = 'true'
+
+          from fastapi.testclient import TestClient
+          from main import app
+
+          client = TestClient(app)
+
+          # Health check
+          r = client.get('/health')
+          assert r.status_code == 200, f'Health: {r.status_code}'
+          print('✅ /health OK')
+
+          # List domains
+          r = client.get('/api/v1/governance/domains')
+          assert r.status_code == 200, f'Domains: {r.status_code}'
+          data = r.json()
+          assert len(data) > 0, 'No domains returned'
+          print(f'✅ /domains OK — {len(data)} domains')
+
+          # Register agent
+          r = client.post('/api/v1/governance/agents/register', json={
+              'name': 'ci-test-agent',
+              'model': 'gpt-4o',
+              'agent_type': 'react',
+              'mcp_tools': ['google-search'],
+              'risk_tier': 'medium'
+          })
+          assert r.status_code == 200, f'Register: {r.status_code} {r.text}'
+          agent_id = r.json()['agent_id']
+          print(f'✅ /agents/register OK — agent_id: {agent_id}')
+
+          # Start certification
+          domain = list(data.keys())[0]
+          r = client.post('/api/v1/governance/certify', json={
+              'agent_name': 'ci-test-agent',
+              'model': 'gpt-4o',
+              'domain': domain
+          })
+          assert r.status_code == 200, f'Certify: {r.status_code} {r.text}'
+          run_id = r.json()['run_id']
+          print(f'✅ /certify OK — run_id: {run_id}')
+
+          # Stats
+          r = client.get('/api/v1/governance/stats')
+          assert r.status_code == 200
+          print(f'✅ /stats OK — {r.json()}')
+
+          print()
+          print('=== ALL API TESTS PASSED ✅ ===')
+          "
+        env:
+          DEMO_MOCK_MODE: "true"
+          DATABASE_URL: "sqlite:///./ci_test.db"
+
+  # ── 4. Validate governance trap tasks ─────────────────────────────
+  test-trap-tasks:
+    name: Validate Governance Trap Tasks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate all trap task JSON files
+        run: |
+          python3 -c "
+          import json
+          import os
+          from pathlib import Path
+
+          tasks_dir = Path('domains/governance_traps/tasks')
+          required_keys = ['category', 'question', 'output_format', 'evaluators']
+          valid_categories = ['multi_hop', 'temporal_logic', 'inverse_compliance', 'chained_execution']
+
+          task_files = list(tasks_dir.glob('*.json'))
+          print(f'Validating {len(task_files)} trap task files...')
+
+          for task_file in task_files:
+              with open(task_file) as f:
+                  task = json.load(f)
+
+              for key in required_keys:
+                  assert key in task, f'{task_file.name}: missing required key \"{key}\"'
+
+              assert task['category'] in valid_categories, \
+                  f'{task_file.name}: unknown category \"{task[\"category\"]}\". Must be one of {valid_categories}'
+
+              assert len(task.get('evaluators', [])) > 0, \
+                  f'{task_file.name}: must have at least 1 evaluator'
+
+              print(f'  ✅ {task_file.name} — category: {task[\"category\"]}')
+
+          print()
+          print(f'=== ALL {len(task_files)} TRAP TASKS VALID ✅ ===')
+          "
+
+  # ── 5. Deploy to Render (only on main push) ─────────────────────
+  deploy:
+    name: Deploy to Render
+    runs-on: ubuntu-latest
+    needs: [test-scoring, test-api, test-trap-tasks]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Trigger Render deploy
+        run: |
+          echo "Render auto-deploys from main branch via webhook."
+          echo "No additional deploy step needed — Render watches this repo."
+          echo "Service: zeta-identity-engine (lbx-governance-api pending rename)"

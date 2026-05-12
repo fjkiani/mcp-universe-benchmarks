@@ -1,0 +1,31 @@
+{
+  "category": "issues",
+  "question": "Create an issue in project 'ml-model-training' (project_id: 12345) with title 'Implement data preprocessing pipeline' and description 'Need to add data preprocessing before training. This includes: data validation, normalization, and feature engineering.' Add labels: 'enhancement', 'ml-pipeline', 'high-priority'. Assign to user_id: 100. Then link this issue to merge request #1 with link_type 'relates_to' to show the MR is related to this issue. Return JSON with issue_id, issue_url, labels, assignee, and link confirmation.",
+  "output_format": {
+    "issue_id": 5,
+    "issue_url": "https://gitlab.com/username/ml-model-training/-/issues/5",
+    "title": "Implement data preprocessing pipeline",
+    "labels": ["enhancement", "ml-pipeline", "high-priority"],
+    "assignee_id": 100,
+    "linked_to_mr": true,
+    "link_type": "relates_to",
+    "mr_id": 1
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_issue_creation_and_link",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

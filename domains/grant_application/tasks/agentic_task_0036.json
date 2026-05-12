@@ -1,0 +1,32 @@
+{
+    "category": "agentic_reasoning",
+    "question": "Calculate a complete NIH R01 budget: Direct costs = $800K, Indirect costs (F&A rate) = 55%, Cost-share required = 20% of total. Break down: (1) What are the total direct costs? (2) What are the indirect costs? (3) What is the total project cost? (4) How much cost-share is needed? (5) How much will the university contribute vs. NIH? Show all math and verify it balances.",
+    "output_format": {
+        "budget_breakdown": {
+            "direct_costs": "$800,000",
+            "indirect_costs": "[Calculated]",
+            "total_project_cost": "[Direct + Indirect]",
+            "cost_share_required": "[20% of total]",
+            "nih_contribution": "[Amount]",
+            "university_contribution": "[Cost-share amount]"
+        },
+        "calculations": "[Show step-by-step math]",
+        "verification": "[Confirm all numbers add up correctly]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "budget_calculation",
+            "direct_costs": 800000,
+            "fa_rate": 0.55,
+            "cost_share_percentage": 0.20,
+            "must_show_math": true
+        }
+    }]
+}
+

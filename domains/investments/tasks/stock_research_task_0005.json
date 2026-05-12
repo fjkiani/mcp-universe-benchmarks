@@ -1,0 +1,85 @@
+{
+  "category": "Stock Research & Valuation",
+  "question": "Research the fundamental financial metrics for TSLA (Tesla Inc) including P/E ratio, revenue growth, profit margins, debt levels, and competitive positioning.\n\nCompany: TSLA\nAnalysis Type: fundamental",
+  "output_format": {
+    "description": "Return valid JSON. Flatten all nested objects into single-level structure.",
+    "example": {
+      "company_name": "Tesla Inc",
+      "sector": "Consumer Discretionary",
+      "market_cap": 650000000000,
+      "pe_ratio": 45.2,
+      "forward_pe": 38.1,
+      "peg_ratio": 1.8,
+      "gross_margin": 25.6,
+      "operating_margin": 15.3,
+      "net_margin": 12.1,
+      "revenue_growth_yoy": 18.5,
+      "earnings_growth_yoy": 22.3,
+      "debt_to_equity": 0.45,
+      "current_ratio": 1.8,
+      "analyst_rating": "Buy",
+      "target_price": 285.0,
+      "upside_potential": 15.3,
+      "valuation_summary": "Fairly valued based on growth prospects"
+    }
+  },
+  "expected_output": {
+    "company_name": "string",
+    "sector": "string",
+    "market_cap": "numeric",
+    "pe_ratio": "numeric",
+    "forward_pe": "numeric",
+    "peg_ratio": "numeric",
+    "gross_margin": "numeric",
+    "operating_margin": "numeric",
+    "net_margin": "numeric",
+    "revenue_growth_yoy": "numeric",
+    "earnings_growth_yoy": "numeric",
+    "debt_to_equity": "numeric",
+    "current_ratio": "numeric",
+    "analyst_rating": "string",
+    "target_price": "numeric",
+    "upside_potential": "numeric",
+    "valuation_summary": "string"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {
+      "name": "stock-portfolio"
+    },
+    {
+      "name": "google-search"
+    }
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "investments.validate_stock_research",
+      "op_args": {
+        "task_input": {
+          "ticker": "TSLA",
+          "analysis_type": "fundamental"
+        },
+        "expected_output": {
+          "company_name": "string",
+          "sector": "string",
+          "market_cap": "numeric",
+          "pe_ratio": "numeric",
+          "forward_pe": "numeric",
+          "peg_ratio": "numeric",
+          "gross_margin": "numeric",
+          "operating_margin": "numeric",
+          "net_margin": "numeric",
+          "revenue_growth_yoy": "numeric",
+          "earnings_growth_yoy": "numeric",
+          "debt_to_equity": "numeric",
+          "current_ratio": "numeric",
+          "analyst_rating": "string",
+          "target_price": "numeric",
+          "upside_potential": "numeric",
+          "valuation_summary": "string"
+        }
+      }
+    }
+  ]
+}

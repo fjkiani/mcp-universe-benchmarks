@@ -1,0 +1,33 @@
+{
+    "category": "edge_cases",
+    "question": "An RFP lists 'research materials' as an allowable budget category but doesn't define it. The researcher wants to include: (1) Lab chemicals ($5K), (2) Software licenses ($10K), (3) Cloud computing ($15K), (4) Patient compensation ($8K). Which items clearly fit 'research materials' and which are ambiguous? Provide classification with confidence levels and flag items requiring program officer clarification.",
+    "output_format": {
+        "budget_items_classification": [
+            {"item": "Lab chemicals", "category_fit": "Clear fit/Ambiguous/Doesn't fit", "confidence": "[High/Medium/Low]", "reasoning": "[Why]", "flag_for_clarification": "Yes/No"},
+            {"item": "Software licenses", "category_fit": "Clear fit/Ambiguous/Doesn't fit", "confidence": "[High/Medium/Low]", "reasoning": "[Why]", "flag_for_clarification": "Yes/No"},
+            {"item": "Cloud computing", "category_fit": "Clear fit/Ambiguous/Doesn't fit", "confidence": "[High/Medium/Low]", "reasoning": "[Why]", "flag_for_clarification": "Yes/No"},
+            {"item": "Patient compensation", "category_fit": "Clear fit/Ambiguous/Doesn't fit", "confidence": "[High/Medium/Low]", "reasoning": "[Why]", "flag_for_clarification": "Yes/No"}
+        ],
+        "alternative_categories": {
+            "software_licenses": "[Possible alternative budget categories]",
+            "cloud_computing": "[Possible alternative budget categories]",
+            "patient_compensation": "[Possible alternative budget categories]"
+        },
+        "recommended_action": "[Overall strategy for handling ambiguity]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "unclear_budget_categories",
+            "num_items": 4,
+            "must_identify_ambiguous": true,
+            "must_provide_alternatives": true
+        }
+    }]
+}
+

@@ -1,0 +1,28 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A research project requires 18 months of work before preliminary data is ready. Three grant deadlines: NSF (6 months), NIH (12 months), DOE (18 months). Assess the feasibility of each deadline considering: data requirements, IRB approval (4-6 weeks), pilot study completion (12 months), and proposal writing (2 months). Recommend a timeline strategy with risk assessment for each option.",
+    "output_format": {
+        "timeline_analysis": {
+            "NSF_6_months": {"feasible": "boolean", "risk_level": "[High/Medium/Low]", "gaps": ["[Issues]"], "mitigation": "[Strategies]"},
+            "NIH_12_months": {"feasible": "boolean", "risk_level": "[High/Medium/Low]", "gaps": ["[Issues]"], "mitigation": "[Strategies]"},
+            "DOE_18_months": {"feasible": "boolean", "risk_level": "[High/Medium/Low]", "gaps": ["[Issues]"], "mitigation": "[Strategies]"}
+        },
+        "recommendation": "[Grant and timeline]",
+        "justification": "[Risk-benefit analysis]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "feasibility",
+            "required_elements": ["feasible", "risk_level", "gaps", "mitigation"],
+            "must_identify_critical_path": true
+        }
+    }]
+}
+

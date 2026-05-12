@@ -1,0 +1,26 @@
+{
+    "category": "document_generation",
+    "question": "Generate a budget justification narrative for an NSF proposal with the following line items: (1) Senior Personnel - PI, 1 month summer salary at $12,000; (2) Graduate Students - 2 PhD students, 12 months each at $30,000/year; (3) Materials and Supplies - $15,000 for computational resources and lab supplies; (4) Travel - $8,000 for 2 conference trips (domestic). For each category, write 2-3 sentences justifying the expense and explaining the calculation basis.",
+    "output_format": {
+        "budget_justification": "[Complete narrative with sections for each budget category, each with 2-3 sentences explaining necessity and calculation]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "pdf-generator"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_budget_justification",
+            "op_args": {
+                "question": "Generate budget justification narrative",
+                "required_categories": ["Senior Personnel", "Graduate Students", "Materials and Supplies", "Travel"],
+                "required_amounts": [12000, 60000, 15000, 8000],
+                "min_sentences_per_category": 2
+            }
+        }
+    ]
+}
+

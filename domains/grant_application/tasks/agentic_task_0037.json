@@ -1,0 +1,41 @@
+{
+    "category": "agentic_reasoning",
+    "question": "NIH allows 'modular budgets' for projects requesting ≤$250K direct costs per year (simplified format, no detailed breakdown). A researcher needs: Personnel ($180K), Equipment ($40K), Travel ($15K), Materials ($20K) = $255K/year. Should they use modular or detailed budget? If they need to fit modular criteria, how should they adjust the budget? Analyze the trade-offs.",
+    "output_format": {
+        "current_budget": {
+            "personnel": "$180,000",
+            "equipment": "$40,000",
+            "travel": "$15,000",
+            "materials": "$20,000",
+            "total": "$255,000"
+        },
+        "modular_eligibility": "Eligible/Not Eligible",
+        "recommendation": "Modular/Detailed",
+        "if_modular_adjustments_needed": {
+            "original_total": "$255,000",
+            "adjusted_total": "[≤$250,000]",
+            "cuts_made": ["[Specific reductions]"]
+        },
+        "trade_offs": {
+            "modular_pros": ["[Benefits]"],
+            "modular_cons": ["[Drawbacks]"],
+            "detailed_pros": ["[Benefits]"],
+            "detailed_cons": ["[Drawbacks]"]
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "budget_optimization",
+            "modular_threshold": 250000,
+            "current_budget": 255000,
+            "must_analyze_tradeoffs": true
+        }
+    }]
+}
+

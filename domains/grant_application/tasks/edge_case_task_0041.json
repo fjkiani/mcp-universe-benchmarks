@@ -1,0 +1,35 @@
+{
+    "category": "edge_cases",
+    "question": "An RFP states 'early-career researchers encouraged to apply.' Does this mean: (A) Required to be early-career, (B) Preference given to early-career, or (C) Just mentioned but not a factor? A well-established professor (20 years post-PhD) wants to apply. Analyze the language, search for similar programs to understand typical meaning, and provide a recommendation with risk assessment.",
+    "output_format": {
+        "language_interpretation": {
+            "exact_phrase": "early-career researchers encouraged",
+            "possible_meanings": [
+                {"interpretation": "Required", "likelihood": "[High/Medium/Low]", "reasoning": "[Why]"},
+                {"interpretation": "Preference given", "likelihood": "[High/Medium/Low]", "reasoning": "[Why]"},
+                {"interpretation": "Mentioned only", "likelihood": "[High/Medium/Low]", "reasoning": "[Why]"}
+            ]
+        },
+        "most_likely_meaning": "[Best interpretation]",
+        "recommendation_for_established_pi": {
+            "should_apply": "Yes/No/Maybe",
+            "risk_level": "[High/Medium/Low]",
+            "mitigation_strategies": ["[Actions to take]"],
+            "alternative_interpretation_check": "[Should contact program officer]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "ambiguous_requirement",
+            "must_acknowledge_ambiguity": true,
+            "must_recommend_clarification": true
+        }
+    }]
+}
+

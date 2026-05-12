@@ -1,0 +1,68 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# SpecStory / IDE chat exports (do not commit)
+.specstory/
+
+# Never commit files named *SECRETS_VALUES* or real API literals
+**/GITHUB_SECRETS_VALUES.md
+**/*_SECRETS_VALUES.md
+
+# Git
+.git/
+
+# Logs
+*.log
+log/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Domain-specific
+domains/**/data/*.db
+domains/**/data/*.sqlite
+
+reports/*
+
+google-service-account.json
+

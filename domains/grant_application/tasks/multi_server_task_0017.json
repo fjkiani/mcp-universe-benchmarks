@@ -1,0 +1,30 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Compare eligibility requirements across NSF CAREER, NIH R01, and DOE Early Career programs. Create a PDF comparison checklist with checkboxes for each requirement, organized by program. The checklist should allow a researcher to quickly assess which programs they qualify for. Store the PDF as 'Early_Career_Eligibility_Checklist.pdf' in file-storage under the '/checklists/' directory.",
+    "output_format": {
+        "pdf_created": true,
+        "filename": "Early_Career_Eligibility_Checklist.pdf",
+        "storage_path": "/checklists/",
+        "programs_compared": ["NSF CAREER", "NIH R01", "DOE Early Career"],
+        "checklist_items": "[Number of items]",
+        "has_checkboxes": true
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "pdf-generator"},
+        {"name": "file-storage"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "required_sections": ["NSF CAREER", "NIH R01", "DOE Early Career"],
+            "expected_pages": null,
+            "filename_pattern": "Early_Career_Eligibility_Checklist\\.pdf",
+            "must_be_stored": true,
+            "storage_path_required": "/checklists/"
+        }
+    }]
+}
+

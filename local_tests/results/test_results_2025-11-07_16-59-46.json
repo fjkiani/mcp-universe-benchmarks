@@ -1,0 +1,109 @@
+{
+  "timestamp": "2025-11-07_16-59-46",
+  "domain": "gitlab_mlops",
+  "tests": {
+    "tasks": {
+      "domain": "gitlab_mlops",
+      "total_tasks": 6,
+      "results": [
+        {
+          "task": "assign_reviewers_003",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        },
+        {
+          "task": "create_issue_link_004",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        },
+        {
+          "task": "create_mr_basic_002",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        },
+        {
+          "task": "create_project_basic_001",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        },
+        {
+          "task": "create_release_milestone_006",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        },
+        {
+          "task": "pipeline_status_check_005",
+          "status": "valid",
+          "errors": [],
+          "warnings": [],
+          "fields": [
+            "category",
+            "question",
+            "output_format",
+            "use_specified_server",
+            "mcp_servers",
+            "evaluators"
+          ],
+          "domain": "gitlab_mlops"
+        }
+      ],
+      "summary": {
+        "total_tasks": 6,
+        "valid": 6,
+        "warnings": 0,
+        "errors": 0,
+        "pass_rate": 100.0
+      }
+    }
+  }
+}

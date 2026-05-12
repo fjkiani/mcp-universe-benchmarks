@@ -1,0 +1,29 @@
+{
+  "category": "merge_requests",
+  "question": "Create a merge request in project 'ml-model-training' (project_id: 12345) from branch 'feature/add-training-script' to branch 'main'. Title: 'Add initial training script'. Description: 'This MR adds the initial model training script for the ML pipeline.' Return JSON with mr_id, mr_url, source_branch, target_branch, and status.",
+  "output_format": {
+    "mr_id": 1,
+    "mr_url": "https://gitlab.com/username/ml-model-training/-/merge_requests/1",
+    "source_branch": "feature/add-training-script",
+    "target_branch": "main",
+    "title": "Add initial training script",
+    "status": "opened"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_mr_creation",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

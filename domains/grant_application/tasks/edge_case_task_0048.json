@@ -1,0 +1,55 @@
+{
+    "category": "edge_cases",
+    "question": "A grant program doesn't specify a maximum budget amount in the solicitation. Historical awards from the past 3 years show a range of $300K to $900K with most clustering around $500-600K. The researcher's project genuinely needs $850K. Should they: (1) Request the full $850K, (2) Scale down to $600K to match typical awards, or (3) Submit two versions? Analyze the trade-offs and provide a recommendation with justification.",
+    "output_format": {
+        "budget_context": {
+            "project_need": "$850,000",
+            "historical_range": "$300K - $900K",
+            "typical_award": "$500K - $600K",
+            "requested_is_outlier": true
+        },
+        "strategy_options": {
+            "option_1_full_request": {
+                "amount": "$850,000",
+                "pros": ["[Benefits]"],
+                "cons": ["[Drawbacks]"],
+                "success_probability": "[High/Medium/Low]"
+            },
+            "option_2_scale_down": {
+                "amount": "$600,000",
+                "pros": ["[Benefits]"],
+                "cons": ["[Drawbacks]"],
+                "impact_on_project": "[How project changes]",
+                "success_probability": "[High/Medium/Low]"
+            },
+            "option_3_tiered_approach": {
+                "description": "[What this means]",
+                "pros": ["[Benefits]"],
+                "cons": ["[Drawbacks]"],
+                "success_probability": "[High/Medium/Low]"
+            }
+        },
+        "recommendation": {
+            "best_strategy": "[Option 1/2/3]",
+            "rationale": "[Detailed reasoning]",
+            "risk_mitigation": ["[How to strengthen proposal]"],
+            "contact_program_officer": "Yes/No",
+            "questions_to_ask": ["[If contacting PO]"]
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "unlisted_budget_cap",
+            "must_use_historical_data": true,
+            "must_analyze_tradeoffs": true,
+            "must_recommend_strategy": true
+        }
+    }]
+}
+

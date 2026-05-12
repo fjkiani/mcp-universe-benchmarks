@@ -1,0 +1,17 @@
+{
+  "category": "value_investing",
+  "question": "There is a seed folder with id: 1hlaYYv7EdN2eEy0nvQR6pPWOuGFezE99. Find the investment analysis document. It has information about some companies. I need you to put them alongside with the stock price in the 'companies stocks' sheet of the '1HbEiG7d0tgZUS7phsD-A9hEJoEwTih0CsUhFXbnjhac' spreadsheet. Clean the destination sheet before the run.",
+  "output_format": {
+      "spreadsheet_id": "1HbEiG7d0tgZUS7phsD-A9hEJoEwTih0CsUhFXbnjhac",
+      "sheet_name": "companies stocks",
+      "tickers_data": [
+          {
+              "ticker": "[TICKER_SYMBOL]",
+              "price": "[CURRENT_PRICE]"
+          }
+      ]
+  },
+  "evaluators": [
+
+  ]
+}

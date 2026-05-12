@@ -1,0 +1,49 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Given this researcher profile: {\"name\": \"Dr. Sarah Chen\", \"expertise\": [\"natural language processing\", \"healthcare informatics\", \"clinical decision support\"], \"position\": \"Assistant Professor\", \"institution\": \"Research University\", \"years_since_phd\": 4, \"publications\": 15}, search for matching grant opportunities. Score each match on a scale of 1-10 based on expertise overlap, career stage fit, and institution type. Save results to a Google Sheet with columns: Grant, Agency, Match Score, Expertise Alignment, Career Stage Fit, and Match Reasoning. Then send a personalized email to Dr. Chen with the top 3 matches, explaining specifically why each grant aligns with her profile and research interests.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_url": "[Google Sheets URL]",
+        "total_matches": "[number]",
+        "sheet_data": [
+            {
+                "grant_title": "[Title]",
+                "agency": "[Agency]",
+                "match_score": "[1-10]",
+                "expertise_alignment": "[explanation]",
+                "career_stage_fit": "[explanation]",
+                "match_reasoning": "[detailed reasoning]"
+            }
+        ],
+        "email_sent": true,
+        "email_content": "[Personalized email to Dr. Chen with top 3 matches and specific alignment explanations]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"},
+        {"name": "email"}
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_multi_server_orchestration",
+            "op_args": {
+                "question": "Researcher-grant matching with scoring and personalized recommendations",
+                "required_steps": ["profile_analysis", "search", "scoring", "sheet_creation", "personalized_email"],
+                "researcher_profile": {
+                    "expertise": ["natural language processing", "healthcare informatics", "clinical decision support"],
+                    "career_stage": "early-career",
+                    "years_since_phd": 4
+                },
+                "min_matches": 3,
+                "required_sheet_columns": ["grant_title", "agency", "match_score", "expertise_alignment", "career_stage_fit", "match_reasoning"],
+                "match_score_range": [1, 10],
+                "top_n_in_email": 3,
+                "email_must_include": ["personalized greeting", "specific alignment", "Dr. Chen", "profile-specific reasoning"],
+                "min_email_sentences": 15
+            }
+        }
+    ]
+}
+

@@ -1,0 +1,51 @@
+========================================
+COPY THIS EXACT PROMPT TO NEW AGENTS
+========================================
+
+I'm working on Sprint 3 of the Healthcare Receptionist domain. I need to create one task from the task list.
+
+Please read this file first:
+.cursor/rules/healthcare-receptionist/sprints/sprint3/AGENT_INSTRUCTIONS.md
+
+Then tell me:
+1. Which tasks are currently available (TODO and not blocked)
+2. Which task you recommend I work on
+3. Once I pick a task, guide me through creating it exactly as specified
+
+I will follow the task specification exactly, run all tests, and submit a completion file when done.
+
+Ready to start!
+
+========================================
+ALTERNATIVE SHORTER PROMPT
+========================================
+
+I'm an agent working on Healthcare Receptionist Sprint 3.
+
+Read: .cursor/rules/healthcare-receptionist/sprints/sprint3/AGENT_INSTRUCTIONS.md
+
+Show me available tasks from SPRINT3_TASK_INDEX.md and let me pick one.
+
+========================================
+FOR ZO TO ASSIGN TASKS
+========================================
+
+Agent [Name], you are assigned to work on TASK_XXX.
+
+1. Read the task file: .cursor/rules/healthcare-receptionist/sprints/sprint3/tasks/TASK_XXX_*.md
+2. Review the reference tasks mentioned in the task file
+3. Create the task JSON exactly as specified
+4. Run all tests
+5. Submit completion file to deliverables/
+
+Task file contains complete JSON structure. Follow it exactly.
+
+Start by reading the task file and confirming you understand the requirements.
+
+========================================
+
+
+
+
+
+

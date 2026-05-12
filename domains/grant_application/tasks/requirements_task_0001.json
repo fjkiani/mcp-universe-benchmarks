@@ -1,0 +1,38 @@
+{
+    "category": "requirements_extraction",
+    "question": "Extract structured requirements from the NSF CAREER program solicitation. Provide: (1) page limit for project description, (2) list of required sections in project description, (3) overall budget cap, (4) project duration limit in years, and (5) PI eligibility requirements (years from PhD, tenure-track status).",
+    "output_format": {
+        "page_limits": {
+            "project_description": "[number]"
+        },
+        "required_sections": ["[section1]", "[section2]", "[section3]", "[section4]", "[section5]"],
+        "budget_cap": "[amount with currency]",
+        "duration_years": "[number]",
+        "pi_eligibility": {
+            "years_from_phd": "[requirement]",
+            "tenure_track": "[yes/no/description]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_requirements_extraction",
+            "op_args": {
+                "question": "Extract requirements from NSF CAREER RFP",
+                "expected_structure": {
+                    "page_limits": {"project_description": 15},
+                    "budget_cap": "$500,000",
+                    "duration_years": 5,
+                    "required_sections_count": 5
+                }
+            }
+        }
+    ]
+}
+

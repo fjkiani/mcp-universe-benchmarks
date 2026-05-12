@@ -1,0 +1,80 @@
+{
+  "category": "Portfolio Analysis",
+  "question": "Calculate and compare portfolio performance across multiple timeframes (1-day, 1-week, 1-month, 3-month, YTD, 1-year) and benchmark against S&P 500 index.\n\nPortfolio Holdings:\n- AAPL: 100 shares (purchased 2023-01-15 at $130.50)\n- GOOGL: 50 shares (purchased 2023-06-10 at $120.30)\n- MSFT: 75 shares (purchased 2023-09-05 at $315.20)\n\nBenchmark: S&P 500 (^GSPC)",
+  "output_format": {
+    "description": "Return your response as valid JSON with flat structure. Avoid nested objects.",
+    "example": {
+      "portfolio_1month_return": 2.5,
+      "benchmark_1month_return": 1.8,
+      "alpha_1month": 0.7,
+      "portfolio_3month_return": 5.2,
+      "benchmark_3month_return": 4.1,
+      "alpha_3month": 1.1,
+      "portfolio_ytd_return": 12.4,
+      "benchmark_ytd_return": 10.2,
+      "alpha_ytd": 2.2,
+      "performance_summary": "Portfolio outperformed S&P 500 by 2.2% YTD"
+    }
+  },
+  "expected_output": {
+    "portfolio_1month_return": "numeric",
+    "benchmark_1month_return": "numeric",
+    "alpha_1month": "numeric",
+    "portfolio_3month_return": "numeric",
+    "benchmark_3month_return": "numeric",
+    "alpha_3month": "numeric",
+    "portfolio_ytd_return": "numeric",
+    "benchmark_ytd_return": "numeric",
+    "alpha_ytd": "numeric",
+    "performance_summary": "string"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {
+      "name": "stock-portfolio"
+    }
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "investments.validate_portfolio_analysis",
+      "op_args": {
+        "task_input": {
+          "holdings": [
+            {
+              "ticker": "AAPL",
+              "shares": 100,
+              "purchase_date": "2023-01-15",
+              "purchase_price": 130.5
+            },
+            {
+              "ticker": "GOOGL",
+              "shares": 50,
+              "purchase_date": "2023-06-10",
+              "purchase_price": 120.3
+            },
+            {
+              "ticker": "MSFT",
+              "shares": 75,
+              "purchase_date": "2023-09-05",
+              "purchase_price": 315.2
+            }
+          ],
+          "benchmark": "^GSPC"
+        },
+        "expected_output": {
+          "portfolio_1month_return": "numeric",
+          "benchmark_1month_return": "numeric",
+          "alpha_1month": "numeric",
+          "portfolio_3month_return": "numeric",
+          "benchmark_3month_return": "numeric",
+          "alpha_3month": "numeric",
+          "portfolio_ytd_return": "numeric",
+          "benchmark_ytd_return": "numeric",
+          "alpha_ytd": "numeric",
+          "performance_summary": "string"
+        }
+      }
+    }
+  ]
+}

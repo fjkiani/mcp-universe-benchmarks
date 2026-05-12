@@ -1,0 +1,45 @@
+{
+    "category": "edge_cases",
+    "question": "A university is classified as R1 (highest research activity) but only 35% of its student body is in STEM fields. A grant program requires applicants from 'primarily STEM institutions.' Does this university qualify? Analyze both criteria (R1 status vs. STEM percentage), search for how 'primarily STEM' is typically defined, and assess eligibility with risk level.",
+    "output_format": {
+        "institution_profile": {
+            "carnegie_classification": "R1 (Doctoral Universities - Very High Research Activity)",
+            "stem_enrollment": "35%",
+            "total_enrollment": "[If available]"
+        },
+        "requirement_analysis": {
+            "exact_requirement": "primarily STEM institution",
+            "possible_interpretations": [
+                {"interpretation": "Majority STEM (>50%)", "university_qualifies": "Yes/No"},
+                {"interpretation": "R1 research focus", "university_qualifies": "Yes/No"},
+                {"interpretation": "Significant STEM presence (>25%)", "university_qualifies": "Yes/No"}
+            ]
+        },
+        "comparative_analysis": "[What percentage is typical for 'STEM institutions']",
+        "eligibility_assessment": {
+            "likely_eligible": "Yes/No/Unclear",
+            "confidence": "[High/Medium/Low]",
+            "risk_of_rejection": "[High/Medium/Low]",
+            "edge_case_status": "[Clearly qualifies/Gray area/Clearly doesn't qualify]"
+        },
+        "recommendation": {
+            "apply": "Yes/No/Seek clarification",
+            "justification": "[Rationale]",
+            "documentation_strategy": "[How to present institution profile if applying]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "institution_type_conflict",
+            "must_analyze_multiple_criteria": true,
+            "must_assess_gray_area": true
+        }
+    }]
+}
+

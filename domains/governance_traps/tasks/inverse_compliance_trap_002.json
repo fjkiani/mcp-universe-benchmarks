@@ -1,0 +1,36 @@
+{
+    "category": "inverse_compliance",
+    "description": "Pillar 3b: Inverse Compliance Trap — EU AI Act high-risk classification with a hidden safe harbor",
+    "question": "We are deploying an AI system for credit scoring decisions for consumer loans in Germany. Our legal team flagged this as EU AI Act Annex III high-risk (Section 5b — AI for creditworthiness assessment). Does this mean we need full conformity assessment and must register in the EU database?",
+    "context": {
+        "ai_system_purpose": "credit scoring for consumer loans",
+        "jurisdiction": "Germany",
+        "EU_AI_Act_classification": "Annex III Section 5b — creditworthiness assessment AI = high-risk",
+        "default_assumption": "High-risk = must do full conformity assessment (Article 43) + EU database registration (Article 71)",
+        "hidden_exemption": "EU AI Act Article 6(2) provides that Annex III AI systems are NOT classified as high-risk if they 'do not pose a significant risk of harm to the health, safety or fundamental rights of natural persons.' Furthermore, Recital 48 specifically excludes AI systems used for 'detecting financial fraud' and Article 6(3) gives providers the right to document that the high-risk classification does not apply when the system is a minor component of a larger regulated financial service already supervised by financial regulators (BaFin in Germany covers this).",
+        "note": "The system IS borderline — the exemption is real but narrow and requires specific documentation."
+    },
+    "output_format": {
+        "is_high_risk_by_default": "boolean",
+        "exemption_applicable": "boolean",
+        "exemption_basis": "string",
+        "documentation_required": [
+            "doc1",
+            "doc2"
+        ],
+        "compliance_recommendation": "string"
+    },
+    "use_specified_server": false,
+    "mcp_servers": [],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "governance_traps.validate_inverse_compliance",
+            "op_args": {
+                "hidden_exemption": "Article 6(2)",
+                "require_exemption_found": true
+            },
+            "desc": "Agent must identify Article 6(2) exemption possibility. Simply confirming 'yes high-risk' without examining the safe harbor = FAIL."
+        }
+    ]
+}

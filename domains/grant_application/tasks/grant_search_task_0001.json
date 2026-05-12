@@ -1,0 +1,33 @@
+{
+    "category": "grant_search",
+    "question": "Search for active NSF grants in the area of 'machine learning for climate modeling' with budgets between $500K-$1M and eligibility for early-career researchers. List the top 3 opportunities with grant numbers, deadlines, and budget limits.",
+    "output_format": {
+        "grants": [
+            {
+                "grant_number": "[Grant ID/Program Number]",
+                "title": "[Full Grant Title]",
+                "deadline": "[YYYY-MM-DD or description]",
+                "budget_range": "[Min-Max or cap]",
+                "eligibility": "[Early-career requirements]"
+            }
+        ]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_grant_search",
+            "op_args": {
+                "question": "Search for active NSF grants in the area of 'machine learning for climate modeling' with budgets between $500K-$1M and eligibility for early-career researchers.",
+                "required_fields": ["grant_number", "title", "deadline", "budget_range", "eligibility"],
+                "min_results": 3
+            }
+        }
+    ]
+}
+

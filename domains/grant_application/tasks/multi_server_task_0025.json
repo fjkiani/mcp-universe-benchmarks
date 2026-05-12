@@ -1,0 +1,32 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Create a personnel hiring plan for an NIH R01: 2 postdocs ($60K each), 3 grad students ($35K each), 2 undergrads ($15K each). Budget starts in Year 1. Create a Google Sheet named 'Personnel_Hiring_Plan' with: position, salary, benefits (30%), start date, and hiring lead time (6 months for postdocs, 4 months for students). Add job posting deadlines and interview dates to the calendar, accounting for proper lead times.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_name": "Personnel_Hiring_Plan",
+        "personnel": [
+            {"position": "Postdoc 1", "salary": "$60,000", "benefits": "$18,000", "start_date": "[Date]", "posting_deadline": "[6 months prior]"},
+            {"position": "Grad Student 1", "salary": "$35,000", "benefits": "$10,500", "start_date": "[Date]", "posting_deadline": "[4 months prior]"}
+        ],
+        "total_personnel_cost": "[Total with benefits]",
+        "calendar_events_created": true,
+        "total_events": "[Number of posting and interview events]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-sheets"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "personnel_positions": ["Postdoc", "Grad Student", "Undergrad"],
+            "expected_personnel_count": 7,
+            "benefits_rate": 0.30,
+            "expected_calendar_events": 7,
+            "lead_times": {"Postdoc": 6, "Grad Student": 4, "Undergrad": 4}
+        }
+    }]
+}
+

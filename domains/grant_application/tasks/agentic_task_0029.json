@@ -1,0 +1,30 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher has a funded NSF proposal with these sections: Specific Aims (2 pages), Background (5 pages), Methods (8 pages), Budget (3 pages). They want to adapt it for an NIH R01. Map the NSF structure to NIH structure (which requires: Specific Aims, Significance, Innovation, Approach). Estimate effort in hours to adapt each section and identify what new content is needed.",
+    "output_format": {
+        "structure_mapping": {
+            "NSF_to_NIH": [
+                {"nsf_section": "Specific Aims", "maps_to": "Specific Aims", "adaptation_effort_hours": "[Hours]", "changes_needed": "[Description]"},
+                {"nsf_section": "Background", "maps_to": "Significance", "adaptation_effort_hours": "[Hours]", "changes_needed": "[Description]"}
+            ]
+        },
+        "new_content_required": ["[Sections that don't map]"],
+        "total_effort_estimate": "[Total hours]",
+        "key_differences": ["[Major structural changes]"]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "mapping",
+            "required_mappings": 4,
+            "must_estimate_effort": true,
+            "must_identify_gaps": true
+        }
+    }]
+}
+

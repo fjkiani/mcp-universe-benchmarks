@@ -1,0 +1,69 @@
+{
+    "category": "edge_cases",
+    "question": "A grant has a submission deadline of November 15, 2025. The project requires IRB approval, which typically takes 4-6 weeks. Today is October 20, 2025 (only 26 days until deadline). The researcher hasn't started the IRB process yet. Assess: (1) Can they realistically get IRB approval in time? (2) Can they submit without IRB approval and get it later? (3) Should they skip this cycle and wait for next year? Provide a go/no-go recommendation with critical path analysis.",
+    "output_format": {
+        "timeline_analysis": {
+            "submission_deadline": "2025-11-15",
+            "today": "2025-10-20",
+            "days_remaining": 26,
+            "irb_typical_duration": "4-6 weeks (28-42 days)",
+            "irb_status": "Not started",
+            "critical_path_issue": "Insufficient time for standard IRB process"
+        },
+        "feasibility_options": {
+            "option_1_expedited_irb": {
+                "feasible": "Yes/No",
+                "timeline": "[Days]",
+                "requirements": ["[What's needed for expedited review]"],
+                "success_probability": "[High/Medium/Low]"
+            },
+            "option_2_submit_pending_irb": {
+                "allowed": "Yes/No/Depends",
+                "research_findings": "[What the RFP or similar programs say]",
+                "risk": "[High/Medium/Low]",
+                "conditions": ["[If allowed, what conditions apply]"]
+            },
+            "option_3_skip_this_cycle": {
+                "next_deadline": "[When]",
+                "advantages": ["[Benefits of waiting]"],
+                "disadvantages": ["[Costs of waiting]"]
+            }
+        },
+        "critical_path_analysis": {
+            "tasks": [
+                {"task": "Submit IRB application", "duration": "[Days]", "earliest_start": "[Date]", "latest_finish": "[Date]"},
+                {"task": "IRB review", "duration": "[Days]", "earliest_start": "[Date]", "latest_finish": "[Date]"},
+                {"task": "Complete proposal", "duration": "[Days]", "earliest_start": "[Date]", "latest_finish": "[Date]"},
+                {"task": "Submit grant", "duration": "[Days]", "earliest_start": "[Date]", "latest_finish": "2025-11-15"}
+            ],
+            "bottleneck": "[Which task is the bottleneck]",
+            "slack_time": "[Days of buffer, if any]"
+        },
+        "recommendation": {
+            "go_or_no_go": "Go/No-Go",
+            "recommended_approach": "[Which option]",
+            "rationale": "[Detailed reasoning]",
+            "risk_level": "High/Medium/Low",
+            "action_items": ["[Immediate steps to take]"],
+            "contingency_plan": "[What to do if things go wrong]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "insufficient_lead_time",
+            "deadline_date": "2025-11-15",
+            "current_date": "2025-10-20",
+            "must_identify_critical_path": true,
+            "must_assess_feasibility": true,
+            "must_recommend_go_no_go": true
+        }
+    }]
+}
+

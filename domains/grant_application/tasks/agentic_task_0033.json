@@ -1,0 +1,30 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher received their PhD in December 2018. NSF CAREER requires submission within 7 years of PhD. NIH K99/R00 requires completion within 5 years of degree. DOE Early Career allows up to 10 years. It's now October 2025. Calculate exactly how much time remains for each program, identify which programs they've already aged out of, and create an urgency-prioritized application timeline for remaining opportunities.",
+    "output_format": {
+        "time_remaining": {
+            "NSF_CAREER": {"deadline": "[Date]", "months_remaining": "[Number]", "status": "Eligible/Aged Out"},
+            "NIH_K99_R00": {"deadline": "[Date]", "months_remaining": "[Number]", "status": "Eligible/Aged Out"},
+            "DOE_Early_Career": {"deadline": "[Date]", "months_remaining": "[Number]", "status": "Eligible/Aged Out"}
+        },
+        "urgency_ranking": [{"program": "[Name]", "urgency": "[Critical/High/Medium]", "reason": "[Why]"}],
+        "application_timeline": "[Detailed strategy prioritizing by urgency]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "eligibility_optimization",
+            "constraint": "early_career_window",
+            "phd_date": "2018-12",
+            "current_date": "2025-10",
+            "must_calculate_deadlines": true
+        }
+    }]
+}
+

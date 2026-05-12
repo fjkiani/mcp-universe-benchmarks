@@ -1,0 +1,28 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A brilliant researcher is a permanent resident (not U.S. citizen). NSF explicitly requires U.S. citizenship for some programs (e.g., CAREER) but not others. NIH generally doesn't have citizenship requirements. Identify which major early-career programs are available to permanent residents, explain the differences in eligibility across agencies, and recommend an optimal funding strategy.",
+    "output_format": {
+        "eligibility_by_agency": {
+            "NSF": {"citizen_required_programs": ["[Programs]"], "permanent_resident_ok": ["[Programs]"], "restrictions": "[Details]"},
+            "NIH": {"citizen_required_programs": ["[Programs]"], "permanent_resident_ok": ["[Programs]"], "restrictions": "[Details]"},
+            "DOE": {"citizen_required_programs": ["[Programs]"], "permanent_resident_ok": ["[Programs]"], "restrictions": "[Details]"}
+        },
+        "recommended_strategy": "[Which programs to target and why]",
+        "workarounds": ["[Strategies like co-PI arrangements if applicable]"]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "eligibility_optimization",
+            "constraint": "citizenship_restrictions",
+            "must_differentiate_agencies": true,
+            "must_provide_workarounds": true
+        }
+    }]
+}
+

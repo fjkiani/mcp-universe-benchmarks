@@ -1,0 +1,129 @@
+kind: llm
+spec:
+  name: llm-1
+  type: litellm
+  config:
+    model_name: openai/gpt-4o
+
+---
+kind: llm
+spec:
+  name: llm-grant-evaluator
+  type: litellm
+  config:
+    model_name: openai/gpt-4o-mini
+
+---
+kind: agent
+spec:
+  name: ReAct-agent
+  type: react
+  config:
+    llm: llm-1
+    instruction: |
+      You are an AI grant application assistant specialized in research funding workflows.
+      
+      Your capabilities:
+      - Search and identify relevant grant opportunities
+      - Extract structured requirements from RFPs and funding announcements
+      - Generate compliant application materials (budgets, timelines, narratives)
+      - Track deadlines and manage submission logistics
+      - Ensure compliance with funding agency rules and guidelines
+      
+      Available MCP servers:
+      - google-search: Search grant databases, funding opportunities, and research resources
+      - google-sheets: Create and manage budget tables, tracking spreadsheets
+      - pdf-generator: Generate formatted application documents and reports
+      - file-storage: Store and retrieve RFPs, application drafts, supporting documents
+      - calendar: Track submission deadlines, milestone dates, and review timelines
+      - email: Simulate correspondence with grant offices (when needed)
+      
+      Guidelines:
+      - Always extract complete and accurate information from RFPs
+      - Follow funding agency guidelines precisely (NSF, NIH, DOE, etc.)
+      - Verify budget calculations and ensure compliance with caps
+      - Format documents according to agency requirements
+      - Track all deadlines and provide clear submission checklists
+      - When generating narratives, be clear, concise, and compliant
+      - Use structured output formats when specified
+      - Chain MCP servers together for multi-step workflows
+      
+      Output format:
+      - Provide responses in the exact format requested in the task
+      - Use JSON structure when specified
+      - Include all required fields
+      - Show your work for calculations
+      
+      Remember: Grant applications are complex, multi-faceted, and rule-bound. 
+      Precision, compliance, and completeness are critical.
+    max_iterations: 25
+    summarize_tool_response: false
+
+---
+kind: benchmark
+spec:
+  description: Grant Application AI Pipeline - Tests multi-server orchestration for research funding workflow automation
+  agent: ReAct-agent
+  tasks:
+    # Category 1: Grant Discovery & Matching (3 tasks)
+    - tasks/grant_search_task_0001.json
+    - tasks/grant_search_task_0002.json
+    - tasks/grant_search_task_0003.json
+    
+    # Category 2: Requirements Extraction (3 tasks)
+    - tasks/requirements_task_0001.json
+    - tasks/requirements_task_0002.json
+    - tasks/requirements_task_0003.json
+    
+    # Category 3: Document Generation (4 tasks)
+    - tasks/document_gen_task_0001.json
+    - tasks/document_gen_task_0002.json
+    - tasks/document_gen_task_0003.json
+    - tasks/document_gen_task_0004.json
+    
+    # Category 4: Multi-Server Orchestration (15 tasks - Day 1-3)
+    - tasks/multi_server_task_0011.json
+    - tasks/multi_server_task_0012.json
+    - tasks/multi_server_task_0013.json
+    - tasks/multi_server_task_0014.json
+    - tasks/multi_server_task_0015.json
+    - tasks/multi_server_task_0016.json
+    - tasks/multi_server_task_0017.json
+    - tasks/multi_server_task_0018.json
+    - tasks/multi_server_task_0019.json
+    - tasks/multi_server_task_0020.json
+    - tasks/multi_server_task_0021.json
+    - tasks/multi_server_task_0022.json
+    - tasks/multi_server_task_0023.json
+    - tasks/multi_server_task_0024.json
+    - tasks/multi_server_task_0025.json
+    
+    # Category 5: Agentic Reasoning (15 tasks - Day 4)
+    - tasks/agentic_task_0026.json
+    - tasks/agentic_task_0027.json
+    - tasks/agentic_task_0028.json
+    - tasks/agentic_task_0029.json
+    - tasks/agentic_task_0030.json
+    - tasks/agentic_task_0031.json
+    - tasks/agentic_task_0032.json
+    - tasks/agentic_task_0033.json
+    - tasks/agentic_task_0034.json
+    - tasks/agentic_task_0035.json
+    - tasks/agentic_task_0036.json
+    - tasks/agentic_task_0037.json
+    - tasks/agentic_task_0038.json
+    - tasks/agentic_task_0039.json
+    - tasks/agentic_task_0040.json
+    
+    # Category 6: Edge Cases (5 tasks - Day 5)
+    - tasks/edge_case_task_0041.json
+    - tasks/edge_case_task_0042.json
+    - tasks/edge_case_task_0043.json
+    - tasks/edge_case_task_0044.json
+    - tasks/edge_case_task_0045.json
+    - tasks/edge_case_task_0046.json
+    - tasks/edge_case_task_0047.json
+    - tasks/edge_case_task_0048.json
+    - tasks/edge_case_task_0049.json
+    - tasks/edge_case_task_0050.json
+

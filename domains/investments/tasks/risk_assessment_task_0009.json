@@ -1,0 +1,71 @@
+{
+  "id": "risk_assessment_0009",
+  "question": "Calculate portfolio risk metrics including beta, annual volatility, Sharpe ratio, and maximum drawdown for this portfolio.",
+  "category": "Risk Assessment",
+  "difficulty": "hard",
+  "description": "Calculate portfolio risk metrics (beta, volatility, Sharpe ratio, max drawdown)",
+  "input": {
+    "holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 100,
+        "purchase_date": "2023-01-15",
+        "purchase_price": 130.5
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 50,
+        "purchase_date": "2023-06-10",
+        "purchase_price": 120.3
+      },
+      {
+        "ticker": "MSFT",
+        "shares": 75,
+        "purchase_date": "2023-09-05",
+        "purchase_price": 315.2
+      },
+      {
+        "ticker": "TSLA",
+        "shares": 25,
+        "purchase_date": "2024-01-10",
+        "purchase_price": 240.0
+      }
+    ],
+    "risk_free_rate": 0.05,
+    "benchmark": "^GSPC"
+  },
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "portfolio_beta": 1.15,
+      "volatility_annual": 0.22,
+      "sharpe_ratio": 1.35,
+      "max_drawdown": -12.5,
+      "portfolio_risk_level": "Moderate-High",
+      "risk_assessment": "Portfolio has higher volatility than market but good risk-adjusted returns"
+    }
+  },
+  "expected_output": {
+    "portfolio_beta": "numeric",
+    "volatility_annual": "numeric",
+    "sharpe_ratio": "numeric",
+    "max_drawdown": "numeric",
+    "portfolio_risk_level": "string",
+    "risk_assessment": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio"
+  ],
+  "task_type": "risk_metrics",
+  "evaluation_criteria": {
+    "beta_calculation_accuracy": "Correct beta calculation vs benchmark",
+    "volatility_calculation": "Accurate annualized volatility from historical returns",
+    "sharpe_ratio_accuracy": "Correct Sharpe ratio with risk-free rate",
+    "drawdown_calculation": "Accurate maximum drawdown from historical data",
+    "risk_interpretation": "Valid assessment of portfolio risk level"
+  },
+  "test_data_note": "Requires historical price data for risk metric calculations"
+}
+
+
+

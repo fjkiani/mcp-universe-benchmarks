@@ -1,0 +1,48 @@
+{
+    "category": "requirements_extraction",
+    "question": "Identify and track all submission deadlines and dates for an NSF CAREER proposal with a February 15, 2025 deadline. Extract: (1) full proposal deadline, (2) preliminary proposal deadline if applicable, (3) letter of intent deadline if required, (4) earliest date proposals are accepted, and (5) notification date for awards. Also calculate days remaining from today to each deadline.",
+    "output_format": {
+        "deadlines": {
+            "full_proposal": {
+                "date": "[YYYY-MM-DD]",
+                "days_remaining": "[number] days"
+            },
+            "preliminary_proposal": {
+                "date": "[YYYY-MM-DD or 'not required']",
+                "days_remaining": "[number] days or N/A"
+            },
+            "letter_of_intent": {
+                "date": "[YYYY-MM-DD or 'not required']",
+                "days_remaining": "[number] days or N/A"
+            },
+            "earliest_submission": {
+                "date": "[YYYY-MM-DD]"
+            },
+            "notification_date": {
+                "estimated_date": "[YYYY-MM or description]"
+            }
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        },
+        {
+            "name": "calendar"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_requirements_extraction",
+            "op_args": {
+                "question": "Track NSF CAREER submission deadlines",
+                "expected_structure": {
+                    "full_proposal": "2025-02-15"
+                }
+            }
+        }
+    ]
+}
+

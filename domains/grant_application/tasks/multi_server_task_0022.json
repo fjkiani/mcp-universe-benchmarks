@@ -1,0 +1,32 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Create a 5-year NSF CAREER budget plan with 3% annual inflation adjustment. Starting budget: Year 1 = $100K personnel, $50K equipment, $10K travel. Create a Google Sheet named 'NSF_CAREER_5Year_Budget' showing year-over-year changes. Add annual budget review dates to the calendar (every January 15th) with reminder alerts 2 weeks prior.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_name": "NSF_CAREER_5Year_Budget",
+        "year_breakdown": [
+            {"year": 1, "personnel": "$100,000", "equipment": "$50,000", "travel": "$10,000", "total": "$160,000"},
+            {"year": 2, "personnel": "[3% increase]", "equipment": "[3% increase]", "travel": "[3% increase]", "total": "[Calculated]"}
+        ],
+        "calendar_events_created": true,
+        "review_dates": ["[YYYY-01-15]"],
+        "reminders_set": true
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-sheets"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "budget_cap": null,
+            "inflation_rate": 0.03,
+            "years": 5,
+            "expected_calendar_events": 5,
+            "starting_total": 160000
+        }
+    }]
+}
+

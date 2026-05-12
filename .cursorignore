@@ -1,0 +1,20 @@
+# Reduce IDE indexing (Cursor). Git still tracks paths unless also in .gitignore.
+
+**/node_modules/
+**/.venv/
+**/venv/
+**/backend/venv/
+**/lbx_mcp_universe_cli/.venv/
+
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+**/htmlcov/
+**/dist/
+**/build/
+
+**/frontend/dist/
+
+**/.DS_Store
+
+.specstory/

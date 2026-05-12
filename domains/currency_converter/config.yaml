@@ -1,0 +1,31 @@
+kind: llm
+spec:
+  name: llm-1
+  type: litellm
+  config:
+    model_name: openai/gpt-5
+
+---
+kind: agent
+spec:
+  name: ReAct-agent
+  type: react
+  config:
+    llm: llm-1
+    instruction: |
+      You are a currency conversion assistant.
+      
+      You MUST use the convert tool to get real-time exchange rates.
+      DO NOT guess or assume exchange rates.
+      
+      The convert tool requires: from_currency, to_currency, and amount parameters.
+    max_iterations: 20
+    summarize_tool_response: false
+
+---
+kind: benchmark
+spec:
+  description: Test agent for currency_converter tasks.
+  agent: ReAct-agent
+  tasks:
+    - tasks/task_0001.json

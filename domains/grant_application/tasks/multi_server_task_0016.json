@@ -1,0 +1,28 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Extract requirements from the NSF CAREER grant program announcement and generate a structured 2-page PDF summary. The PDF should include sections: 'Eligibility', 'Budget Guidelines', 'Page Limits', 'Review Criteria', and 'Key Deadlines'. Store the PDF in file-storage with the filename 'NSF_CAREER_Summary_2025.pdf'. Return confirmation of PDF creation and storage location.",
+    "output_format": {
+        "pdf_created": true,
+        "filename": "NSF_CAREER_Summary_2025.pdf",
+        "storage_location": "[Path]",
+        "sections_included": ["Eligibility", "Budget Guidelines", "Page Limits", "Review Criteria", "Key Deadlines"],
+        "page_count": 2
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "pdf-generator"},
+        {"name": "file-storage"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "required_sections": ["Eligibility", "Budget Guidelines", "Page Limits", "Review Criteria", "Key Deadlines"],
+            "expected_pages": 2,
+            "filename_pattern": "NSF_CAREER_Summary_\\d{4}\\.pdf",
+            "must_be_stored": true
+        }
+    }]
+}
+

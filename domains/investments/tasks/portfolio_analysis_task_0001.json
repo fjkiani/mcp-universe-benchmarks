@@ -1,0 +1,66 @@
+{
+  "category": "Portfolio Analysis",
+  "question": "Calculate the current total value of this portfolio, daily performance metrics, and identify the best and worst performing holdings based on year-to-date returns.\n\nPortfolio Holdings:\n- AAPL: 100 shares (purchased 2024-01-15)\n- GOOGL: 50 shares (purchased 2024-02-10)\n- MSFT: 75 shares (purchased 2024-03-05)",
+  "output_format": {
+    "description": "Return your response as valid JSON matching this exact structure",
+    "example": {
+      "current_portfolio_value": 45000.50,
+      "daily_change_dollars": 250.75,
+      "daily_change_percent": 0.56,
+      "ytd_return_percent": 12.34,
+      "best_performer_ticker": "AAPL",
+      "best_performer_return": 15.2,
+      "worst_performer_ticker": "GOOGL",
+      "worst_performer_return": 8.1,
+      "data_source": "Alpha Vantage API"
+    }
+  },
+  "expected_output": {
+    "current_portfolio_value": "numeric",
+    "daily_change_dollars": "numeric",
+    "daily_change_percent": "numeric",
+    "ytd_return_percent": "numeric",
+    "best_performer_ticker": "string",
+    "best_performer_return": "numeric",
+    "worst_performer_ticker": "string",
+    "worst_performer_return": "numeric",
+    "data_source": "string"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {
+      "name": "stock-portfolio"
+    }
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "investments.validate_portfolio_analysis",
+      "op_args": {
+        "task_input": {
+          "holdings": [
+            {"ticker": "AAPL", "shares": 100},
+            {"ticker": "GOOGL", "shares": 50},
+            {"ticker": "MSFT", "shares": 75}
+          ],
+          "purchase_dates": {
+            "AAPL": "2024-01-15",
+            "GOOGL": "2024-02-10",
+            "MSFT": "2024-03-05"
+          }
+        },
+        "expected_output": {
+          "current_portfolio_value": "numeric",
+          "daily_change_dollars": "numeric",
+          "daily_change_percent": "numeric",
+          "ytd_return_percent": "numeric",
+          "best_performer_ticker": "string",
+          "best_performer_return": "numeric",
+          "worst_performer_ticker": "string",
+          "worst_performer_return": "numeric",
+          "data_source": "string"
+        }
+      }
+    }
+  ]
+}

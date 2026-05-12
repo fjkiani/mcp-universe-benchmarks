@@ -1,0 +1,45 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for grants from NSF, NIH, and DOE in the area of 'quantum computing' with deadlines in the next 6 months. Create a comparison spreadsheet with columns: Agency, Program Name, Grant Number, Deadline, Budget Cap, Duration, Eligibility Requirements. Sort the spreadsheet by deadline (earliest first). Then send an email to the research team with the spreadsheet link and a summary of key differences between the three agencies' programs.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_url": "[Google Sheets URL]",
+        "sheet_data": [
+            {
+                "agency": "[NSF/NIH/DOE]",
+                "program_name": "[Name]",
+                "grant_number": "[ID]",
+                "deadline": "[YYYY-MM-DD]",
+                "budget_cap": "[Amount]",
+                "duration": "[Years]",
+                "eligibility": "[Requirements]"
+            }
+        ],
+        "sorted_by": "deadline",
+        "email_sent": true,
+        "email_summary": "[Email with spreadsheet link and agency comparison]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"},
+        {"name": "email"}
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_multi_server_orchestration",
+            "op_args": {
+                "question": "Multi-agency comparison with search, sheets sorting, and email",
+                "required_steps": ["search", "sheet_creation", "sorting", "email_send"],
+                "min_agencies": 3,
+                "required_agencies": ["NSF", "NIH", "DOE"],
+                "required_sheet_columns": ["agency", "program_name", "grant_number", "deadline", "budget_cap", "duration", "eligibility"],
+                "sort_order": "deadline_ascending",
+                "email_must_include": ["spreadsheet link", "agency differences", "comparison"],
+                "min_email_sentences": 8
+            }
+        }
+    ]
+}
+

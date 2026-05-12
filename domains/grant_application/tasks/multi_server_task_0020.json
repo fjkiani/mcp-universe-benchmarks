@@ -1,0 +1,32 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for common compliance requirements for NIH human subjects research grants (IRB approval, data management plan, resource sharing plan, vertebrate animals). Create a comprehensive PDF compliance checklist document that lists each requirement, the responsible office/person, typical processing time, and action items. Store the PDF as 'NIH_Compliance_Checklist.pdf' in the '/compliance/' folder with tags: 'compliance', 'IRB', 'NIH', 'human-subjects'.",
+    "output_format": {
+        "pdf_created": true,
+        "filename": "NIH_Compliance_Checklist.pdf",
+        "storage_path": "/compliance/",
+        "compliance_types": ["IRB approval", "Data management plan", "Resource sharing plan", "Vertebrate animals"],
+        "includes_processing_times": true,
+        "includes_action_items": true,
+        "metadata_tags": ["compliance", "IRB", "NIH", "human-subjects"]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "pdf-generator"},
+        {"name": "file-storage"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "required_sections": ["IRB approval", "Data management plan", "Resource sharing plan", "Vertebrate animals"],
+            "expected_pages": null,
+            "filename_pattern": "NIH_Compliance_Checklist\\.pdf",
+            "must_be_stored": true,
+            "storage_path_required": "/compliance/",
+            "required_metadata_tags": ["compliance", "IRB", "NIH", "human-subjects"]
+        }
+    }]
+}
+

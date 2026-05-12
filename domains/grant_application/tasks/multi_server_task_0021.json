@@ -1,0 +1,41 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Given a total NIH R01 budget cap of $250,000 per year for 5 years, create an optimal budget allocation across these categories: Personnel (60-70%), Equipment (10-15%), Travel (3-5%), Materials (10-15%), Other (5-10%). Create a Google Sheet named 'R01_Budget_Allocation' with year-by-year breakdown. Then add quarterly budget review meetings to the calendar for the next 5 years.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_name": "R01_Budget_Allocation",
+        "total_budget": "$1,250,000",
+        "allocation": {
+            "Personnel": "[Amount]",
+            "Equipment": "[Amount]",
+            "Travel": "[Amount]",
+            "Materials": "[Amount]",
+            "Other": "[Amount]"
+        },
+        "calendar_events_created": true,
+        "review_meetings_count": "[Number of quarterly reviews over 5 years]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-sheets"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "budget_cap": 1250000,
+            "required_categories": ["Personnel", "Equipment", "Travel", "Materials", "Other"],
+            "category_ranges": {
+                "Personnel": [0.60, 0.70],
+                "Equipment": [0.10, 0.15],
+                "Travel": [0.03, 0.05],
+                "Materials": [0.10, 0.15],
+                "Other": [0.05, 0.10]
+            },
+            "years": 5,
+            "expected_calendar_events": 20
+        }
+    }]
+}
+

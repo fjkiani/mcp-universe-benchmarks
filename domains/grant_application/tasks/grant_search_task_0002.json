@@ -1,0 +1,34 @@
+{
+    "category": "grant_search",
+    "question": "Given a researcher profile (Assistant Professor, Computer Science, 3 years experience, expertise in natural language processing and healthcare applications), identify and match 3 suitable NIH or NSF grant opportunities. For each grant, explain why it matches the profile and what the key eligibility requirements are.",
+    "output_format": {
+        "matches": [
+            {
+                "grant_title": "[Grant name]",
+                "agency": "[NIH/NSF/etc.]",
+                "program_number": "[ID]",
+                "match_reasoning": "[Why this grant fits the profile]",
+                "eligibility_requirements": "[Key requirements]",
+                "deadline": "[Date or cycle info]"
+            }
+        ]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_grant_search",
+            "op_args": {
+                "question": "Match researcher profile to grant opportunities",
+                "required_fields": ["grant_title", "agency", "match_reasoning", "eligibility_requirements"],
+                "min_results": 3
+            }
+        }
+    ]
+}
+

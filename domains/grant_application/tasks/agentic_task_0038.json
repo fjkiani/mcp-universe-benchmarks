@@ -1,0 +1,31 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher needs a $150K mass spectrometer. NSF reviewers are often skeptical of equipment >$50K in a single year. Propose strategies to justify or restructure this request: (1) Split across multiple years, (2) Request cost-share from university, (3) Argue for shared facility access instead, (4) Lease vs. purchase. Analyze pros/cons of each and recommend the strongest approach.",
+    "output_format": {
+        "equipment_need": "$150,000 mass spectrometer",
+        "nsf_concern": "Equipment >$50K raises red flags",
+        "strategies": [
+            {"approach": "Split across years", "year_1": "[Amount]", "year_2": "[Amount]", "year_3": "[Amount]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"], "feasibility": "[High/Medium/Low]"},
+            {"approach": "University cost-share", "nsf_request": "[Amount]", "university_contribution": "[Amount]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"], "feasibility": "[High/Medium/Low]"},
+            {"approach": "Shared facility access", "budget_instead": "[Smaller amount for access fees]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"], "feasibility": "[High/Medium/Low]"},
+            {"approach": "Lease vs purchase", "lease_annual_cost": "[Amount]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"], "feasibility": "[High/Medium/Low]"}
+        ],
+        "recommendation": "[Best strategy with detailed justification]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "budget_justification",
+            "equipment_cost": 150000,
+            "concern_threshold": 50000,
+            "min_strategies": 4,
+            "must_recommend": true
+        }
+    }]
+}
+

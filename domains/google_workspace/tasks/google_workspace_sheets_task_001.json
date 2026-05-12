@@ -1,0 +1,16 @@
+{
+  "category": "value_investing",
+  "question": "I need you to read the list of ticker symbols from Sheet1 in the existing Google Spreadsheet with ID '1HbEiG7d0tgZUS7phsD-A9hEJoEwTih0CsUhFXbnjhac', then create or update a sheet named 'companies stocks' and populate it with the current stock prices for all the tickers found in Sheet1. Use yfinance to get the current share prices for each ticker. The 'companies stocks' sheet should have columns for Ticker Symbol and Current Share Price.",
+  "output_format": {
+      "spreadsheet_id": "1HbEiG7d0tgZUS7phsD-A9hEJoEwTih0CsUhFXbnjhac",
+      "sheet_name": "companies stocks",
+      "tickers_data": [
+          {
+              "ticker": "[TICKER_SYMBOL]",
+              "price": "[CURRENT_PRICE]"
+          }
+      ]
+  },
+  "evaluators": [
+  ]
+}

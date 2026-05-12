@@ -1,0 +1,38 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Given a grant submission deadline of December 1, 2025, create a detailed backward-planned timeline for grant preparation. The timeline should include these milestones: 'Draft specific aims' (3 months before), 'Complete preliminary data' (2.5 months), 'Draft budget' (2 months), 'Internal review' (1.5 months), 'Revisions' (1 month), 'Final formatting' (2 weeks), 'Submit' (deadline). Generate a PDF timeline document with dates, milestones, and responsible parties (PI, Co-I, Admin). Store as 'Grant_Timeline_Dec2025.pdf' in the '/timelines/' directory.",
+    "output_format": {
+        "pdf_created": true,
+        "filename": "Grant_Timeline_Dec2025.pdf",
+        "storage_path": "/timelines/",
+        "submission_deadline": "2025-12-01",
+        "milestones": [
+            {"task": "Draft specific aims", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Complete preliminary data", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Draft budget", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Internal review", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Revisions", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Final formatting", "date": "[YYYY-MM-DD]", "responsible": "[Role]"},
+            {"task": "Submit", "date": "2025-12-01", "responsible": "[Role]"}
+        ]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "pdf-generator"},
+        {"name": "file-storage"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "required_sections": ["Draft specific aims", "Complete preliminary data", "Draft budget", "Internal review", "Revisions", "Final formatting", "Submit"],
+            "expected_pages": null,
+            "filename_pattern": "Grant_Timeline_Dec2025\\.pdf",
+            "must_be_stored": true,
+            "storage_path_required": "/timelines/",
+            "deadline_date": "2025-12-01"
+        }
+    }]
+}
+

@@ -1,0 +1,32 @@
+{
+  "category": "project_management",
+  "question": "Create a milestone in project 'ml-model-training' (project_id: 12345) with title 'v1.0 - Initial Release', description 'First production release of the ML training pipeline', start_date '2025-11-01', and due_date '2025-11-30'. Then create a release with tag 'v1.0.0', name 'Version 1.0 - Production Ready', and description 'Release notes: - Initial training pipeline, - Data preprocessing, - Model evaluation metrics, - Docker deployment'. Link the release to the milestone. Return JSON with milestone_id, milestone_url, release_tag, release_url, and confirmation that they are linked.",
+  "output_format": {
+    "milestone_id": 10,
+    "milestone_title": "v1.0 - Initial Release",
+    "milestone_url": "https://gitlab.com/username/ml-model-training/-/milestones/10",
+    "start_date": "2025-11-01",
+    "due_date": "2025-11-30",
+    "release_tag": "v1.0.0",
+    "release_name": "Version 1.0 - Production Ready",
+    "release_url": "https://gitlab.com/username/ml-model-training/-/releases/v1.0.0",
+    "milestone_linked": true
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {"name": "gitlab"}
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "gitlab_mlops.validate_release_and_milestone",
+      "op_args": {}
+    }
+  ]
+}
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A senior researcher earns $280K annual salary. NIH caps executive compensation at $221,000 (Level II of Executive Schedule). NSF has no salary cap. For a proposal requesting 3 months (25%) effort: (1) Calculate allowable costs for NIH vs. NSF, (2) Identify unallowable costs, (3) Recommend how to structure the budget for each agency, (4) Explain what happens to the 'unallowable' portion for NIH.",
+    "output_format": {
+        "researcher_salary": "$280,000",
+        "effort_requested": "25% (3 months)",
+        "nih_analysis": {
+            "salary_cap": "$221,000",
+            "allowable_amount": "[25% of $221K]",
+            "unallowable_amount": "[25% of ($280K - $221K)]",
+            "who_pays_difference": "[University/Other source]"
+        },
+        "nsf_analysis": {
+            "salary_cap": "None",
+            "allowable_amount": "[25% of $280K]",
+            "unallowable_amount": "$0"
+        },
+        "budget_recommendations": {
+            "nih_proposal": "[How to structure the budget line]",
+            "nsf_proposal": "[How to structure the budget line]"
+        },
+        "compliance_notes": ["[Key differences between agencies]"]
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "salary_cap_navigation",
+            "actual_salary": 280000,
+            "nih_cap": 221000,
+            "effort_percentage": 0.25,
+            "must_calculate_both_agencies": true
+        }
+    }]
+}
+

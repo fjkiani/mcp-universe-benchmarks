@@ -1,0 +1,116 @@
+{
+  "id": "rebalancing_0015",
+  "question": "Generate comprehensive portfolio rebalancing recommendation orchestrating stock research, risk analysis, tax optimization, and trade execution planning across multiple MCP servers.",
+  "category": "Rebalancing Recommendations",
+  "difficulty": "expert",
+  "description": "Comprehensive portfolio rebalancing with tax optimization, sector rotation, and risk management - full workflow orchestration",
+  "input": {
+    "current_holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 150,
+        "purchase_price": 145.0,
+        "purchase_date": "2023-03-15"
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 80,
+        "purchase_price": 125.0,
+        "purchase_date": "2023-06-20"
+      },
+      {
+        "ticker": "MSFT",
+        "shares": 100,
+        "purchase_price": 310.0,
+        "purchase_date": "2023-01-10"
+      },
+      {
+        "ticker": "TSLA",
+        "shares": 40,
+        "purchase_price": 280.0,
+        "purchase_date": "2024-02-05"
+      },
+      {
+        "ticker": "NVDA",
+        "shares": 30,
+        "purchase_price": 450.0,
+        "purchase_date": "2024-04-12"
+      },
+      {
+        "ticker": "JPM",
+        "shares": 70,
+        "purchase_price": 170.0,
+        "purchase_date": "2023-08-15"
+      },
+      {
+        "ticker": "JNJ",
+        "shares": 50,
+        "purchase_price": 155.0,
+        "purchase_date": "2023-11-20"
+      }
+    ],
+    "target_allocation": {
+      "Technology": 0.5,
+      "Financials": 0.2,
+      "Healthcare": 0.2,
+      "Cash": 0.1
+    },
+    "rebalancing_constraints": {
+      "max_single_stock_allocation": 0.15,
+      "min_trade_size": 1000,
+      "tax_efficiency_priority": "high",
+      "avoid_wash_sales": true
+    },
+    "economic_context": "late_cycle_expansion",
+    "tax_rates": {
+      "short_term_gains": 0.37,
+      "long_term_gains": 0.2
+    },
+    "today_date": "2024-10-22"
+  },
+  "expected_output": {
+    "analysis_complete": "boolean",
+    "rebalance_needed": "boolean",
+    "total_trades": "numeric",
+    "tax_loss_harvested": "numeric",
+    "tax_savings": "numeric",
+    "risk_reduced": "boolean",
+    "new_sharpe_ratio": "numeric",
+    "execution_summary": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio",
+    "google-search",
+    "google-sheets",
+    "pdf-generator",
+    "calendar"
+  ],
+  "task_type": "comprehensive_rebalancing",
+  "evaluation_criteria": {
+    "multi_objective_optimization": "Balance allocation, tax efficiency, and risk management",
+    "calculation_accuracy": "Correct calculations for tax, allocation, risk metrics",
+    "constraint_compliance": "Respect max allocation, min trade size, wash sale rules",
+    "sector_rotation_validity": "Appropriate sector recommendations for economic cycle",
+    "execution_practicality": "Realistic phased implementation plan",
+    "reporting_completeness": "Generate all tracking materials (sheets, PDF, calendar)",
+    "workflow_orchestration": "Successfully chain 5+ MCP servers",
+    "professional_quality": "Investment advisor-grade analysis and recommendations"
+  },
+  "test_data_note": "Ultimate complexity - tests full investment workflow end-to-end with 5+ MCP servers",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "analysis_complete": true,
+      "rebalance_needed": true,
+      "total_trades": 5,
+      "tax_loss_harvested": -4500,
+      "tax_savings": 1350,
+      "risk_reduced": true,
+      "new_sharpe_ratio": 1.65,
+      "execution_summary": "Rebalanced portfolio to target allocation with tax optimization"
+    }
+  }
+}
+
+
+

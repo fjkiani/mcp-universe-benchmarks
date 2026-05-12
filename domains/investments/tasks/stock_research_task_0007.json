@@ -1,0 +1,63 @@
+{
+  "id": "stock_research_0007",
+  "question": "Compare this company against its industry peers analyzing relative valuation metrics, growth rates, profitability, and market positioning.",
+  "category": "Stock Research & Valuation",
+  "difficulty": "very_hard",
+  "description": "Perform peer comparison analysis for competitive positioning",
+  "input": {
+    "target_company": "AMD",
+    "peer_group": [
+      "NVDA",
+      "INTC",
+      "QCOM",
+      "TSM"
+    ],
+    "comparison_metrics": [
+      "valuation",
+      "profitability",
+      "growth",
+      "balance_sheet"
+    ]
+  },
+  "expected_output": {
+    "peer_1_ticker": "string",
+    "peer_1_pe_ratio": "numeric",
+    "peer_2_ticker": "string",
+    "peer_2_pe_ratio": "numeric",
+    "target_ticker": "string",
+    "target_pe_ratio": "numeric",
+    "industry_avg_pe": "numeric",
+    "relative_valuation": "string",
+    "competitive_position": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio",
+    "google-search"
+  ],
+  "task_type": "peer_comparison",
+  "evaluation_criteria": {
+    "data_completeness": "All metrics for all companies",
+    "ranking_accuracy": "Correct relative rankings based on metrics",
+    "competitive_analysis_depth": "Identify meaningful competitive differences",
+    "investment_thesis_quality": "Logical reasoning for recommendation",
+    "sector_context": "Consider semiconductor industry dynamics"
+  },
+  "test_data_note": "Requires data for 5 companies - complex multi-stock analysis",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "peer_1_ticker": "GM",
+      "peer_1_pe_ratio": 6.2,
+      "peer_2_ticker": "F",
+      "peer_2_pe_ratio": 7.1,
+      "target_ticker": "TSLA",
+      "target_pe_ratio": 45.2,
+      "industry_avg_pe": 12.5,
+      "relative_valuation": "Premium valuation vs peers",
+      "competitive_position": "Leader in EV segment"
+    }
+  }
+}
+
+
+

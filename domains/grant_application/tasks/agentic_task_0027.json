@@ -1,0 +1,28 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher needs $800K total for their project. Three grant options exist: (1) NSF: $500K max, 20% cost-share required, 5 years, (2) NIH R01: $250K/year max, no cost-share, 5 years, (3) DOE: $1M max, 10% cost-share, 3 years. Analyze which option(s) best meet the need, considering total funding, institutional burden, and timeline. Can multiple grants be combined? Provide cost-benefit analysis.",
+    "output_format": {
+        "analysis": {
+            "NSF": {"total_available": "$500K", "cost_share_burden": "$100K", "timeline": "5 years", "feasibility_score": "[1-10]"},
+            "NIH_R01": {"total_available": "$1.25M", "cost_share_burden": "$0", "timeline": "5 years", "feasibility_score": "[1-10]"},
+            "DOE": {"total_available": "$1M", "cost_share_burden": "$100K", "timeline": "3 years", "feasibility_score": "[1-10]"}
+        },
+        "recommendation": "[Single grant or combination]",
+        "justification": "[Detailed reasoning with trade-offs]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "optimization",
+            "project_need": 800000,
+            "required_analysis": ["total_available", "cost_share_burden", "timeline", "feasibility_score"],
+            "must_address_tradeoffs": true
+        }
+    }]
+}
+

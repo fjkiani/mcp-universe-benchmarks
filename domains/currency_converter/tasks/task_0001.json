@@ -1,0 +1,27 @@
+{
+    "category": "currency",
+    "question": "Convert 100 USD to EUR. What is the result?",
+    "use_specified_server": true,
+    "mcp_servers": [
+      {
+        "name": "currency-converter"
+      }
+    ],
+    "output_format": {
+      "from_currency": "<FROM_CURRENCY>",
+      "to_currency": "<TO_CURRENCY>",
+      "amount": "<AMOUNT>",
+      "converted_amount": "<CONVERTED_AMOUNT>"
+    },
+    "evaluators": [
+      {
+        "func": "raw",
+        "op": "currency_converter.validate_conversion",
+        "op_args": {
+          "from_currency": "USD",
+          "to_currency": "EUR",
+          "amount": "100"
+        }
+      }
+    ]
+  }

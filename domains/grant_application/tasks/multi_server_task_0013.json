@@ -1,0 +1,52 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for early-career grants (any agency) in 'biomedical engineering' and apply these filters: budget greater than $400K, duration between 3-5 years, eligible for assistant professors at U.S. institutions. Save the filtered results to a Google Sheet. For any grants with deadlines within 60 days, mark them as 'URGENT' in a separate column and send an immediate email alert to the PI with just those urgent opportunities and their specific deadlines.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_url": "[Google Sheets URL]",
+        "total_results": "[number]",
+        "urgent_count": "[number]",
+        "sheet_data": [
+            {
+                "grant_number": "[ID]",
+                "title": "[Title]",
+                "agency": "[Agency]",
+                "deadline": "[YYYY-MM-DD]",
+                "days_remaining": "[number]",
+                "budget": "[Amount]",
+                "duration": "[Years]",
+                "urgency": "[NORMAL/URGENT]"
+            }
+        ],
+        "email_sent": true,
+        "email_content": "[Email with only URGENT grants and deadlines]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"},
+        {"name": "email"}
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_multi_server_orchestration",
+            "op_args": {
+                "question": "Eligibility filter with conditional email alerts",
+                "required_steps": ["search", "filtering", "sheet_creation", "conditional_email"],
+                "required_filters": {
+                    "budget_min": 400000,
+                    "duration_min": 3,
+                    "duration_max": 5,
+                    "career_stage": "early-career",
+                    "institution_type": "U.S."
+                },
+                "required_sheet_columns": ["grant_number", "title", "agency", "deadline", "days_remaining", "budget", "duration", "urgency"],
+                "urgency_threshold_days": 60,
+                "email_should_only_include": "urgent_grants",
+                "min_email_sentences": 5
+            }
+        }
+    ]
+}
+

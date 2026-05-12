@@ -1,0 +1,33 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A $1M collaborative grant will be split among 3 institutions: Lead (50% of work), Partner A (30%), Partner B (20%). Each institution has different F&A rates: Lead = 55%, Partner A = 45%, Partner B = 30%. Calculate the optimal budget distribution to (1) minimize total overhead, (2) ensure each institution can complete their scope, (3) comply with subaward requirements. Show all calculations.",
+    "output_format": {
+        "total_budget": "$1,000,000",
+        "institutions": [
+            {"name": "Lead", "work_percentage": "50%", "fa_rate": "55%", "direct_costs": "[Amount]", "indirect_costs": "[Amount]", "total": "[Amount]"},
+            {"name": "Partner A", "work_percentage": "30%", "fa_rate": "45%", "direct_costs": "[Amount]", "indirect_costs": "[Amount]", "total": "[Amount]"},
+            {"name": "Partner B", "work_percentage": "20%", "fa_rate": "30%", "direct_costs": "[Amount]", "indirect_costs": "[Amount]", "total": "[Amount]"}
+        ],
+        "optimization_strategy": "[How budget was distributed to minimize overhead]",
+        "total_direct_costs": "[Sum]",
+        "total_indirect_costs": "[Sum]",
+        "verification": "[Confirm total = $1M]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "google-sheets"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "multi_institution_budget",
+            "total_budget": 1000000,
+            "num_institutions": 3,
+            "must_minimize_overhead": true,
+            "must_verify_math": true
+        }
+    }]
+}
+

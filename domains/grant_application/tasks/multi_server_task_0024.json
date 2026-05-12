@@ -1,0 +1,30 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Plan equipment purchases for a DOE grant with staggered budget releases: Year 1 (30%), Year 2 (40%), Year 3 (30%). Equipment list: Spectrometer ($150K, Year 1), Computer cluster ($100K, Year 2), Lab setup ($50K, Year 1). Create a Google Sheet named 'Equipment_Purchase_Timeline' with purchase dates, vendor quote deadlines (3 months before purchase), and approval timelines. Add all key dates to the calendar.",
+    "output_format": {
+        "sheet_created": true,
+        "sheet_name": "Equipment_Purchase_Timeline",
+        "equipment_plan": [
+            {"item": "Spectrometer", "cost": "$150,000", "year": 1, "quote_deadline": "[Date]", "purchase_date": "[Date]"},
+            {"item": "Computer cluster", "cost": "$100,000", "year": 2, "quote_deadline": "[Date]", "purchase_date": "[Date]"}
+        ],
+        "calendar_events_created": true,
+        "total_events": "[Number of deadline and purchase date events]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-sheets"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "budget_cap": 300000,
+            "equipment_items": ["Spectrometer", "Computer cluster", "Lab setup"],
+            "expected_calendar_events": 6,
+            "years": 3
+        }
+    }]
+}
+

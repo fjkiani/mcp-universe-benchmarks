@@ -1,0 +1,31 @@
+{
+    "category": "flight_delay",
+    "question": "What is the delay probability for flight AAL100? Should I be worried about delays?",
+    "mcp_servers": [
+      {
+        "name": "flight-delay"
+      }
+    ],
+    "actions": [
+      {
+        "server": "flight-delay",
+        "name": "predict_flight_delay_by_number",
+        "kwargs": {
+          "flight_number": "AAL100"
+        }
+      }
+    ],
+    "output_format": {
+      "flight_number": "<FLIGHT_NUMBER>",
+      "delay_probability": "<DELAY_PROBABILITY_PERCENTAGE>",
+      "confidence": "<CONFIDENCE_LEVEL>",
+      "recommendation": "<RECOMMENDATION>"
+    },
+    "evaluators": [
+      {
+        "func": "json -> get(flight_number)",
+        "op": "=",
+        "value": "AA100"
+      }
+    ]
+  }

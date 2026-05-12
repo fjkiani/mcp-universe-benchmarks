@@ -1,0 +1,82 @@
+{
+  "category": "Portfolio Analysis",
+  "question": "Analyze the diversification of this portfolio by calculating the Herfindahl-Hirschman Index (HHI), sector allocation breakdown, and concentration risk metrics.\n\nPortfolio Holdings:\n- AAPL: 100 shares\n- GOOGL: 50 shares\n- MSFT: 75 shares\n- TSLA: 25 shares\n- JPM: 60 shares\n- JNJ: 40 shares",
+  "output_format": {
+    "description": "Return your response as valid JSON matching this exact structure. Flatten all nested objects.",
+    "example": {
+      "technology_value": 45000,
+      "technology_percentage": 52.3,
+      "healthcare_value": 12000,
+      "healthcare_percentage": 14.0,
+      "financials_value": 18000,
+      "financials_percentage": 20.9,
+      "consumer_discretionary_value": 11000,
+      "consumer_discretionary_percentage": 12.8,
+      "diversification_score": 72,
+      "top_holding_percentage": 30.5,
+      "top_3_holdings_percentage": 65.2,
+      "is_concentrated": true,
+      "sector_balance_assessment": "Overweight in Technology sector",
+      "recommendation": "Consider reducing Technology exposure and adding to underweight sectors"
+    }
+  },
+  "expected_output": {
+    "technology_value": "numeric",
+    "technology_percentage": "numeric",
+    "healthcare_value": "numeric",
+    "healthcare_percentage": "numeric",
+    "financials_value": "numeric",
+    "financials_percentage": "numeric",
+    "consumer_discretionary_value": "numeric",
+    "consumer_discretionary_percentage": "numeric",
+    "diversification_score": "numeric",
+    "top_holding_percentage": "numeric",
+    "top_3_holdings_percentage": "numeric",
+    "is_concentrated": "boolean",
+    "sector_balance_assessment": "string",
+    "recommendation": "string"
+  },
+  "use_specified_server": true,
+  "mcp_servers": [
+    {
+      "name": "stock-portfolio"
+    },
+    {
+      "name": "google-search"
+    }
+  ],
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "investments.validate_portfolio_analysis",
+      "op_args": {
+        "task_input": {
+          "holdings": [
+            {"ticker": "AAPL", "shares": 100},
+            {"ticker": "GOOGL", "shares": 50},
+            {"ticker": "MSFT", "shares": 75},
+            {"ticker": "TSLA", "shares": 25},
+            {"ticker": "JPM", "shares": 60},
+            {"ticker": "JNJ", "shares": 40}
+          ]
+        },
+        "expected_output": {
+          "technology_value": "numeric",
+          "technology_percentage": "numeric",
+          "healthcare_value": "numeric",
+          "healthcare_percentage": "numeric",
+          "financials_value": "numeric",
+          "financials_percentage": "numeric",
+          "consumer_discretionary_value": "numeric",
+          "consumer_discretionary_percentage": "numeric",
+          "diversification_score": "numeric",
+          "top_holding_percentage": "numeric",
+          "top_3_holdings_percentage": "numeric",
+          "is_concentrated": "boolean",
+          "sector_balance_assessment": "string",
+          "recommendation": "string"
+        }
+      }
+    }
+  ]
+}

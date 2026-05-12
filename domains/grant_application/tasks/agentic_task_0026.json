@@ -1,0 +1,28 @@
+{
+    "category": "agentic_reasoning",
+    "question": "Compare eligibility requirements across NSF CAREER, NIH K99/R00, and DOE Early Career programs for a researcher who: (1) got PhD in 2021, (2) started tenure-track position in 2022, (3) works at a research university. For each program, determine if they qualify and explain the reasoning. Recommend the best fit considering success rates and alignment.",
+    "output_format": {
+        "comparison": {
+            "NSF_CAREER": {"qualifies": "boolean", "reasoning": "[Explanation]", "key_criteria": ["[Criteria]"]},
+            "NIH_K99_R00": {"qualifies": "boolean", "reasoning": "[Explanation]", "key_criteria": ["[Criteria]"]},
+            "DOE_Early_Career": {"qualifies": "boolean", "reasoning": "[Explanation]", "key_criteria": ["[Criteria]"]}
+        },
+        "recommendation": "[Program name]",
+        "justification": "[Why this is the best fit]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "comparison",
+            "required_programs": ["NSF_CAREER", "NIH_K99_R00", "DOE_Early_Career"],
+            "required_elements": ["qualifies", "reasoning", "key_criteria"],
+            "must_have_recommendation": true
+        }
+    }]
+}
+

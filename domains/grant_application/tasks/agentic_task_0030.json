@@ -1,0 +1,30 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher has 3 project ideas: (A) AI for education ($600K, 3 years), (B) Robotics ($400K, 2 years), (C) Data science ($300K, 18 months). Grant opportunities: NSF CISE (due Oct 1), NIH R21 (due Nov 15), DOE ASCR (due Dec 1), DARPA YFA (due Jan 15). Match each project to the optimal grant, avoiding deadline conflicts, and create a 12-month submission calendar prioritizing success probability.",
+    "output_format": {
+        "project_grant_matching": [
+            {"project": "A", "grant": "[Grant name]", "deadline": "[Date]", "fit_score": "[1-10]", "rationale": "[Why]"},
+            {"project": "B", "grant": "[Grant name]", "deadline": "[Date]", "fit_score": "[1-10]", "rationale": "[Why]"},
+            {"project": "C", "grant": "[Grant name]", "deadline": "[Date]", "fit_score": "[1-10]", "rationale": "[Why]"}
+        ],
+        "submission_calendar": [{"month": "[Month]", "action": "[Project + Grant]", "priority": "[High/Med/Low]"}],
+        "conflict_analysis": "[Any deadline conflicts identified and resolved]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "portfolio_planning",
+            "num_projects": 3,
+            "num_grants": 4,
+            "must_avoid_conflicts": true,
+            "must_prioritize": true
+        }
+    }]
+}
+

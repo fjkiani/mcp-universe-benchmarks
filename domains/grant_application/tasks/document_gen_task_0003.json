@@ -1,0 +1,50 @@
+{
+    "category": "document_generation",
+    "question": "Draft the 'Specific Aims' section for an NSF CAREER proposal on 'Machine Learning for Climate Model Uncertainty Quantification'. Include: (1) opening paragraph stating the problem and its importance (2-3 sentences), (2) three specific aims with clear objectives and expected outcomes, (3) brief description of approach for each aim, and (4) closing paragraph on broader impacts. Follow NSF format guidelines with clear, concise scientific writing.",
+    "output_format": {
+        "specific_aims": {
+            "opening": "[2-3 sentence problem statement and significance]",
+            "aims": [
+                {
+                    "aim_number": 1,
+                    "title": "[Aim title]",
+                    "objective": "[What will be accomplished]",
+                    "approach": "[Brief methodology]",
+                    "expected_outcome": "[Anticipated results]"
+                },
+                {
+                    "aim_number": 2,
+                    "title": "[Aim title]",
+                    "objective": "[What will be accomplished]",
+                    "approach": "[Brief methodology]",
+                    "expected_outcome": "[Anticipated results]"
+                },
+                {
+                    "aim_number": 3,
+                    "title": "[Aim title]",
+                    "objective": "[What will be accomplished]",
+                    "approach": "[Brief methodology]",
+                    "expected_outcome": "[Anticipated results]"
+                }
+            ],
+            "broader_impacts": "[2-3 sentences on broader impacts]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "pdf-generator"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_document_structure",
+            "op_args": {
+                "question": "Draft specific aims section for NSF CAREER proposal",
+                "required_sections": ["opening", "aims", "broader_impacts"]
+            }
+        }
+    ]
+}
+

@@ -1,0 +1,36 @@
+{
+    "category": "inverse_compliance",
+    "description": "Pillar 3: Inverse Compliance Trap — agent must find the hidden exemption in the regulation that changes the outcome from PROHIBITED to PERMITTED",
+    "question": "Our company processes biometric data for employee time and attendance tracking in France. Our legal team says this is prohibited under GDPR. Is there a way to make this compliant, or must we discontinue the system?",
+    "context": {
+        "jurisdiction": "France",
+        "data_type": "biometric (fingerprint, facial recognition)",
+        "purpose": "employee time and attendance",
+        "default_analysis": "GDPR Article 9 prohibits processing of biometric data for uniquely identifying natural persons.",
+        "hidden_exemption": "GDPR Article 9(2)(b) provides an exemption when processing is necessary for carrying out obligations in the field of employment law, provided it is authorized by Union or Member State law and appropriate safeguards exist. France's Act on Data Processing (Article 26) explicitly permits biometric data for access control in employment contexts with employee consent and DPA authorization."
+    },
+    "output_format": {
+        "prohibited_by_default": "boolean",
+        "exemption_found": "boolean",
+        "exemption_article": "string",
+        "compliance_path": "string",
+        "required_steps": [
+            "step1",
+            "step2",
+            "step3"
+        ]
+    },
+    "use_specified_server": false,
+    "mcp_servers": [],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "governance_traps.validate_inverse_compliance",
+            "op_args": {
+                "hidden_exemption": "Article 9(2)(b)",
+                "require_exemption_found": true
+            },
+            "desc": "Agent must find the Article 9(2)(b) exemption. Simply saying 'prohibited' without the exemption = FAIL."
+        }
+    ]
+}

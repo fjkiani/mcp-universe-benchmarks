@@ -1,0 +1,61 @@
+{
+    "category": "document_generation",
+    "question": "Compile a comprehensive submission checklist for an NSF CAREER proposal due February 15, 2025. Include: (1) all required documents with page limits, (2) required formats (PDF, font size, margins), (3) supplementary documents needed, (4) required approvals and signatures, (5) submission platform requirements (Research.gov), and (6) pre-submission validation steps. Organize in order of preparation sequence.",
+    "output_format": {
+        "checklist": {
+            "core_documents": [
+                {
+                    "document_name": "[Name]",
+                    "page_limit": "[Number or N/A]",
+                    "format_requirements": "[Font, margins, etc.]",
+                    "deadline": "[When needed]",
+                    "status": "[Pending/In Progress/Complete]"
+                }
+            ],
+            "supplementary_documents": [
+                {
+                    "document_name": "[Name]",
+                    "requirements": "[Description]",
+                    "optional": "[yes/no]"
+                }
+            ],
+            "approvals_required": [
+                {
+                    "approval_type": "[Type]",
+                    "responsible_party": "[Who provides]",
+                    "deadline": "[When needed]"
+                }
+            ],
+            "submission_platform": {
+                "platform_name": "[Research.gov/Grants.gov]",
+                "account_requirements": "[What's needed]",
+                "technical_requirements": "[System specs]"
+            },
+            "validation_steps": [
+                "[Step 1]",
+                "[Step 2]",
+                "[Step 3]"
+            ]
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "google-search"
+        },
+        {
+            "name": "google-sheets"
+        }
+    ],
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "grant_application.validate_document_structure",
+            "op_args": {
+                "question": "Compile NSF CAREER submission checklist",
+                "required_sections": ["core_documents", "supplementary_documents", "approvals_required", "submission_platform", "validation_steps"]
+            }
+        }
+    ]
+}
+

@@ -1,0 +1,30 @@
+{
+    "category": "multi_server_orchestration",
+    "question": "Search for NIH R01 budget guidelines and create a fillable PDF budget template. The template should include standard NIH cost categories: 'Personnel', 'Equipment', 'Travel', 'Materials & Supplies', 'Consultants', 'Other Direct Costs', and 'Indirect Costs'. Include a total calculation section. Store the template as 'NIH_R01_Budget_Template.pdf' with metadata tags: 'template', 'budget', 'NIH', 'R01'.",
+    "output_format": {
+        "pdf_created": true,
+        "filename": "NIH_R01_Budget_Template.pdf",
+        "cost_categories": ["Personnel", "Equipment", "Travel", "Materials & Supplies", "Consultants", "Other Direct Costs", "Indirect Costs"],
+        "has_calculation_section": true,
+        "metadata_tags": ["template", "budget", "NIH", "R01"],
+        "is_fillable": true
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "pdf-generator"},
+        {"name": "file-storage"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_multi_server_orchestration",
+        "op_args": {
+            "required_sections": ["Personnel", "Equipment", "Travel", "Materials & Supplies", "Consultants", "Other Direct Costs", "Indirect Costs"],
+            "expected_pages": null,
+            "filename_pattern": "NIH_R01_Budget_Template\\.pdf",
+            "must_be_stored": true,
+            "required_metadata_tags": ["template", "budget", "NIH", "R01"]
+        }
+    }]
+}
+

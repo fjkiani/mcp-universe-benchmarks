@@ -1,0 +1,80 @@
+{
+  "id": "risk_assessment_0011",
+  "question": "Perform stress testing and scenario analysis on this portfolio simulating market crash conditions (-20%, -30%, -40%) and sector-specific shocks.",
+  "category": "Risk Assessment",
+  "difficulty": "expert",
+  "description": "Perform stress testing and scenario analysis for market crash events",
+  "input": {
+    "holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 100,
+        "purchase_price": 150.0
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 50,
+        "purchase_price": 130.0
+      },
+      {
+        "ticker": "TSLA",
+        "shares": 25,
+        "purchase_price": 240.0
+      },
+      {
+        "ticker": "JPM",
+        "shares": 60,
+        "purchase_price": 175.0
+      }
+    ],
+    "stress_scenarios": [
+      "market_crash_20_percent",
+      "tech_selloff_30_percent",
+      "interest_rate_spike_2_percent",
+      "recession_scenario"
+    ]
+  },
+  "expected_output": {
+    "current_portfolio_value": "numeric",
+    "recession_scenario_value": "numeric",
+    "recession_loss_percent": "numeric",
+    "tech_crash_scenario_value": "numeric",
+    "tech_crash_loss_percent": "numeric",
+    "rate_hike_scenario_value": "numeric",
+    "rate_hike_loss_percent": "numeric",
+    "worst_case_scenario": "string",
+    "recommendation": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio",
+    "google-search",
+    "pdf-generator"
+  ],
+  "task_type": "stress_testing",
+  "evaluation_criteria": {
+    "scenario_realism": "Stress scenarios are realistic and well-defined",
+    "beta_based_estimation": "Use historical betas to estimate scenario impacts",
+    "worst_case_identification": "Correctly identify most damaging scenario",
+    "hedge_recommendation_quality": "Practical, implementable hedging strategies",
+    "defensive_position_logic": "Valid reasoning for defensive stock selection",
+    "pdf_report_generation": "Professional formatted stress test report"
+  },
+  "test_data_note": "Expert-level task requiring market scenario modeling and beta-based projections",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "current_portfolio_value": 150000,
+      "recession_scenario_value": 120000,
+      "recession_loss_percent": -20.0,
+      "tech_crash_scenario_value": 105000,
+      "tech_crash_loss_percent": -30.0,
+      "rate_hike_scenario_value": 135000,
+      "rate_hike_loss_percent": -10.0,
+      "worst_case_scenario": "Tech sector crash",
+      "recommendation": "Reduce tech concentration"
+    }
+  }
+}
+
+
+

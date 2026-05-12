@@ -1,0 +1,120 @@
+{
+  "report_id": "CMY-SCRUB-20260302150013",
+  "generated_at": "2026-03-02T20:00:13.355386Z",
+  "generated_by": "ClearMyMind Claims Intelligence Agent v1.0",
+  "summary": {
+    "total_claims_processed": 200,
+    "clean_claims": 60,
+    "denial_risk_flagged": 140,
+    "denial_rate_pct": 70.0,
+    "auto_correctable": 140,
+    "require_human_review": 109,
+    "at_risk_revenue_usd": 94145.4,
+    "recoverable_via_auto_correction_usd": 94145.4,
+    "first_pass_acceptance_rate_pct": 30.0
+  },
+  "payer_breakdown": {
+    "BCBS": {
+      "claims": 74,
+      "denials": 47,
+      "at_risk_revenue": 31253.400000000005
+    },
+    "AET": {
+      "claims": 66,
+      "denials": 46,
+      "at_risk_revenue": 33312.86999999999
+    },
+    "UHC": {
+      "claims": 60,
+      "denials": 47,
+      "at_risk_revenue": 29579.129999999994
+    }
+  },
+  "top_denial_rules": [
+    "modifier_missing",
+    "prior_auth",
+    "bundled"
+  ],
+  "sample_flagged_claims": [
+    {
+      "claim_id": "CLM-00003",
+      "patient": "Patient3",
+      "payer": "Aetna",
+      "cpt_code": "99214",
+      "billed_amount": 1063.26,
+      "original_confidence": 0.7,
+      "denial_predicted": true,
+      "denial_rule_id": "DENY-MOD-001",
+      "denial_rule_description": "-25 required when billed same-day as procedure",
+      "auto_correction_available": true,
+      "auto_correction_action": "Append modifier -25 to CPT 99214",
+      "final_confidence": 0.5499999999999999,
+      "recommendation": "HOLD \u2014 HUMAN REVIEW",
+      "risk_level": "HIGH"
+    },
+    {
+      "claim_id": "CLM-00004",
+      "patient": "Patient4",
+      "payer": "BlueCross BlueShield",
+      "cpt_code": "99214",
+      "billed_amount": 170.48,
+      "original_confidence": 0.82,
+      "denial_predicted": true,
+      "denial_rule_id": "DENY-MOD-001",
+      "denial_rule_description": "-25 required when billed same-day as procedure",
+      "auto_correction_available": true,
+      "auto_correction_action": "Append modifier -25 to CPT 99214",
+      "final_confidence": 0.6699999999999999,
+      "recommendation": "HOLD \u2014 HUMAN REVIEW",
+      "risk_level": "HIGH"
+    },
+    {
+      "claim_id": "CLM-00005",
+      "patient": "Patient5",
+      "payer": "BlueCross BlueShield",
+      "cpt_code": "99214",
+      "billed_amount": 321.92,
+      "original_confidence": 0.71,
+      "denial_predicted": true,
+      "denial_rule_id": "DENY-MOD-001",
+      "denial_rule_description": "-25 required when billed same-day as procedure",
+      "auto_correction_available": true,
+      "auto_correction_action": "Append modifier -25 to CPT 99214",
+      "final_confidence": 0.5599999999999999,
+      "recommendation": "HOLD \u2014 HUMAN REVIEW",
+      "risk_level": "HIGH"
+    },
+    {
+      "claim_id": "CLM-00006",
+      "patient": "Patient6",
+      "payer": "Aetna",
+      "cpt_code": "99214",
+      "billed_amount": 1040.32,
+      "original_confidence": 0.71,
+      "denial_predicted": true,
+      "denial_rule_id": "DENY-MOD-001",
+      "denial_rule_description": "-25 required when billed same-day as procedure",
+      "auto_correction_available": true,
+      "auto_correction_action": "Append modifier -25 to CPT 99214",
+      "final_confidence": 0.5599999999999999,
+      "recommendation": "HOLD \u2014 HUMAN REVIEW",
+      "risk_level": "HIGH"
+    },
+    {
+      "claim_id": "CLM-00007",
+      "patient": "Patient7",
+      "payer": "United Healthcare",
+      "cpt_code": "99214",
+      "billed_amount": 144.89,
+      "original_confidence": 0.57,
+      "denial_predicted": true,
+      "denial_rule_id": "DENY-MOD-001",
+      "denial_rule_description": "-25 required when billed same-day as procedure",
+      "auto_correction_available": true,
+      "auto_correction_action": "Append modifier -25 to CPT 99214",
+      "final_confidence": 0.41999999999999993,
+      "recommendation": "HOLD \u2014 HUMAN REVIEW",
+      "risk_level": "HIGH"
+    }
+  ]
+}

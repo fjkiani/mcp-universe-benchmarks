@@ -1,0 +1,39 @@
+{
+    "category": "edge_cases",
+    "question": "A grant program states 'open to untenured assistant professors only.' Can a senior researcher (tenured full professor) apply as a co-PI instead of PI? Or does the requirement apply to all investigators on the proposal? Search for similar programs to understand common interpretations and recommend an approach with risk assessment.",
+    "output_format": {
+        "requirement_analysis": {
+            "exact_language": "untenured assistant professors only",
+            "ambiguity_identified": "Does this apply to PI only or all investigators?",
+            "possible_interpretations": [
+                {"interpretation": "PI only", "reasoning": "[Why]", "risk": "[High/Medium/Low]"},
+                {"interpretation": "All investigators", "reasoning": "[Why]", "risk": "[High/Medium/Low]"}
+            ]
+        },
+        "precedent_research": {
+            "similar_programs_found": ["[Program names]"],
+            "common_interpretation": "[What's typical]"
+        },
+        "recommendation": {
+            "can_senior_be_copi": "Yes/No/Unclear",
+            "conservative_approach": "[What to do]",
+            "contact_program_officer": "Yes/No",
+            "risk_level": "[High/Medium/Low]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "multi_pi_role_confusion",
+            "must_identify_ambiguity": true,
+            "must_research_precedent": true,
+            "must_recommend_clarification": true
+        }
+    }]
+}
+

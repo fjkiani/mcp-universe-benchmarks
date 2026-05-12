@@ -1,0 +1,70 @@
+{
+    "category": "edge_cases",
+    "question": "A researcher has three high-priority grants all due in the same week: NSF CAREER (due Monday), NIH R01 (due Wednesday), DOE Early Career (due Friday). Each requires significant effort. Realistically, they can only complete 2 of the 3. Which should they prioritize? Consider: success rates, funding amounts, career stage requirements, and strategic value. Provide a prioritization with detailed reasoning and risk assessment for skipping one.",
+    "output_format": {
+        "deadline_conflict": {
+            "grant_1": {"name": "NSF CAREER", "deadline": "Monday", "effort_required": "High"},
+            "grant_2": {"name": "NIH R01", "deadline": "Wednesday", "effort_required": "High"},
+            "grant_3": {"name": "DOE Early Career", "deadline": "Friday", "effort_required": "High"},
+            "realistic_capacity": "2 out of 3"
+        },
+        "feasibility_analysis": {
+            "can_submit_all_three": "Yes/No",
+            "quality_tradeoff": "[If rushing all three]",
+            "recommended_approach": "Submit 2, Skip 1"
+        },
+        "prioritization_analysis": [
+            {
+                "grant": "NSF CAREER",
+                "priority_score": "[1-10]",
+                "rationale": "[Why this score]",
+                "success_rate": "[Typical %]",
+                "funding_amount": "[Typical $]",
+                "strategic_importance": "[Why important]",
+                "window_closure": "[Years remaining for eligibility]"
+            },
+            {
+                "grant": "NIH R01",
+                "priority_score": "[1-10]",
+                "rationale": "[Why this score]",
+                "success_rate": "[Typical %]",
+                "funding_amount": "[Typical $]",
+                "strategic_importance": "[Why important]",
+                "window_closure": "[Years remaining for eligibility]"
+            },
+            {
+                "grant": "DOE Early Career",
+                "priority_score": "[1-10]",
+                "rationale": "[Why this score]",
+                "success_rate": "[Typical %]",
+                "funding_amount": "[Typical $]",
+                "strategic_importance": "[Why important]",
+                "window_closure": "[Years remaining for eligibility]"
+            }
+        ],
+        "recommendation": {
+            "submit": ["[Grant 1]", "[Grant 2]"],
+            "skip": "[Grant 3]",
+            "rationale": "[Detailed reasoning for prioritization]",
+            "risk_of_skipping": "[What they lose]",
+            "next_opportunity": "[When can they reapply to skipped grant]"
+        }
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"},
+        {"name": "calendar"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_edge_case_handling",
+        "op_args": {
+            "edge_case_type": "overlapping_deadlines",
+            "num_grants": 3,
+            "must_prioritize": true,
+            "must_assess_tradeoffs": true,
+            "must_identify_risks": true
+        }
+    }]
+}
+

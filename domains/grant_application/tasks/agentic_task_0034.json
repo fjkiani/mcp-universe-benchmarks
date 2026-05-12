@@ -1,0 +1,30 @@
+{
+    "category": "agentic_reasoning",
+    "question": "A researcher is in a soft-money position (research scientist, not tenure-track faculty). Many grants explicitly require 'tenure-track' status. Identify which major programs allow soft-money PIs, which require tenure-track, and what workarounds exist (e.g., co-PI with tenure-track colleague, consultant role). Recommend a strategy to maximize fundability despite this constraint.",
+    "output_format": {
+        "program_analysis": {
+            "allows_soft_money": [{"program": "[Name]", "agency": "[Agency]", "notes": "[Details]"}],
+            "requires_tenure_track": [{"program": "[Name]", "agency": "[Agency]", "alternatives": "[Workarounds]"}]
+        },
+        "workaround_strategies": [
+            {"strategy": "Co-PI arrangement", "feasibility": "[High/Medium/Low]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"]},
+            {"strategy": "Consultant role", "feasibility": "[High/Medium/Low]", "pros": ["[Benefits]"], "cons": ["[Drawbacks]"]}
+        ],
+        "recommended_approach": "[Overall strategy]"
+    },
+    "use_specified_server": true,
+    "mcp_servers": [
+        {"name": "google-search"}
+    ],
+    "evaluators": [{
+        "func": "raw",
+        "op": "grant_application.validate_agentic_reasoning",
+        "op_args": {
+            "reasoning_type": "eligibility_optimization",
+            "constraint": "soft_money_position",
+            "must_identify_workarounds": true,
+            "min_workarounds": 2
+        }
+    }]
+}
+

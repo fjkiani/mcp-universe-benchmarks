@@ -1,0 +1,89 @@
+{
+  "id": "rebalancing_0014",
+  "question": "Recommend sector rotation strategy based on current economic cycle, momentum indicators, and market conditions to optimize portfolio positioning.",
+  "category": "Rebalancing Recommendations",
+  "difficulty": "very_hard",
+  "description": "Sector rotation strategy based on economic cycle and market momentum",
+  "input": {
+    "current_holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 100,
+        "sector": "Technology"
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 50,
+        "sector": "Technology"
+      },
+      {
+        "ticker": "JPM",
+        "shares": 60,
+        "sector": "Financials"
+      },
+      {
+        "ticker": "JNJ",
+        "shares": 40,
+        "sector": "Healthcare"
+      },
+      {
+        "ticker": "XOM",
+        "shares": 30,
+        "sector": "Energy"
+      }
+    ],
+    "total_portfolio_value": 75000,
+    "economic_indicators": {
+      "gdp_growth": 2.1,
+      "unemployment_rate": 3.8,
+      "inflation_rate": 3.2,
+      "interest_rate": 5.25,
+      "yield_curve": "slightly_inverted"
+    },
+    "instruction": "Analyze current economic cycle stage and recommend sector rotation to optimize portfolio positioning"
+  },
+  "expected_output": {
+    "current_tech_allocation": "numeric",
+    "target_tech_allocation": "numeric",
+    "current_healthcare_allocation": "numeric",
+    "target_healthcare_allocation": "numeric",
+    "rotation_rationale": "string",
+    "trade_1_action": "string",
+    "trade_1_sector": "string",
+    "trade_1_amount": "numeric",
+    "trade_2_action": "string",
+    "trade_2_sector": "string",
+    "trade_2_amount": "numeric"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio",
+    "google-search",
+    "google-sheets"
+  ],
+  "task_type": "sector_rotation",
+  "evaluation_criteria": {
+    "economic_cycle_assessment": "Accurate identification of cycle stage based on indicators",
+    "sector_performance_data": "Real YTD sector returns from market data",
+    "rotation_logic": "Valid sector rotation strategy for identified cycle stage",
+    "specific_stock_selection": "Appropriate stock picks within target sectors"
+  },
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "current_tech_allocation": 55.0,
+      "target_tech_allocation": 45.0,
+      "current_healthcare_allocation": 15.0,
+      "target_healthcare_allocation": 25.0,
+      "rotation_rationale": "Economic cycle favoring defensive sectors",
+      "trade_1_action": "SELL",
+      "trade_1_sector": "Technology",
+      "trade_1_amount": 15000,
+      "trade_2_action": "BUY",
+      "trade_2_sector": "Healthcare",
+      "trade_2_amount": 15000
+    }
+  }
+}
+
+
+

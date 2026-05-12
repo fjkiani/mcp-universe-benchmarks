@@ -1,0 +1,96 @@
+{
+  "id": "rebalancing_0013",
+  "question": "Optimize portfolio rebalancing with tax-loss harvesting strategy to minimize capital gains tax while maintaining target allocation.",
+  "category": "Rebalancing Recommendations",
+  "difficulty": "very_hard",
+  "description": "Optimize rebalancing with tax-loss harvesting to minimize capital gains",
+  "input": {
+    "current_holdings": [
+      {
+        "ticker": "AAPL",
+        "shares": 100,
+        "purchase_price": 150.0,
+        "current_price": 180.0,
+        "purchase_date": "2023-06-15"
+      },
+      {
+        "ticker": "GOOGL",
+        "shares": 50,
+        "purchase_price": 130.0,
+        "current_price": 140.0,
+        "purchase_date": "2023-09-10"
+      },
+      {
+        "ticker": "TSLA",
+        "shares": 30,
+        "purchase_price": 280.0,
+        "current_price": 220.0,
+        "purchase_date": "2024-01-20"
+      },
+      {
+        "ticker": "META",
+        "shares": 40,
+        "purchase_price": 350.0,
+        "current_price": 480.0,
+        "purchase_date": "2023-11-05"
+      },
+      {
+        "ticker": "NVDA",
+        "shares": 25,
+        "purchase_price": 450.0,
+        "current_price": 420.0,
+        "purchase_date": "2024-03-15"
+      }
+    ],
+    "target_allocation": {
+      "Technology": 0.6,
+      "Other": 0.4
+    },
+    "tax_rate_short_term": 0.37,
+    "tax_rate_long_term": 0.2,
+    "today_date": "2024-10-22"
+  },
+  "expected_output": {
+    "harvest_1_ticker": "string",
+    "harvest_1_shares": "numeric",
+    "harvest_1_loss": "numeric",
+    "harvest_2_ticker": "string",
+    "harvest_2_shares": "numeric",
+    "harvest_2_loss": "numeric",
+    "total_loss_harvested": "numeric",
+    "tax_savings_estimate": "numeric",
+    "replacement_strategy": "string"
+  },
+  "required_mcp_servers": [
+    "stock-portfolio",
+    "google-search"
+  ],
+  "task_type": "tax_optimized_rebalancing",
+  "evaluation_criteria": {
+    "holding_period_accuracy": "Correctly classify long-term vs short-term holdings",
+    "tax_calculation_accuracy": "Correct tax calculations at specified rates",
+    "loss_harvesting_identification": "Identify all tax-loss harvesting opportunities",
+    "wash_sale_awareness": "Warn about wash sale rule (30-day repurchase restriction)",
+    "replacement_stock_logic": "Suggest appropriate replacement stocks",
+    "net_tax_impact_calculation": "Correct calculation of overall tax efficiency",
+    "optimization_value": "Demonstrate meaningful tax savings vs naive rebalancing"
+  },
+  "test_data_note": "Expert-level task requiring tax law knowledge and optimization logic",
+  "output_format": {
+    "description": "Return valid JSON with flat structure",
+    "example": {
+      "harvest_1_ticker": "TSLA",
+      "harvest_1_shares": 15,
+      "harvest_1_loss": -2250,
+      "harvest_2_ticker": "NVDA",
+      "harvest_2_shares": 10,
+      "harvest_2_loss": -1500,
+      "total_loss_harvested": -3750,
+      "tax_savings_estimate": 1125,
+      "replacement_strategy": "Buy similar sector ETFs"
+    }
+  }
+}
+
+
+
