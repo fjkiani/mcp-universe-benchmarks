@@ -487,6 +487,7 @@ async def handle_alert(req: HandleAlertRequest) -> dict:
 import asyncio
 import json as _json
 import threading
+from datetime import datetime as _datetime
 import time as _time
 import uuid as _uuid
 from typing import Any
@@ -508,21 +509,29 @@ _KAIROS_RUNS: dict[str, dict] = {}
 _RUNS_LOCK = threading.Lock()
 
 
-def _new_run_record() -> dict:
+def _new_run_record(skill_id: str = "", goal: str = "", tenant_id: str = "") -> dict:
+    now = _datetime.utcnow().isoformat()
     return {
-        "status": "running",   # running | done | failed
-        "events": [],          # SSE-formatted strings buffered for replay
+        "status": "running",
+        "skill_id": skill_id,
+        "goal": goal,
+        "tenant_id": tenant_id,
+        "events": [],
         "result": None,
         "lock": threading.Lock(),
+        "started_at": now,
+        "updated_at": now,
     }
 
 
-def _push_event(run_id: str, event_type: str, data: Any) -> None:
+def _push_event(run_id: str, event_type: str, payload: Any) -> None:
     """Serialize an event to SSE format and append to the run buffer."""
-    payload = _json.dumps({"type": event_type, "data": data})
-    sse_line = f"event: {event_type}\ndata: {payload}\n\n"
+    now = _datetime.utcnow().isoformat()
+    envelope = _json.dumps({"type": event_type, "run_id": run_id, "timestamp": now, "payload": payload})
+    sse_line = f"event: {event_type}\ndata: {envelope}\n\n"
     with _KAIROS_RUNS[run_id]["lock"]:
         _KAIROS_RUNS[run_id]["events"].append(sse_line)
+        _KAIROS_RUNS[run_id]["updated_at"] = now
 
 
 def _event_to_dict(event) -> tuple[str, Any]:
@@ -589,6 +598,7 @@ def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: Kair
 class KairosRunRequest(BaseModel):
     skill_id: str
     goal: str
+    tenant_id: str = ""
     # Benchmark scores — used by permission gate
     l1_score: float = 0.0
     l2_score: float = 0.0
@@ -632,14 +642,20 @@ async def kairos_start_run(req: KairosRunRequest, background_tasks: BackgroundTa
     )
 
     with _RUNS_LOCK:
-        _KAIROS_RUNS[run_id] = _new_run_record()
+        _KAIROS_RUNS[run_id] = _new_run_record(skill_id=req.skill_id, goal=req.goal, tenant_id=getattr(req, 'tenant_id', ''))
 
     # Run in a background thread (engine.run() is a sync generator)
     background_tasks.add_task(
         _run_kairos_thread, run_id, engine, req.goal, state
     )
 
-    return {"run_id": run_id, "status": "running"}
+    return {
+        "run_id": run_id,
+        "skill_id": req.skill_id,
+        "phase": "planning",
+        "status": "running",
+        "started_at": _KAIROS_RUNS[run_id]["started_at"],
+    }
 
 
 @router.get("/zoa/kairos/run/{run_id}")
@@ -649,11 +665,28 @@ async def kairos_get_run(run_id: str) -> dict:
     if not record:
         raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found")
     with record["lock"]:
+        result = record["result"] or {}
         return {
             "run_id": run_id,
+            "skill_id": record.get("skill_id", ""),
+            "phase": result.get("phase", record["status"]),
             "status": record["status"],
-            "event_count": len(record["events"]),
-            "result": record["result"],
+            "turn_count": result.get("turns", 0),
+            "tool_calls_made": result.get("tool_calls_made", 0),
+            "violations": result.get("violations", []),
+            "degraded": result.get("degraded", False),
+            "result": result.get("final_text"),
+            "error": result.get("error"),
+            "started_at": record.get("started_at", ""),
+            "updated_at": record.get("updated_at", record.get("started_at", "")),
+            "archon_reforge_ready": result.get("degraded", False),
+            "archon_context": {
+                "skill_id": record.get("skill_id", ""),
+                "run_id": run_id,
+                "goal": record.get("goal", ""),
+                "violations": result.get("violations", []),
+                "error_summary": result.get("error", ""),
+            } if result.get("degraded", False) else None,
         }
 
 

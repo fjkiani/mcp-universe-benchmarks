@@ -233,3 +233,21 @@ class TaskResult(Base):
 
 # AgentMemory is defined in services/kairos/memory_store.py (canonical).
 # Removed duplicate here to prevent SQLAlchemy InvalidRequestError on import.
+
+
+# ── Kairos run persistence ────────────────────────────────────────────────────
+
+class KairosRun(Base):
+    """Durable record of a Kairos execution run."""
+    __tablename__ = "kairos_runs"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    skill_id = Column(String(255), nullable=False, index=True)
+    tenant_id = Column(String(255), nullable=False, default="", index=True)
+    goal = Column(Text, nullable=False)
+    phase = Column(String(50), default="idle")
+    degraded = Column(Boolean, default=False)
+    result_json = Column(Text, nullable=True)
+    error = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
