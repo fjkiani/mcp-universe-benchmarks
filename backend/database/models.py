@@ -251,3 +251,23 @@ class KairosRun(Base):
     error = Column(Text, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class UsageEvent(Base):
+    """Usage ledger — one row per billable event in a Kairos run.
+
+    This is a usage ledger seam, not billing logic.
+    No Stripe, no invoices, no monetization here.
+    """
+    __tablename__ = "usage_events"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    tenant_id = Column(String(255), nullable=False, index=True)
+    skill_id = Column(String(255), nullable=False, index=True)
+    run_id = Column(String(255), nullable=False, index=True)
+    event_type = Column(String(50), nullable=False)  # run_started | tool_invocation | llm_call | run_completed
+    tool_name = Column(String(255), nullable=True)
+    model_name = Column(String(255), nullable=True)
+    input_tokens = Column(Integer, nullable=True)
+    output_tokens = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)

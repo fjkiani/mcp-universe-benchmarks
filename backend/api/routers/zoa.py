@@ -502,6 +502,8 @@ from services.kairos.providers import TextChunk, ThinkingChunk
 from services.kairos.engine import (
     PhaseChange, PermissionViolation, ToolStart, ToolEnd, TurnDone, PermissionRequest
 )
+from database.session import SessionLocal
+from database.models import KairosRun as KairosRunModel, UsageEvent as UsageEventModel
 
 # ── In-memory run store ───────────────────────────────────────────────────────
 # { run_id: { "status": str, "events": list[str], "result": dict|None, "lock": threading.Lock } }
@@ -534,6 +536,32 @@ def _push_event(run_id: str, event_type: str, payload: Any) -> None:
         _KAIROS_RUNS[run_id]["updated_at"] = now
 
 
+def _emit_usage(run_id: str, tenant_id: str, skill_id: str, event_type: str,
+                tool_name: str = None, model_name: str = None,
+                input_tokens: int = None, output_tokens: int = None) -> None:
+    """Write one usage event row. Failures are logged and swallowed — never crash the run."""
+    _db = SessionLocal()
+    try:
+        evt = UsageEventModel(
+            id=str(_uuid.uuid4()),
+            tenant_id=tenant_id,
+            skill_id=skill_id,
+            run_id=run_id,
+            event_type=event_type,
+            tool_name=tool_name,
+            model_name=model_name,
+            input_tokens=input_tokens,
+            output_tokens=output_tokens,
+        )
+        _db.add(evt)
+        _db.commit()
+    except Exception as exc:
+        logger.warning("usage_events INSERT failed (%s/%s): %s", run_id, event_type, exc)
+        _db.rollback()
+    finally:
+        _db.close()
+
+
 def _event_to_dict(event) -> tuple[str, Any]:
     """Convert a Kairos event object to (event_type, data_dict)."""
     if isinstance(event, PhaseChange):
@@ -559,8 +587,28 @@ def _event_to_dict(event) -> tuple[str, Any]:
     return "unknown", {"repr": str(event)}
 
 
-def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: KairosState) -> None:
+def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: KairosState, skill_id: str = "", tenant_id: str = "") -> None:
     """Execute the Kairos loop in a background thread, buffering all events."""
+    # ── DB: persist run record ────────────────────────────────────────────────
+    _db = SessionLocal()
+    try:
+        _db_run = KairosRunModel(
+            id=run_id,
+            skill_id=skill_id,
+            tenant_id=tenant_id,
+            goal=goal,
+            phase="planning",
+        )
+        _db.add(_db_run)
+        _db.commit()
+    except Exception as _db_exc:
+        logger.warning("kairos_runs INSERT failed for %s: %s", run_id, _db_exc)
+        _db.rollback()
+    finally:
+        _db.close()
+
+    _emit_usage(run_id, tenant_id, skill_id, "run_started")
+
     final_text = ""
     error = None
     try:
@@ -569,6 +617,13 @@ def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: Kair
             _push_event(run_id, event_type, data)
             if event_type == "text_chunk":
                 final_text += data.get("text", "")
+            if event_type == "tool_end":
+                _emit_usage(run_id, tenant_id, skill_id, "tool_invocation",
+                            tool_name=data.get("name"))
+            elif event_type == "turn_done":
+                _emit_usage(run_id, tenant_id, skill_id, "llm_call",
+                            input_tokens=data.get("input_tokens"),
+                            output_tokens=data.get("output_tokens"))
     except Exception as exc:
         error = str(exc)
         logger.exception("Kairos run %s failed: %s", run_id, exc)
@@ -591,6 +646,25 @@ def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: Kair
 
     # Push terminal event so SSE clients know the stream is complete
     _push_event(run_id, "run_complete", result_dict)
+
+    # ── DB: update run record on completion ───────────────────────────────────
+    import json as _json_mod
+    _db2 = SessionLocal()
+    try:
+        _db_run2 = _db2.query(KairosRunModel).filter(KairosRunModel.id == run_id).first()
+        if _db_run2:
+            _db_run2.phase = "done" if result.success else "failed"
+            _db_run2.degraded = result.degraded
+            _db_run2.result_json = _json_mod.dumps(result_dict)
+            _db_run2.error = result.error
+            _db2.commit()
+    except Exception as _db_exc2:
+        logger.warning("kairos_runs UPDATE failed for %s: %s", run_id, _db_exc2)
+        _db2.rollback()
+    finally:
+        _db2.close()
+
+    _emit_usage(run_id, tenant_id, skill_id, "run_completed")
 
 
 # ── Pydantic models ───────────────────────────────────────────────────────────
@@ -646,7 +720,8 @@ async def kairos_start_run(req: KairosRunRequest, background_tasks: BackgroundTa
 
     # Run in a background thread (engine.run() is a sync generator)
     background_tasks.add_task(
-        _run_kairos_thread, run_id, engine, req.goal, state
+        _run_kairos_thread, run_id, engine, req.goal, state,
+        skill_id=req.skill_id, tenant_id=req.tenant_id
     )
 
     return {
@@ -733,15 +808,114 @@ async def kairos_stream_run(run_id: str, request: Request):
 
 
 @router.get("/zoa/kairos/runs")
-async def kairos_list_runs() -> dict:
-    """List all in-memory Kairos runs (run_id, status, event_count)."""
+async def kairos_list_runs(skill_id: Optional[str] = None, tenant_id: Optional[str] = None) -> dict:
+    """List Kairos runs. Filters by skill_id and/or tenant_id.
+
+    Returns in-memory runs first (fast path). Falls back to DB query
+    when in-memory store is empty (e.g. after server restart).
+    """
     with _RUNS_LOCK:
-        runs = [
+        runs_mem = [
             {
                 "run_id": rid,
+                "skill_id": rec.get("skill_id", ""),
+                "tenant_id": rec.get("tenant_id", ""),
                 "status": rec["status"],
+                "phase": rec.get("result", {}).get("phase", rec["status"]) if rec.get("result") else rec["status"],
+                "degraded": rec.get("result", {}).get("degraded", False) if rec.get("result") else False,
+                "goal": rec.get("goal", ""),
+                "started_at": rec.get("started_at", ""),
+                "updated_at": rec.get("updated_at", rec.get("started_at", "")),
                 "event_count": len(rec["events"]),
             }
             for rid, rec in _KAIROS_RUNS.items()
+            if (skill_id is None or rec.get("skill_id") == skill_id)
+            and (tenant_id is None or rec.get("tenant_id") == tenant_id)
         ]
-    return {"runs": runs, "total": len(runs)}
+
+    if runs_mem:
+        return {"runs": runs_mem, "total": len(runs_mem), "source": "memory"}
+
+    # DB fallback — query kairos_runs table
+    _db = SessionLocal()
+    try:
+        q = _db.query(KairosRunModel)
+        if skill_id:
+            q = q.filter(KairosRunModel.skill_id == skill_id)
+        if tenant_id:
+            q = q.filter(KairosRunModel.tenant_id == tenant_id)
+        db_runs = q.order_by(KairosRunModel.created_at.desc()).limit(100).all()
+        runs_db = [
+            {
+                "run_id": r.id,
+                "skill_id": r.skill_id,
+                "tenant_id": r.tenant_id,
+                "status": r.phase if r.phase in ("done", "failed") else "done",
+                "phase": r.phase,
+                "degraded": r.degraded,
+                "goal": r.goal,
+                "started_at": r.created_at.isoformat() if r.created_at else "",
+                "updated_at": r.updated_at.isoformat() if r.updated_at else "",
+                "event_count": 0,
+            }
+            for r in db_runs
+        ]
+        return {"runs": runs_db, "total": len(runs_db), "source": "db"}
+    except Exception as exc:
+        logger.warning("kairos_runs DB query failed: %s", exc)
+        return {"runs": [], "total": 0, "source": "error"}
+    finally:
+        _db.close()
+
+
+@router.get("/zoa/kairos/usage")
+async def kairos_usage_summary(
+    tenant_id: Optional[str] = None,
+    skill_id: Optional[str] = None,
+    since: Optional[str] = None,
+) -> dict:
+    """Usage ledger summary for a tenant/skill.
+
+    Returns aggregate counts: runs, tool invocations, LLM calls, tokens.
+    This is a usage ledger seam — not billing, not invoicing.
+    """
+    _db = SessionLocal()
+    try:
+        from sqlalchemy import func as _func
+        q = _db.query(UsageEventModel)
+        if tenant_id:
+            q = q.filter(UsageEventModel.tenant_id == tenant_id)
+        if skill_id:
+            q = q.filter(UsageEventModel.skill_id == skill_id)
+        if since:
+            try:
+                since_dt = _datetime.fromisoformat(since)
+                q = q.filter(UsageEventModel.created_at >= since_dt)
+            except ValueError:
+                pass
+
+        events = q.all()
+        runs_started = sum(1 for e in events if e.event_type == "run_started")
+        runs_completed = sum(1 for e in events if e.event_type == "run_completed")
+        tool_invocations = sum(1 for e in events if e.event_type == "tool_invocation")
+        llm_calls = sum(1 for e in events if e.event_type == "llm_call")
+        input_tokens = sum(e.input_tokens or 0 for e in events if e.event_type == "llm_call")
+        output_tokens = sum(e.output_tokens or 0 for e in events if e.event_type == "llm_call")
+
+        return {
+            "tenant_id": tenant_id,
+            "skill_id": skill_id,
+            "runs_started": runs_started,
+            "runs_completed": runs_completed,
+            "tool_invocations_total": tool_invocations,
+            "llm_calls_total": llm_calls,
+            "input_tokens_total": input_tokens,
+            "output_tokens_total": output_tokens,
+            "period_start": since,
+            "period_end": _datetime.utcnow().isoformat(),
+        }
+    except Exception as exc:
+        logger.warning("usage summary query failed: %s", exc)
+        return {"error": str(exc)}
+    finally:
+        _db.close()
