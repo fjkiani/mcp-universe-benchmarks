@@ -229,3 +229,26 @@ class TaskResult(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
 
     certification_run = relationship("CertificationRun", back_populates="task_results")
+
+
+# ══════════════════════════════════════════════════════════════════════
+# KAIROS MEMORY MODELS
+# ══════════════════════════════════════════════════════════════════════
+
+class AgentMemory(Base):
+    """Persistent memory entries for Kairos execution runs.
+
+    Stores key facts, tool results, and context summaries that the
+    Kairos engine should recall across skill invocations.
+    """
+    __tablename__ = "agent_memories"
+
+    id = Column(String(36), primary_key=True, default=_uuid)
+    skill_id = Column(String(255), nullable=False, index=True)
+    run_id = Column(String(36), nullable=True, index=True)       # which run created this
+    memory_type = Column(String(50), nullable=False, default="fact")  # fact | summary | tool_result | error
+    content = Column(Text, nullable=False)                        # the memory text
+    importance = Column(Integer, default=5)                       # 1-10 relevance score
+    tags = Column(Text, default="[]")                             # JSON array of string tags
+    last_used_at = Column(DateTime, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow, index=True)

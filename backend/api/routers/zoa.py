@@ -469,3 +469,246 @@ async def handle_alert(req: HandleAlertRequest) -> dict:
     except Exception as exc:
         logger.exception("Error in handle_alert")
         raise HTTPException(status_code=500, detail=str(exc))
+
+
+# ══════════════════════════════════════════════════════════════════════
+# KAIROS EXECUTION ENGINE ENDPOINTS
+# ══════════════════════════════════════════════════════════════════════
+#
+# POST /zoa/kairos/run          — start a Kairos run, returns run_id
+# GET  /zoa/kairos/run/{id}     — poll run status + result
+# GET  /zoa/kairos/run/{id}/stream — SSE event stream (with replay)
+#
+# Runs execute in a BackgroundTask thread. Events are buffered in
+# _KAIROS_RUNS (in-memory, acceptable for alpha). SSE clients that
+# connect after the run completes receive the full buffered event log.
+# ══════════════════════════════════════════════════════════════════════
+
+import asyncio
+import json as _json
+import threading
+import time as _time
+import uuid as _uuid
+from typing import Any
+
+from fastapi import Request
+from fastapi.responses import StreamingResponse
+
+from services.kairos import KairosEngine, KairosState, KairosResult
+from services.kairos.permission_gate import SkillMeta
+from services.kairos.engine import build_result
+from services.kairos.providers import TextChunk, ThinkingChunk
+from services.kairos.engine import (
+    PhaseChange, PermissionViolation, ToolStart, ToolEnd, TurnDone, PermissionRequest
+)
+
+# ── In-memory run store ───────────────────────────────────────────────────────
+# { run_id: { "status": str, "events": list[str], "result": dict|None, "lock": threading.Lock } }
+_KAIROS_RUNS: dict[str, dict] = {}
+_RUNS_LOCK = threading.Lock()
+
+
+def _new_run_record() -> dict:
+    return {
+        "status": "running",   # running | done | failed
+        "events": [],          # SSE-formatted strings buffered for replay
+        "result": None,
+        "lock": threading.Lock(),
+    }
+
+
+def _push_event(run_id: str, event_type: str, data: Any) -> None:
+    """Serialize an event to SSE format and append to the run buffer."""
+    payload = _json.dumps({"type": event_type, "data": data})
+    sse_line = f"event: {event_type}\ndata: {payload}\n\n"
+    with _KAIROS_RUNS[run_id]["lock"]:
+        _KAIROS_RUNS[run_id]["events"].append(sse_line)
+
+
+def _event_to_dict(event) -> tuple[str, Any]:
+    """Convert a Kairos event object to (event_type, data_dict)."""
+    if isinstance(event, PhaseChange):
+        return "phase_change", {"phase": event.phase}
+    if isinstance(event, TextChunk):
+        return "text_chunk", {"text": event.text}
+    if isinstance(event, ThinkingChunk):
+        return "thinking_chunk", {"text": event.text}
+    if isinstance(event, ToolStart):
+        return "tool_start", {"name": event.name, "inputs": event.inputs}
+    if isinstance(event, ToolEnd):
+        return "tool_end", {"name": event.name, "result": event.result, "permitted": event.permitted}
+    if isinstance(event, TurnDone):
+        return "turn_done", {"input_tokens": event.input_tokens, "output_tokens": event.output_tokens}
+    if isinstance(event, PermissionViolation):
+        return "permission_violation", {
+            "tool_name": event.tool_name,
+            "reason": event.reason,
+            "benchmark_score": event.benchmark_score,
+        }
+    if isinstance(event, PermissionRequest):
+        return "permission_request", {"description": event.description, "granted": event.granted}
+    return "unknown", {"repr": str(event)}
+
+
+def _run_kairos_thread(run_id: str, engine: KairosEngine, goal: str, state: KairosState) -> None:
+    """Execute the Kairos loop in a background thread, buffering all events."""
+    final_text = ""
+    error = None
+    try:
+        for event in engine.run(goal=goal, state=state):
+            event_type, data = _event_to_dict(event)
+            _push_event(run_id, event_type, data)
+            if event_type == "text_chunk":
+                final_text += data.get("text", "")
+    except Exception as exc:
+        error = str(exc)
+        logger.exception("Kairos run %s failed: %s", run_id, exc)
+
+    result = build_result(state, final_text, error)
+    result_dict = {
+        "run_id": result.run_id,
+        "success": result.success,
+        "final_text": result.final_text,
+        "turns": result.turns,
+        "tool_calls_made": result.tool_calls_made,
+        "violations": result.violations,
+        "degraded": result.degraded,
+        "error": result.error,
+    }
+
+    with _KAIROS_RUNS[run_id]["lock"]:
+        _KAIROS_RUNS[run_id]["result"] = result_dict
+        _KAIROS_RUNS[run_id]["status"] = "done" if result.success else "failed"
+
+    # Push terminal event so SSE clients know the stream is complete
+    _push_event(run_id, "run_complete", result_dict)
+
+
+# ── Pydantic models ───────────────────────────────────────────────────────────
+
+class KairosRunRequest(BaseModel):
+    skill_id: str
+    goal: str
+    # Benchmark scores — used by permission gate
+    l1_score: float = 0.0
+    l2_score: float = 0.0
+    l3_score: float = 0.0
+    l4_score: float = 0.0
+    permitted_tools: list[str] = []
+    allowlisted_tools: list[str] = []
+    max_turns: int = 20
+    memory_summary: str = ""
+
+
+# ── Endpoints ─────────────────────────────────────────────────────────────────
+
+@router.post("/zoa/kairos/run")
+async def kairos_start_run(req: KairosRunRequest, background_tasks: BackgroundTasks) -> dict:
+    """Start a Kairos execution run. Returns run_id immediately.
+
+    The run executes asynchronously. Poll GET /zoa/kairos/run/{id} for status,
+    or stream events via GET /zoa/kairos/run/{id}/stream.
+    """
+    run_id = str(_uuid.uuid4())
+
+    skill_meta = SkillMeta(
+        skill_id=req.skill_id,
+        l1_score=req.l1_score,
+        l2_score=req.l2_score,
+        l3_score=req.l3_score,
+        l4_score=req.l4_score,
+        permitted_tools=req.permitted_tools,
+        allowlisted_tools=req.allowlisted_tools,
+    )
+
+    config = {}  # openrouter_api_key resolved from env inside providers.py
+
+    engine = KairosEngine(skill_meta=skill_meta, config=config)
+
+    state = KairosState(
+        skill_id=req.skill_id,
+        run_id=run_id,
+        max_turns=req.max_turns,
+    )
+
+    with _RUNS_LOCK:
+        _KAIROS_RUNS[run_id] = _new_run_record()
+
+    # Run in a background thread (engine.run() is a sync generator)
+    background_tasks.add_task(
+        _run_kairos_thread, run_id, engine, req.goal, state
+    )
+
+    return {"run_id": run_id, "status": "running"}
+
+
+@router.get("/zoa/kairos/run/{run_id}")
+async def kairos_get_run(run_id: str) -> dict:
+    """Poll the status and result of a Kairos run."""
+    record = _KAIROS_RUNS.get(run_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found")
+    with record["lock"]:
+        return {
+            "run_id": run_id,
+            "status": record["status"],
+            "event_count": len(record["events"]),
+            "result": record["result"],
+        }
+
+
+@router.get("/zoa/kairos/run/{run_id}/stream")
+async def kairos_stream_run(run_id: str, request: Request):
+    """SSE event stream for a Kairos run.
+
+    Replays all buffered events from the start, then streams new events
+    as they arrive. Clients that connect after the run completes receive
+    the full event log including the terminal run_complete event.
+    """
+    record = _KAIROS_RUNS.get(run_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found")
+
+    async def event_generator():
+        sent = 0
+        while True:
+            if await request.is_disconnected():
+                break
+
+            with record["lock"]:
+                events = record["events"]
+                new_events = events[sent:]
+                status = record["status"]
+
+            for sse_line in new_events:
+                yield sse_line
+            sent += len(new_events)
+
+            if status in ("done", "failed") and sent >= len(record["events"]):
+                break
+
+            await asyncio.sleep(0.1)
+
+    return StreamingResponse(
+        event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
+    )
+
+
+@router.get("/zoa/kairos/runs")
+async def kairos_list_runs() -> dict:
+    """List all in-memory Kairos runs (run_id, status, event_count)."""
+    with _RUNS_LOCK:
+        runs = [
+            {
+                "run_id": rid,
+                "status": rec["status"],
+                "event_count": len(rec["events"]),
+            }
+            for rid, rec in _KAIROS_RUNS.items()
+        ]
+    return {"runs": runs, "total": len(runs)}
