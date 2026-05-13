@@ -1,8 +1,10 @@
 """
 Identity Agent Service
 ───────────────────────
-GPT-4o function-calling agent for identity security workflows.
-Falls back to deterministic logic if OpenAI is unavailable.
+OpenRouter-powered function-calling agent for identity security workflows.
+Falls back to deterministic logic if OpenRouter is unavailable.
+
+Replaces the previous OpenAI GPT-4o dependency with OpenRouter free-tier models.
 """
 import os
 import json
@@ -10,7 +12,6 @@ from datetime import datetime, timezone
 from typing import Literal, Optional, List
 
 from dotenv import load_dotenv
-from openai import AsyncOpenAI
 
 from services.identity.models import ActionTrace, IdentityAgentResponse
 from services.identity.tools import IDENTITY_TOOLS, IDENTITY_SYSTEM_PROMPTS
@@ -22,18 +23,22 @@ from services.identity.engine import (
 )
 
 load_dotenv()
-_OPENAI_KEY = os.getenv("OPENAI_API_KEY", "")
+
+# ─── Try OpenRouter service ───────────────────────────────────────────────────
+try:
+    from services.openrouter_service import call_llm_with_messages
+    OPENROUTER_AVAILABLE = True
+except ImportError:
+    OPENROUTER_AVAILABLE = False
 
 
 class IdentityAgentService:
     """
     Core identity agent.
-    GPT-4o drives the agentic loop; deterministic engine handles every tool call.
+    OpenRouter (Hermes 405B reasoning model) drives the agentic loop;
+    deterministic engine handles every tool call.
     No external APIs in the tool layer — 100% deterministic, zero latency for logic.
     """
-
-    def __init__(self):
-        self.client = AsyncOpenAI(api_key=_OPENAI_KEY) if _OPENAI_KEY else None
 
     async def process(
         self,
@@ -42,12 +47,18 @@ class IdentityAgentService:
         scenario_context: Optional[dict] = None
     ) -> IdentityAgentResponse:
         """
-        Entry point: natural language request → agent loop → structured response.
-        Uses LLM if OPENAI_API_KEY is set, otherwise falls back to direct logic.
+        Entry point: natural language request -> agent loop -> structured response.
+        Uses OpenRouter LLM if available, otherwise falls back to direct logic.
         """
-        if not self.client:
-            return await self._process_without_llm(user_request, vertical, scenario_context)
-        return await self._process_with_llm(user_request, vertical, scenario_context)
+        if OPENROUTER_AVAILABLE:
+            try:
+                return await self._process_with_llm(user_request, vertical, scenario_context)
+            except Exception as e:
+                import logging
+                logging.getLogger("identity_agent").warning(
+                    f"OpenRouter unavailable ({e}), falling back to deterministic logic"
+                )
+        return await self._process_without_llm(user_request, vertical, scenario_context)
 
     # ── LLM path ──────────────────────────────────────────────────────────────
 
@@ -57,7 +68,7 @@ class IdentityAgentService:
         vertical: str,
         scenario_context: Optional[dict]
     ) -> IdentityAgentResponse:
-        """GPT-4o agentic loop with tool calling."""
+        """OpenRouter agentic loop with tool calling."""
         system_prompt = IDENTITY_SYSTEM_PROMPTS.get(vertical, IDENTITY_SYSTEM_PROMPTS["mfa_auth"])
         context_str = json.dumps(scenario_context, indent=2) if scenario_context else "No additional context."
 
@@ -70,43 +81,56 @@ class IdentityAgentService:
         auth_result = rbac_result = audit_result = remediation_result = None
 
         for _ in range(6):  # max 6 iterations
-            response = await self.client.chat.completions.create(
-                model="gpt-4o",
+            result = await call_llm_with_messages(
+                role="reasoning",  # Hermes 405B — best for function calling
                 messages=messages,
                 tools=IDENTITY_TOOLS,
-                tool_choice="auto",
-                temperature=0.1
+                temperature=0.1,
             )
-            msg = response.choices[0].message
-            messages.append(msg)
 
-            if not msg.tool_calls:
+            content = result.get("content", "")
+            tool_calls = result.get("tool_calls")
+
+            # Append assistant message to history
+            assistant_msg = {"role": "assistant", "content": content}
+            if tool_calls:
+                assistant_msg["tool_calls"] = tool_calls
+            messages.append(assistant_msg)
+
+            if not tool_calls:
                 break
 
-            for tc in msg.tool_calls:
-                name = tc.function.name
-                args = json.loads(tc.function.arguments)
+            for tc in tool_calls:
+                name = tc["function"]["name"]
+                try:
+                    args = json.loads(tc["function"]["arguments"])
+                except (json.JSONDecodeError, KeyError):
+                    args = {}
+
                 t1 = datetime.now()
-                result, success = self._dispatch(name, args)
+                dispatch_result, success = self._dispatch(name, args)
                 tool_latency = int((datetime.now() - t1).total_seconds() * 1000)
 
-                # Track key results for response assembly
-                if name == "evaluate_authentication":  auth_result      = result
-                elif name == "evaluate_rbac":          rbac_result      = result
-                elif name == "generate_audit_log":     audit_result     = result
-                elif name == "apply_remediation":      remediation_result = result
+                if name == "evaluate_authentication":
+                    auth_result = dispatch_result
+                elif name == "evaluate_rbac":
+                    rbac_result = dispatch_result
+                elif name == "generate_audit_log":
+                    audit_result = dispatch_result
+                elif name == "apply_remediation":
+                    remediation_result = dispatch_result
 
                 actions.append(ActionTrace(
-                    tool=name, args=args, result=result,
+                    tool=name, args=args, result=dispatch_result,
                     success=success, latency_ms=tool_latency
                 ))
                 messages.append({
                     "role": "tool",
-                    "tool_call_id": tc.id,
-                    "content": json.dumps(result)
+                    "tool_call_id": tc.get("id", ""),
+                    "content": json.dumps(dispatch_result)
                 })
 
-        final_message = msg.content or "Identity evaluation complete."
+        final_message = content or "Identity evaluation complete."
         return self._build_response(
             final_message, vertical, actions,
             auth_result, rbac_result, audit_result, remediation_result
@@ -182,7 +206,6 @@ class IdentityAgentService:
             )
             actions.append(ActionTrace(tool="generate_audit_log", args=ctx, result=audit, success=True))
 
-            # Auto-remediate flagged anomalies
             for anomaly in audit.get("anomalies", []):
                 atype = anomaly.get("type")
                 if atype in ("impossible_travel", "audit_tampering", "off_hours_access"):
@@ -192,7 +215,7 @@ class IdentityAgentService:
                         args={"issue_type": atype, "context": audit},
                         result=remedy, success=True
                     ))
-                    break  # one remediation per run
+                    break
 
             return self._build_response(
                 f"Audit complete. Status: {audit['compliance_status'].upper()}. "
@@ -203,7 +226,7 @@ class IdentityAgentService:
     # ── Tool dispatch ──────────────────────────────────────────────────────────
 
     def _dispatch(self, name: str, args: dict) -> tuple:
-        """Route tool name → engine function."""
+        """Route tool name -> engine function."""
         try:
             if name == "evaluate_authentication":
                 result = evaluate_auth_request(**{
@@ -255,11 +278,11 @@ class IdentityAgentService:
             resp.risk_level     = auth_result.get("risk_level")
 
         if rbac_result:
-            resp.access_granted      = rbac_result.get("access_granted")
-            resp.applied_roles       = rbac_result.get("applied_roles", [])
+            resp.access_granted       = rbac_result.get("access_granted")
+            resp.applied_roles        = rbac_result.get("applied_roles", [])
             resp.permission_breakdown = rbac_result.get("permission_breakdown")
-            resp.risk_score          = rbac_result.get("risk_score")
-            resp.risk_level          = rbac_result.get("risk_level")
+            resp.risk_score           = rbac_result.get("risk_score")
+            resp.risk_level           = rbac_result.get("risk_level")
 
         if audit_result:
             resp.anomaly_detected  = audit_result.get("anomaly_detected")
@@ -274,3 +297,7 @@ class IdentityAgentService:
             resp.remediation_applied   = remedy.get("auto_apply", False)
 
         return resp
+
+
+# Global singleton
+identity_agent = IdentityAgentService()

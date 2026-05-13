@@ -1,7 +1,7 @@
 """
 Healthcare Agent Service — The Brain 🧠
 
-Uses OpenAI function calling (GPT-4o) to:
+Uses OpenRouter (multi-LLM) function calling to:
 1. Understand patient's natural language request
 2. Classify intent (scheduling, triage, insurance, telehealth)
 3. Call real REST APIs (NexHealth, VideoSDK, Twilio, AssemblyAI) directly via httpx
@@ -17,7 +17,8 @@ from datetime import datetime, timezone
 from typing import Literal, Any, Optional, List
 from pydantic import BaseModel
 from dotenv import load_dotenv
-from openai import AsyncOpenAI
+
+from services.openrouter_service import call_llm as openrouter_call
 
 load_dotenv()
 
@@ -33,7 +34,9 @@ VIDEOSDK_API_KEY = os.getenv("VIDEOSDK_API_KEY", "")
 VIDEOSDK_SECRET_KEY = os.getenv("VIDEOSDK_SECRET_KEY", "")
 
 ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY", "")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "")
+OPENROUTER_CHAT_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # Simple PHI keywords for HIPAA filtering
 PHI_KEYWORDS = [
@@ -421,7 +424,7 @@ def _fallback_transcription(error: str = None) -> dict:
     }
 
 
-# ─── OpenAI Tool Definitions ──────────────────────────────────────────────────
+# ─── OpenAI-format Tool Definitions ──────────────────────────────────────────
 AGENT_TOOLS = [
     {
         "type": "function",
@@ -559,11 +562,31 @@ Be efficient. Route correctly. Don't over-engineer."""
 class HealthcareAgentService:
     """
     Agentic orchestrator for healthcare scheduling.
-    Uses GPT-4o function calling to route + execute real API calls.
+    Uses OpenRouter (multi-LLM) function calling to route + execute real API calls.
+    Falls back to direct logic if OpenRouter is unavailable.
     """
 
-    def __init__(self):
-        self.client = AsyncOpenAI(api_key=OPENAI_API_KEY) if OPENAI_API_KEY else None
+    async def _call_openrouter_with_messages(
+        self,
+        messages: list[dict],
+        tools: Optional[list] = None,
+        temperature: float = 0.2,
+    ) -> dict:
+        """
+        POST to OpenRouter with the full messages array (preserves agentic history).
+        Returns: {"content": str, "tool_calls": list[{id, function: {name, arguments}}] | None}
+        """
+        from services.openrouter_service import call_llm_with_messages
+        result = await call_llm_with_messages(
+            role="reasoning",
+            messages=messages,
+            tools=tools,
+            temperature=temperature,
+        )
+        return {
+            "content": result.get("content", ""),
+            "tool_calls": result.get("tool_calls"),
+        }
 
     async def process(
         self,
@@ -575,11 +598,8 @@ class HealthcareAgentService:
     ) -> AgentResponse:
         """
         Main entry: patient natural language → agent actions → structured response.
-        Falls back to direct logic if OpenAI unavailable.
+        Falls back to direct logic if OpenRouter unavailable.
         """
-        if not self.client:
-            return await self._process_without_llm(patient_input, vertical, patient_id, patient_phone, patient_name)
-
         system_prompt = SYSTEM_PROMPTS.get(vertical, SYSTEM_PROMPTS["general"])
         messages = [
             {"role": "system", "content": system_prompt},
@@ -600,28 +620,35 @@ class HealthcareAgentService:
         video_patient_link = None
         sms_sent = False
         urgency = None
+        msg_content = ""
 
         try:
             # Agentic loop — runs until no more tool calls
             for _iteration in range(8):  # safety cap
-                response = await self.client.chat.completions.create(
-                    model="gpt-4o",
+                llm_result = await self._call_openrouter_with_messages(
                     messages=messages,
                     tools=AGENT_TOOLS,
-                    tool_choice="auto",
-                    temperature=0.2
+                    temperature=0.2,
                 )
 
-                msg = response.choices[0].message
-                messages.append(msg)
+                msg_content = llm_result.get("content", "")
+                tool_calls = llm_result.get("tool_calls")
 
-                if not msg.tool_calls:
+                # Append assistant turn to history
+                assistant_msg: dict = {"role": "assistant", "content": msg_content}
+                if tool_calls:
+                    assistant_msg["tool_calls"] = tool_calls
+                messages.append(assistant_msg)
+
+                if not tool_calls:
                     break  # Agent is done
 
                 # Execute all tool calls in this round
-                for tc in msg.tool_calls:
-                    name = tc.function.name
-                    args = json.loads(tc.function.arguments)
+                for tc in tool_calls:
+                    tc_id = tc.get("id", f"call_{_iteration}")
+                    name = tc["function"]["name"]
+                    raw_args = tc["function"].get("arguments", "{}")
+                    args = json.loads(raw_args) if isinstance(raw_args, str) else raw_args
                     result, success = await self._dispatch_tool(name, args, patient_id, patient_name)
 
                     # Track key state
@@ -638,16 +665,16 @@ class HealthcareAgentService:
                     actions.append(ActionTrace(tool=name, args=args, result=result, success=success))
                     messages.append({
                         "role": "tool",
-                        "tool_call_id": tc.id,
+                        "tool_call_id": tc_id,
                         "content": json.dumps(result)
                     })
 
         except Exception as llm_err:
-            # OpenAI unavailable (invalid key, quota, network) — use direct API fallback
-            print(f"[Agent] OpenAI fallback triggered ({type(llm_err).__name__}): using direct API path")
+            # OpenRouter unavailable (invalid key, quota, network) — use direct API fallback
+            print(f"[Agent] OpenRouter fallback triggered ({type(llm_err).__name__}): using direct API path")
             return await self._process_without_llm(patient_input, vertical, patient_id, patient_phone, patient_name)
 
-        final_message = msg.content or self._default_reply(vertical, appointment_id, urgency)
+        final_message = msg_content or self._default_reply(vertical, appointment_id, urgency)
 
         return AgentResponse(
             message=final_message,
@@ -712,7 +739,7 @@ class HealthcareAgentService:
         patient_name: str
     ) -> AgentResponse:
         """
-        Fallback when OpenAI is unavailable.
+        Fallback when OpenRouter is unavailable.
         Still calls real NexHealth/VideoSDK/Twilio APIs but without LLM reasoning.
         """
         actions = []

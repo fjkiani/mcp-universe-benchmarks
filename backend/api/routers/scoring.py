@@ -1,20 +1,22 @@
 """
 FDA Credibility Engine — Scoring Endpoints (Production)
-Wraps DeepEval metrics (Apache-2.0) into API endpoints that produce
+Wraps scoring metrics into API endpoints that produce
 real VVUQ scores for the frontend demos.
 
 Production features:
   - Structured logging
   - Timeout protection (LLM calls capped at 30s)
   - In-memory result caching (avoid re-scoring identical inputs)
-  - Graceful fallback when deepeval or OpenAI key unavailable
+  - Graceful fallback when LLM unavailable
   - Full Pydantic validation on all I/O
+  - LLM-as-judge via OpenRouter (role="reasoning")
 
 Four endpoints mapped to ASME V&V 40:
   POST /score/hallucination    → Validation track
   POST /score/tool-correctness → Verification track
   POST /score/abstention       → UQ track
   POST /score/artifact         → Convenience (scores existing artifacts)
+  POST /score/llm-judge        → OpenRouter LLM-as-judge scoring
 """
 
 import json
@@ -35,57 +37,9 @@ logger = logging.getLogger("fda.scoring")
 
 ARTIFACTS_DIR = Path(__file__).parent.parent.parent / "adversarial_artifacts"
 SCORING_TIMEOUT_SECONDS = 30
-_DEEPEVAL_DIR = Path.home() / ".deepeval"
-if _DEEPEVAL_DIR.is_dir():
-    # v1.6.2 expects .deepeval to be a file, not dir — clean up
-    import shutil
-    shutil.rmtree(_DEEPEVAL_DIR, ignore_errors=True)
-if not _DEEPEVAL_DIR.exists():
-    _DEEPEVAL_DIR.write_text("{}")  # Create as empty JSON file
+
+# DeepEval is disabled — we use OpenRouter LLM-as-judge instead
 DEEPEVAL_AVAILABLE = False
-
-# Probe at import time — don't fail startup
-try:
-    from deepeval.metrics import HallucinationMetric, ToolCorrectnessMetric
-    from deepeval.test_case import LLMTestCase
-    from deepeval.models import DeepEvalBaseLLM
-    import cohere
-    DEEPEVAL_AVAILABLE = True
-    logger.info("DeepEval loaded successfully — LLM-as-judge scoring enabled")
-    
-    class CohereEvalModel(DeepEvalBaseLLM):
-        def __init__(self, model_name="command-r-plus-08-2024"):
-            self.model_name = model_name
-            api_key = os.environ.get("COHERE_API_KEY")
-            if not api_key:
-                raise ValueError("COHERE_API_KEY is not set")
-            self.client = cohere.ClientV2(api_key=api_key)
-            self.async_client = cohere.AsyncClientV2(api_key=api_key)
-
-        def load_model(self):
-            return self.client
-
-        def generate(self, prompt: str) -> str:
-            res = self.client.chat(
-                model=self.model_name,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0
-            )
-            return res.message.content[0].text
-
-        async def a_generate(self, prompt: str) -> str:
-            res = await self.async_client.chat(
-                model=self.model_name,
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.0
-            )
-            return res.message.content[0].text
-            
-        def get_model_name(self):
-            return self.model_name
-            
-except (ImportError, TypeError, ValueError) as e:
-    logger.warning(f"DeepEval/Cohere not available ({e}) — using rule-based fallback scoring")
 
 # ─── In-memory score cache ───────────────────────────────────────────
 
@@ -111,6 +65,37 @@ def _load_artifact(filename: str) -> dict:
         raise HTTPException(status_code=404, detail=f"Artifact {filename} not found at {ARTIFACTS_DIR}")
     with open(path) as f:
         return json.load(f)
+
+
+# ─── OpenRouter LLM-as-judge helper ──────────────────────────────────
+
+async def _openrouter_judge(prompt: str) -> str:
+    """
+    Call OpenRouter with role='reasoning' to get an LLM judgment.
+    Returns the raw text response from the model.
+    Falls back to empty string on any error.
+    """
+    try:
+        from services.openrouter_service import call_llm
+        result = await asyncio.wait_for(
+            call_llm(
+                role="reasoning",
+                prompt=prompt,
+                system=(
+                    "You are a precise evaluation judge. "
+                    "Respond ONLY with a JSON object containing: "
+                    "verdict (\"pass\" or \"fail\"), score (0.0-1.0), reasoning (string). "
+                    "No markdown, no extra text."
+                ),
+                temperature=0.0,
+                max_tokens=512,
+            ),
+            timeout=SCORING_TIMEOUT_SECONDS,
+        )
+        return result.get("content", "")
+    except Exception as exc:
+        logger.warning(f"[scoring] _openrouter_judge failed: {exc}")
+        return ""
 
 
 # ─── Request / Response Models ───────────────────────────────────────
@@ -174,63 +159,34 @@ class ArtifactScoreRequest(BaseModel):
                            description="hallucination | tool-correctness | abstention")
 
 
+class LLMJudgeRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, description="The full judge prompt")
+    context: str = Field("", description="Optional context")
+
+
+class LLMJudgeResponse(BaseModel):
+    verdict: str        # "pass" or "fail"
+    score: float        # 0.0 to 1.0
+    reasoning: str
+    model_used: str
+
+
 # ─── Endpoint 1: Hallucination Scoring (Validation) ─────────────────
 
 @router.post("/score/hallucination", response_model=HallucinationResponse, tags=["scoring"])
 async def score_hallucination(req: HallucinationRequest):
     """
     Scores LLM output against ground-truth contexts for contradictions.
-    Uses DeepEval HallucinationMetric with LLM-as-judge when available,
-    falls back to rule-based keyword scoring.
+    Uses rule-based keyword scoring (DeepEval disabled).
     """
     ck = _cache_key("hallucination", req.actual_output[:200], str(req.contexts[:3]))
     if ck in _score_cache:
         logger.info(f"Cache hit for hallucination score {ck[:8]}")
         return HallucinationResponse(**_score_cache[ck])
 
-    if DEEPEVAL_AVAILABLE:
-        try:
-            result = await _deepeval_hallucination(req)
-            _score_cache[ck] = result.dict()
-            return result
-        except Exception as e:
-            logger.error(f"DeepEval hallucination scoring failed: {e}. Falling back to rule-based.")
-
     result = _fallback_hallucination(req)
     _score_cache[ck] = result.dict()
     return result
-
-
-async def _deepeval_hallucination(req: HallucinationRequest) -> HallucinationResponse:
-    """DeepEval LLM-as-judge hallucination scoring with timeout."""
-    def _run():
-        cohere_model = CohereEvalModel()
-        metric = HallucinationMetric(threshold=req.threshold, model=cohere_model)
-        test_case = LLMTestCase(
-            input="evaluate clinical output for hallucination",
-            actual_output=req.actual_output,
-            context=req.contexts,
-        )
-        score = metric.measure(test_case)
-        verdicts = []
-        for i, v in enumerate(metric.verdicts):
-            verdicts.append(HallucinationVerdict(
-                context=req.contexts[i][:300] if i < len(req.contexts) else "",
-                verdict=v.verdict,
-                reason=v.reason or "",
-            ))
-        return HallucinationResponse(
-            score=round(score, 4),
-            passed=metric.success,
-            reason=metric.reason or "",
-            verdicts=verdicts,
-            engine="deepeval",
-        )
-
-    return await asyncio.wait_for(
-        asyncio.get_event_loop().run_in_executor(None, _run),
-        timeout=SCORING_TIMEOUT_SECONDS,
-    )
 
 
 def _fallback_hallucination(req: HallucinationRequest) -> HallucinationResponse:
@@ -285,51 +241,15 @@ def _fallback_hallucination(req: HallucinationRequest) -> HallucinationResponse:
 async def score_tool_correctness(req: ToolCorrectnessRequest):
     """
     Scores whether the agent selected and used the right tools.
-    Uses DeepEval ToolCorrectnessMetric when available.
+    Uses rule-based scoring (DeepEval disabled).
     """
     ck = _cache_key("tool", req.user_input[:200], str(len(req.tools_called)))
     if ck in _score_cache:
         return ToolCorrectnessResponse(**_score_cache[ck])
 
-    if DEEPEVAL_AVAILABLE:
-        try:
-            result = await _deepeval_tool_correctness(req)
-            _score_cache[ck] = result.dict()
-            return result
-        except Exception as e:
-            logger.error(f"DeepEval tool scoring failed: {e}. Falling back.")
-
     result = _fallback_tool_correctness(req)
     _score_cache[ck] = result.dict()
     return result
-
-
-async def _deepeval_tool_correctness(req: ToolCorrectnessRequest) -> ToolCorrectnessResponse:
-    """DeepEval tool correctness scoring with timeout."""
-    def _run():
-        cohere_model = CohereEvalModel()
-        metric = ToolCorrectnessMetric(threshold=0.5, model=cohere_model)
-        # v1.6.2 expects expected_tools as list of strings (tool names)
-        expected_names = [t.get('name', '') for t in req.available_tools]
-        called_list = [t.get('name', '') for t in req.tools_called]
-        test_case = LLMTestCase(
-            input=req.user_input,
-            actual_output="(scored by tool correctness)",
-            tools_called=called_list,
-            expected_tools=expected_names,
-        )
-        score = metric.measure(test_case)
-        return ToolCorrectnessResponse(
-            score=round(score, 4),
-            passed=metric.success,
-            reason=metric.reason or "",
-            engine="deepeval",
-        )
-
-    return await asyncio.wait_for(
-        asyncio.get_event_loop().run_in_executor(None, _run),
-        timeout=SCORING_TIMEOUT_SECONDS,
-    )
 
 
 def _fallback_tool_correctness(req: ToolCorrectnessRequest) -> ToolCorrectnessResponse:
@@ -505,6 +425,70 @@ async def score_artifact(req: ArtifactScoreRequest):
         raise HTTPException(status_code=400, detail=f"Unknown score_type: {req.score_type}")
 
 
+# ─── Endpoint 5: LLM-as-judge via OpenRouter ─────────────────────────
+
+@router.post("/score/llm-judge", response_model=LLMJudgeResponse, tags=["scoring"])
+async def score_with_llm_judge(req: LLMJudgeRequest):
+    """
+    LLM-as-judge scoring using OpenRouter (role='reasoning').
+    Accepts a full judge prompt and optional context, returns a structured verdict.
+    """
+    full_prompt = req.prompt
+    if req.context:
+        full_prompt = f"Context:\n{req.context}\n\n{req.prompt}"
+
+    raw_response = await _openrouter_judge(full_prompt)
+
+    # Attempt to parse JSON from the model response
+    verdict = "fail"
+    score = 0.0
+    reasoning = raw_response
+    model_used = "openrouter/reasoning"
+
+    if raw_response:
+        # Strip markdown code fences if present
+        cleaned = raw_response.strip()
+        if cleaned.startswith("```"):
+            lines = cleaned.split("\n")
+            cleaned = "\n".join(lines[1:-1]) if len(lines) > 2 else cleaned
+
+        try:
+            parsed = json.loads(cleaned)
+            verdict = str(parsed.get("verdict", "fail")).lower()
+            if verdict not in ("pass", "fail"):
+                verdict = "pass" if float(parsed.get("score", 0)) >= 0.5 else "fail"
+            raw_score = parsed.get("score", 0.5 if verdict == "pass" else 0.0)
+            score = max(0.0, min(1.0, float(raw_score)))
+            reasoning = str(parsed.get("reasoning", raw_response))
+        except (json.JSONDecodeError, ValueError, TypeError):
+            # Heuristic fallback: look for pass/fail keywords
+            lower = raw_response.lower()
+            if "pass" in lower and "fail" not in lower:
+                verdict = "pass"
+                score = 0.8
+            elif "fail" in lower:
+                verdict = "fail"
+                score = 0.2
+            else:
+                verdict = "fail"
+                score = 0.0
+            reasoning = raw_response
+
+    # Retrieve the actual model used from openrouter_service if possible
+    try:
+        from services.openrouter_service import get_model_for_role
+        model_used = get_model_for_role("reasoning")
+    except Exception:
+        pass
+
+    return LLMJudgeResponse(
+        verdict=verdict,
+        score=round(score, 4),
+        reasoning=reasoning,
+        model_used=model_used,
+    )
+
+
 # ─── Health check for scoring subsystem ──────────────────────────────
 
 @router.get("/score/health", tags=["scoring"])
@@ -518,7 +502,7 @@ async def scoring_health():
         "status": "healthy",
         "deepeval_available": DEEPEVAL_AVAILABLE,
         "deepeval_version": _get_deepeval_version(),
-        "scoring_engine": "deepeval" if DEEPEVAL_AVAILABLE else "fallback",
+        "scoring_engine": "openrouter_llm_judge",
         "artifacts_found": len(artifacts),
         "artifact_files": sorted(artifacts),
         "timeout_seconds": SCORING_TIMEOUT_SECONDS,

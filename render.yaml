@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: openclaw-benchmark
+    runtime: python
+    region: oregon
+    plan: starter
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/v1/benchmark/health/status
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: MCP_GATEWAY_ADDRESS
+        value: http://mcp-gateway:8000
+      - key: BENCHMARK_SERVICE_URL
+        value: https://openclaw-benchmark.onrender.com
+      - key: PYTHON_VERSION
+        value: "3.11"
