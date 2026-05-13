@@ -702,7 +702,6 @@ async def kairos_start_run(req: KairosRunRequest, background_tasks: BackgroundTa
         l3_score=req.l3_score,
         l4_score=req.l4_score,
         permitted_tools=req.permitted_tools,
-        allowlisted_tools=req.allowlisted_tools,
     )
 
     config = {}  # openrouter_api_key resolved from env inside providers.py
