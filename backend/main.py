@@ -10,15 +10,17 @@ from api.routers.identity_agent import router as identity_router
 from api.routers.certification import router as certification_router
 from api.routers.benchmark import router as benchmark_router
 from api.routers.zoa import router as zoa_router
+from api.routers.writing import router as writing_router
 from database.session import init_db
 
 app = FastAPI(
     title="OpenClaw Benchmark & Healthcare AI API",
     description=(
         "Backend API Gateway — OpenClaw skill benchmarking (L1-L4) "
-        "via multi-LLM OpenRouter free tier, plus Healthcare Receptionist AI."
+        "via multi-LLM OpenRouter free tier, plus Healthcare Receptionist AI, "
+        "ZOA multi-agent business suite, and ZOA-W Writing Overlord."
     ),
-    version="2.0.0",
+    version="2.1.0",
 )
 
 # Initialize database on startup
@@ -32,6 +34,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",
         "http://localhost:3001",
+        "http://localhost:3002",
         "http://localhost:5173",   # Vite dev server
         "http://localhost:4173",   # Vite preview
         "https://clear-mind-life.vercel.app",
@@ -53,6 +56,9 @@ app.include_router(benchmark_router, prefix="/api/v1/benchmark", tags=["benchmar
 
 # ─── ZOA Agent Suite routes ───────────────────────────────────────────────────
 app.include_router(zoa_router, prefix="/api/v1", tags=["zoa"])
+
+# ─── ZOA-W Writing Overlord routes ───────────────────────────────────────────
+app.include_router(writing_router, prefix="/api/v1/writing", tags=["writing"])
 
 # ─── Existing routes ──────────────────────────────────────────────────────────
 app.include_router(servers.router, prefix="/api/v1/servers", tags=["servers"])
@@ -78,12 +84,13 @@ app.include_router(scoring.router, prefix="/api/v1", tags=["scoring"])  # FDA VV
 async def root():
     return {
         "message": "OpenClaw Benchmark & Healthcare AI API Gateway",
-        "version": "2.0.0",
+        "version": "2.1.0",
         "docs": "/docs",
         "health": "/health",
         "benchmark": "/api/v1/benchmark",
         "benchmark_health": "/api/v1/benchmark/health/status",
         "zoa": "/api/v1/zoa",
+        "writing": "/api/v1/writing",
     }
 
 
