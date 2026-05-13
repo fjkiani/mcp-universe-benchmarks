@@ -188,7 +188,7 @@ async def zoa_health() -> dict:
 async def get_pending_events(agent_id: str) -> dict:
     """Returns pending cross-agent events for the given agent from the context bus."""
     try:
-        result = bus.get_pending_events(agent_id)
+        result = await bus.get_pending_events(agent_id)
         return result
     except Exception as exc:
         logger.exception("Error fetching events for agent %s", agent_id)
