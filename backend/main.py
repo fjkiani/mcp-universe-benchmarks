@@ -9,6 +9,7 @@ from api.routers.healthcare_agent import router as agent_router
 from api.routers.identity_agent import router as identity_router
 from api.routers.certification import router as certification_router
 from api.routers.benchmark import router as benchmark_router
+from api.routers.zoa import router as zoa_router
 from database.session import init_db
 
 app = FastAPI(
@@ -50,6 +51,9 @@ app.add_middleware(
 # ─── Benchmark routes (OpenClaw skill testing) ────────────────────────────────
 app.include_router(benchmark_router, prefix="/api/v1/benchmark", tags=["benchmark"])
 
+# ─── ZOA Agent Suite routes ───────────────────────────────────────────────────
+app.include_router(zoa_router, prefix="/api/v1", tags=["zoa"])
+
 # ─── Existing routes ──────────────────────────────────────────────────────────
 app.include_router(servers.router, prefix="/api/v1/servers", tags=["servers"])
 app.include_router(sprint.router, prefix="/api/v1/sprint", tags=["sprint"])
@@ -79,6 +83,7 @@ async def root():
         "health": "/health",
         "benchmark": "/api/v1/benchmark",
         "benchmark_health": "/api/v1/benchmark/health/status",
+        "zoa": "/api/v1/zoa",
     }
 
 
