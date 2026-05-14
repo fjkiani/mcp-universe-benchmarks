@@ -17,7 +17,7 @@ Cross-agent events are accessible via the context bus at /zoa/events/{agent_id}.
 """
 
 import logging
-from typing import Any, Optional
+from typing import Any, List, Optional
 
 from fastapi import APIRouter, HTTPException, BackgroundTasks
 from pydantic import BaseModel
@@ -184,9 +184,20 @@ async def zoa_health() -> dict:
     }
 
 
+@router.get("/zoa/events/dashboard")
+async def get_dashboard_events(limit: int = 50) -> List[dict]:
+    """Returns recent events from the context bus log (non-destructive, for dashboard polling)."""
+    try:
+        result = await bus.get_recent_events(limit=limit)
+        return result
+    except Exception as exc:
+        logger.exception("Error fetching dashboard events")
+        raise HTTPException(status_code=500, detail=str(exc))
+
+
 @router.get("/zoa/events/{agent_id}")
-async def get_pending_events(agent_id: str) -> dict:
-    """Returns pending cross-agent events for the given agent from the context bus."""
+async def get_pending_events(agent_id: str) -> List[dict]:
+    """Returns pending cross-agent events for the given agent from the context bus (consume-once)."""
     try:
         result = await bus.get_pending_events(agent_id)
         return result
