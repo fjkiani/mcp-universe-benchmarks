@@ -32,3 +32,8 @@ docs/development/
 docs/architecture/
 **/*_BREAKDOWN.md
 local_tests/results/
+central/
+datasets/
+Dockerfile
+render.yaml
+render-governance.yaml

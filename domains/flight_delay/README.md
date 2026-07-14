@@ -1,0 +1,11 @@
+# flight_delay
+
+| | |
+|--|--|
+| Tasks | `tasks/*.json` |
+| Config | `config.yaml` |
+| Evaluators | `evaluators/` |
+
+```bash
+uv run alignerr_mcp validate --domain flight_delay
+```

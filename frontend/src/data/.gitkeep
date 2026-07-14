@@ -1,9 +1,0 @@
-# This file ensures the data directory is tracked by git
-# Actual data files (api-status.json) are auto-generated and ignored
-
-
-
-
-
-
-

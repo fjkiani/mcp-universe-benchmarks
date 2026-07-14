@@ -1,7 +1,7 @@
 [project]
-name = "lbx-mcp-universe-template"
+name = "mcp-universe-benchmarks"
 version = "0.1.0"
-description = "Template repository for LBX MCP Universe domain benchmarks"
+description = "MCP Universe agent benchmarks — domains, CLI submodule, MCP servers submodule"
 readme = "README.md"
 requires-python = ">=3.12"
 authors = [

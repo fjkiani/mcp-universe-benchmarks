@@ -1,16 +1,21 @@
 # Repository secrets checklist (names only)
 
-Use your platform’s secret store (e.g. GitHub Actions → Secrets). **Do not commit real values.**
+Use GitHub Actions → Secrets (or your vault). **Do not commit real values.**
 
-For healthcare demo / MCP CI, typical names:
+### CI / submodules
 
-- `TWILIO_ACCOUNT_SID`
-- `TWILIO_AUTH_TOKEN`
-- `TWILIO_PHONE_NUMBER`
-- `ASSEMBLYAI_API_KEY`
-- `VIDEOSDK_API_KEY`
-- `VIDEOSDK_SECRET_KEY`
-- `NEXHEALTH_API_KEY`
-- `NEXHEALTH_API_URL` (optional; often `https://api.nexhealth.com`)
+- `GH_ACCESS_TOKEN_WORKFLOW` — checkout private Alignerr submodules in Actions
 
-Copy values from each vendor console into `.env` locally; never paste them into tracked files.
+### LLM / gateway (as needed by domain configs)
+
+- `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` / `OPENROUTER_API_KEY` / `LABELBOX_API_KEY`
+- Other model keys only if your `config.yaml` references them
+
+### MCP servers (domain-dependent)
+
+- Search: `SERP_API_KEY`
+- Google Workspace: service account file (local path; do not commit keys)
+- GitHub/GitLab domains: `GITHUB_PERSONAL_ACCESS_TOKEN`
+- Finance: `EXCHANGERATE_API_KEY`, `ALPHA_VANTAGE_API_KEY`
+
+Copy values into local `.env` from `.env.example`. Never paste secrets into tracked files.

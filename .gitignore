@@ -47,6 +47,18 @@ docs/archive/
 docs/healthcare-receptionist/
 docs/development/
 docs/architecture/
+frontend/
+backend/
+central/
+datasets/
+Dockerfile
+render.yaml
+render-governance.yaml
+setup_all.sh
+setup_backend.sh
+setup_frontend.sh
+start_backend.sh
+start_frontend.sh
 .cursor/plans/
 **/STATUS.md
 **/STATUS_SUMMARY.txt
@@ -57,7 +69,7 @@ docs/architecture/
 adversarial_test_results.json
 local_tests/results/*
 !local_tests/results/.gitignore
-_purge_slop*.sh
+_purge_*.sh
 
 # Never commit files named *SECRETS_VALUES* or real API literals
 **/GITHUB_SECRETS_VALUES.md

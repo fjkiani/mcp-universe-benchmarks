@@ -1,154 +1,66 @@
-# MCP Universe benchmarks (template)
+# MCP Universe benchmarks
 
-Monorepo for **MCP-backed agent benchmarks**: domains live under `domains/`, execution goes through the bundled CLI submodule, and tools ship in the mothership submodule.
+Monorepo for **MCP-backed agent benchmarks**. Domains live under `domains/`; execution is the CLI submodule; tools are the mothership submodule.
 
-Start here: [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md) · [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md) · [AGENTS.md](AGENTS.md) · [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md)
+Guides: [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md) · [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md) · [AGENTS.md](AGENTS.md) · [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md)
 
-## 🚀 Quick Start
+## Quick start
 
 ```bash
-# Init and update all git submodules
 git submodule update --init --recursive
-
-# Install dependencies
 uv sync
+cp .env.example .env   # fill keys for servers your domain uses
 
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env with your actual API keys
-# You only need to populate the keys for the services you plan to use
-
-# Run CLI command examples and --help
 uv run alignerr_mcp --help
 uv run alignerr_mcp list
 ```
 
-## Domains (consolidated)
+## Domains
 
 | Domain | Notes |
 |--------|--------|
 | [web_search](domains/web_search) | Reference implementation |
-| [google_workspace](domains/google_workspace) / [google_slides](domains/google_slides) | Workspace + legacy slides subset |
-| [grant_application](domains/grant_application) | 55 tasks (incl. document_gen 0051–0055) |
-| [investments](domains/investments) | Portfolio/risk tasks + local `mcp_servers/` |
-| [identity_service](domains/identity_service) | 25 auth/security tasks (from Alignerr identity repos) |
-| currency_converter, flight_delay, gitlab_mlops, governance_traps | Existing monorepo domains |
+| [google_workspace](domains/google_workspace) / [google_slides](domains/google_slides) | Workspace + slides subset |
+| [grant_application](domains/grant_application) | 55 tasks |
+| [investments](domains/investments) | Portfolio/risk + local `mcp_servers/` |
+| [identity_service](domains/identity_service) | 25 auth/security tasks |
+| currency_converter, flight_delay, gitlab_mlops, governance_traps | Additional domains |
 
 ## Contribution
 
-Below you will find a high level steps explaining how to contribute to the new domain creation.
-For details instructions, please visit [this google docs link](https://docs.google.com/document/d/1X7-J5zLNQvFVwqk6PX0lFW22rQf5WTBj11g_v5d6tTc).
-
-### 1. Create your own domain
-
 ```bash
-# Create domain structure
 uv run alignerr_mcp create-domain --name {your-domain}
-```
-
-### 2. Implement your domain
-
-Edit the generated files to implement your domain logic. Refer to the [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md) to learn about the files and contents formats.
-
-**⚠️ Critical**: You **must** follow the exact structure and format of existing domains in the `domains/` directory. Review reference implementations thoroughly and replicate their:
-- File structure and naming conventions
-- JSON schema and field formats  
-- Evaluator implementation patterns
-- Documentation style
-
-Deviations from the established structure will cause validation failures.
-
-### 3. Test locally
-
-```bash
-# Validate domain
+# implement under domains/{your-domain}/ following STRUCTURE_GUIDE.md
 uv run alignerr_mcp validate --domain {your-domain}
-
-# Pass@k validation
 uv run alignerr_mcp validate --domain {your-domain} --runs 3
-
-# Parallel execution with specific model
-uv run alignerr_mcp validate --domain {your-domain} --model claude-3-5-sonnet-20241022 --parallel 8
 ```
 
-### 4. Create a Pull Request
+PR branch: `domains/{your-domain}/v1`. CI runs domain lint/eval on `domains/**` changes.
 
-**Fork the repository first**, then:
+> **Model failures are the goal.** This benchmark finds where models struggle.
 
-```bash
-# Create feature branch
-git checkout -b domains/{your-domain}/v1
+## Best practices
 
-# Commit your domain
-git add domains/{your-domain}/
-git commit -m "Add {your-domain} domain with variation_1"
-
-# Push to your fork
-git push origin domains/{your-domain}/v1
-
-# Create a PR from your fork to the main repository
-```
-
-**Automated Evaluation**: Once you create a PR, the evaluator will automatically run and post an HTML report as a comment. The same comment will be updated every time you push changes to your PR branch.
-
-### Key Principle
-
-> **Model failures are the goal.** We're building a benchmark to identify where models struggle, not to showcase their successes. Reproducible task design is paramount.
-
-## Best Practices
-
-- **Test locally** before pushing
-- **Keep submodules updated** regularly
-- **Never commit secrets** to git
-- **Design for difficulty**: Create challenging tasks that expose model limitations
-- **Verify expected outputs**: Ensure 100% confidence in expected results
-- **Test reproducibility**: Run multiple times to confirm consistent results
+- Test locally before push
+- Keep submodules updated
+- Never commit secrets
+- Design hard tasks; verify expected outputs
 
 ## Troubleshooting
 
-### CLI Commands Not Found
+**CLI not found:** use `uv run alignerr_mcp …` and `uv sync --reinstall` if needed.
 
-**Problem**: Running `alignerr_mcp` or `alignerr` shows "command not found"
+**Empty submodules:**
 
-**Solutions**:
-
-1. **Use `uv run` (recommended)**:
-   ```bash
-   uv run alignerr_mcp --help
-   ```
-
-2. **Check your Python environment**:
-   ```bash
-   which python  # Should point to .venv/bin/python
-   uv pip list | grep alignerr  # Should show alignerr-cli
-   ```
-
-3. **Reinstall if needed**:
-   ```bash
-   uv sync --reinstall
-   ```
-
-### Submodule Issues
-
-**Problem**: CLI submodule is empty or missing
-
-**Solution**:
 ```bash
-# Initialize and update submodules
 git submodule update --init --recursive
-
-# Then reinstall
 uv sync
 ```
 
-**Problem**: Failures to install MCP Servers
+**MCP server install:**
 
-**Solution**:
 ```bash
-# Install required servers
 uv run alignerr_mcp servers install google_search
-
-# Install server in uv environment (in case the above does not work)
-uv pip install -e "<path to lbx_mcp_universe_mcp_servers_mothership>/servers/<server name>"
+# or
+uv pip install -e "lbx_mcp_universe_mcp_servers_mothership/servers/<server_name>"
 ```
