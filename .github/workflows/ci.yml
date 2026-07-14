@@ -1,207 +1,102 @@
-name: Domain Validation and Evaluation
-
-run-name: >-
-  ${{
-    github.event_name == 'workflow_dispatch'
-    && format('Manual - {0}/{1}', inputs.domain, inputs.variation || 'all')
-    || format('PR #{0}', github.event.pull_request.number || github.run_number)
-  }}
+name: Validate and Benchmark
 
 on:
   pull_request:
     branches: [main]
     paths:
-      - "domains/**" # Only trigger on changes to domains folder
-    types:
-      - opened
-      - synchronize
-      - reopened
-      - ready_for_review
+      - "domains/**"
+      - "mcpbench/**"
+      - "servers/**"
+      - "scripts/**"
+      - "pyproject.toml"
   workflow_dispatch:
     inputs:
       domain:
-        description: "Domain to evaluate (e.g., web_search)"
-        required: true
+        description: "Domain to validate (e.g., web_search) or 'all'"
+        required: false
         type: string
-      skip_validation:
-        description: "Skip validation checks"
+        default: "all"
+      run_benchmark:
+        description: "Run live benchmark (requires API keys)"
         required: false
         type: boolean
         default: false
-      run_agent:
-        description: "Run agent evaluation (expensive Pass@K testing)"
+      model:
+        description: "Model slug for benchmark run"
         required: false
-        type: boolean
-        default: false
-      pilot_mode:
-        description: "Allow variations with fewer than 100 tasks"
-        required: false
-        type: boolean
-        default: false
-      runs_per_model:
-        description: "Number of runs per model (Pass@K, default: 2)"
-        required: false
-        type: number
-        default: 2
-      concurrent_runs:
-        description: "Maximum concurrent runs (default: 4)"
-        required: false
-        type: number
-        default: 4
+        type: string
+        default: "openrouter/openai/gpt-oss-20b:free"
 
-# Cancel older runs when new pushes happen
 concurrency:
-  group: ${{ github.event_name == 'workflow_dispatch' && format('{0}-{1}', github.workflow, github.run_id) || format('{0}-{1}', github.workflow, github.event.pull_request.number) }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
 permissions:
   contents: read
   pull-requests: write
-  issues: write
-  checks: write
-  id-token: write
 
 jobs:
-  # Lint domain structure before expensive evaluation
-  lint-domain:
+  validate:
     runs-on: ubuntu-latest
     if: |
-      github.actor != 'github-actions[bot]' && 
-      !contains(github.event.pull_request.title || '', '[skip ci]') &&
-      (github.event_name == 'workflow_dispatch' || github.event.pull_request.draft != true)
-    outputs:
-      domain: ${{ steps.detect_domain.outputs.domain }}
+      github.actor != 'github-actions[bot]' &&
+      !contains(github.event.pull_request.title || '', '[skip ci]')
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2
-          submodules: recursive  # Need CLI submodule for linter
-          token: ${{ secrets.GH_ACCESS_TOKEN_WORKFLOW }}  # Need token for private submodules
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      
+          python-version: "3.11"
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
-      
-      - name: Install dependencies
-        run: |
-          echo "📦 Installing CLI and dependencies..."
-          uv sync
-      
-      - name: Detect domain from changes
-        id: detect_domain
-        run: |
-          # If manual dispatch with domain, use it
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.domain }}" ]; then
-            DOMAIN="${{ inputs.domain }}"
-            echo "Using manual domain: $DOMAIN"
-          else
-            # Auto-detect from changed files
-            CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD 2>/dev/null || git diff --name-only ${{ github.event.pull_request.base.sha }} HEAD)
-            DOMAIN=$(echo "$CHANGED_FILES" | grep '^domains/' | cut -d'/' -f2 | sort -u | head -1)
-            
-            if [ -z "$DOMAIN" ]; then
-              echo "⚠️ No domain detected from changes"
-              DOMAIN=""
-            else
-              echo "✅ Auto-detected domain: $DOMAIN"
-            fi
-          fi
-          
-          echo "domain=$DOMAIN" >> $GITHUB_OUTPUT
-      
-      - name: Lint domain structure
-        run: |
-          DOMAIN="${{ steps.detect_domain.outputs.domain }}"
-          
-          if [ -z "$DOMAIN" ]; then
-            echo "⚠️ No domain detected - skipping linting"
-            echo "This is normal if changes don't touch domains/ folder"
-            exit 0
-          fi
-          
-          echo "🔍 Linting domain: $DOMAIN"
-          
-          uv run alignerr_mcp lint-domain --domain "$DOMAIN" || {
-            echo ""
-            echo "❌ Domain structure validation failed!"
-            echo ""
-            echo "Please fix the errors above before pushing."
-            echo "Common issues:"
-            echo "  - Missing required fields in task JSON files"
-            echo "  - config.yaml must define at least 2 LLMs"
-            echo "  - If task has mcp_servers, use_specified_server must be true"
-            echo "  - If use_specified_server is false, agent must have servers in config"
-            echo ""
-            echo "Run locally to debug: uv run alignerr_mcp lint-domain --domain $DOMAIN"
-            exit 1
-          }
-          
-          echo "✅ Domain structure is valid!"
 
-  # Trigger centralized evaluation pipeline
-  # All validation and evaluation logic lives in lbx_mcp_universe_evaluation_pipeline repo
-  # This workflow just triggers it and handles the results
-  #
-  # Note: Only GH_ACCESS_TOKEN_WORKFLOW is passed from template repo
-  # API keys (OPENAI_API_KEY, SERP_API_KEY, etc.) are configured in the evaluation pipeline repo
-  trigger-evaluation:
-    needs: lint-domain  # Only run if linting passes
-    runs-on: ubuntu-latest
-    if: |
-      github.actor != 'github-actions[bot]' && 
-      !contains(github.event.pull_request.title || '', '[skip ci]') &&
-      (github.event_name == 'workflow_dispatch' || github.event.pull_request.draft != true)
-    steps:
-      - name: Trigger evaluation in mothership
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Validate all domains
         run: |
-          DOMAIN="${{ needs.lint-domain.outputs.domain }}"
-          
-          echo "🔔 Triggering evaluation in mothership repo..."
-          echo "Source repo: ${{ github.repository }}"
-          echo "PR number: ${{ github.event.pull_request.number || 0 }}"
-          echo "Domain: ${DOMAIN}"
-          
-          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: token ${{ secrets.GH_ACCESS_TOKEN_WORKFLOW }}" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            https://api.github.com/repos/Alignerr-Code-Labeling/lbx_mcp_universe_evaluation_pipeline/dispatches \
-            -d '{
-              "event_type": "evaluate_pr",
-              "client_payload": {
-                "source_repo": "${{ github.repository }}",
-                "source_ref": "${{ github.head_ref || github.ref_name }}",
-                "pr_number": "${{ github.event.pull_request.number || 0 }}",
-                "domain": "${{ needs.lint-domain.outputs.domain }}",
-                "skip_validation": ${{ inputs.skip_validation || false }},
-                "run_agent": ${{ inputs.run_agent || false }},
-                "pilot_mode": ${{ inputs.pilot_mode || false }},
-                "runs_per_model": ${{ inputs.runs_per_model || 2 }},
-                "concurrent_runs": ${{ inputs.concurrent_runs || 4 }}
-              }
-            }')
-          
-          HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-          RESPONSE_BODY=$(echo "$RESPONSE" | head -n-1)
-          
-          if [ "$HTTP_CODE" -eq 204 ]; then
-            echo "✅ Successfully triggered evaluation in mothership repo"
-            echo "Results will be posted as a comment on this PR"
-            echo "Build logs are kept private for security"
+          DOMAIN="${{ inputs.domain || 'all' }}"
+          if [ "$DOMAIN" = "all" ]; then
+            uv run python -m mcpbench validate --all
           else
-            echo "❌ Failed to trigger mothership (HTTP $HTTP_CODE)"
-            echo "Response: $RESPONSE_BODY"
-            echo ""
-            echo "Please check:"
-            echo "1. GH_ACCESS_TOKEN_WORKFLOW secret is set in template repo"
-            echo "2. Token has 'Actions: Read/Write' permission"
-            echo "3. Token has access to lbx_mcp_universe_evaluation_pipeline repo"
-            exit 1
+            uv run python -m mcpbench validate --domain "$DOMAIN"
           fi
+
+      - name: List available models
+        run: uv run python -m mcpbench list-models
+
+  benchmark:
+    runs-on: ubuntu-latest
+    needs: validate
+    if: ${{ github.event.inputs.run_benchmark == 'true' }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Run benchmark
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          DOMAIN="${{ inputs.domain || 'investments' }}"
+          MODEL="${{ inputs.model }}"
+          uv run python -m mcpbench run --domain "$DOMAIN" --models "$MODEL" --runs 1

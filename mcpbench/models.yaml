@@ -1,0 +1,115 @@
+# Model registry — verified slugs from provider APIs
+# OpenRouter free models queried from https://openrouter.ai/api/v1/models
+# Groq models from https://console.groq.com/docs/models
+# Google Gemini from https://ai.google.dev/gemini-api/docs/models
+
+models:
+  # === OpenRouter free models (tool support) ===
+  - slug: "openrouter/nvidia/nemotron-3-super-120b-a12b:free"
+    provider: openrouter
+    tier: free
+    context: 1000000
+    supports_tools: true
+    display_name: "NVIDIA Nemotron 3 Super 120B (free)"
+  - slug: "openrouter/nvidia/nemotron-3-nano-30b-a3b:free"
+    provider: openrouter
+    tier: free
+    context: 256000
+    supports_tools: true
+    display_name: "NVIDIA Nemotron 3 Nano 30B (free)"
+  - slug: "openrouter/openai/gpt-oss-20b:free"
+    provider: openrouter
+    tier: free
+    context: 131072
+    supports_tools: true
+    display_name: "OpenAI GPT-OSS 20B (free)"
+  - slug: "openrouter/meta-llama/llama-3.3-70b-instruct:free"
+    provider: openrouter
+    tier: free
+    context: 131072
+    supports_tools: true
+    display_name: "Meta Llama 3.3 70B Instruct (free)"
+  - slug: "openrouter/qwen/qwen3-coder:free"
+    provider: openrouter
+    tier: free
+    context: 1048576
+    supports_tools: true
+    display_name: "Qwen3 Coder 480B (free)"
+
+  # === Groq production models ===
+  - slug: "groq/llama-3.3-70b-versatile"
+    provider: groq
+    tier: paid
+    context: 131072
+    supports_tools: true
+    display_name: "Groq Llama 3.3 70B Versatile"
+  - slug: "groq/llama-3.1-8b-instant"
+    provider: groq
+    tier: paid
+    context: 131072
+    supports_tools: true
+    display_name: "Groq Llama 3.1 8B Instant"
+  - slug: "groq/openai/gpt-oss-120b"
+    provider: groq
+    tier: paid
+    context: 131072
+    supports_tools: true
+    display_name: "Groq GPT-OSS 120B"
+  - slug: "groq/openai/gpt-oss-20b"
+    provider: groq
+    tier: paid
+    context: 131072
+    supports_tools: true
+    display_name: "Groq GPT-OSS 20B"
+
+  # === Google Gemini ===
+  - slug: "gemini/gemini-2.5-flash"
+    provider: gemini
+    tier: paid
+    context: 1048576
+    supports_tools: true
+    display_name: "Google Gemini 2.5 Flash"
+  - slug: "gemini/gemini-2.5-flash-lite"
+    provider: gemini
+    tier: paid
+    context: 1048576
+    supports_tools: true
+    display_name: "Google Gemini 2.5 Flash Lite"
+
+  # === OpenAI (paid, for backward compat with existing configs) ===
+  - slug: "openai/gpt-4o"
+    provider: openai
+    tier: paid
+    context: 128000
+    supports_tools: true
+    display_name: "OpenAI GPT-4o"
+  - slug: "openai/gpt-4o-mini"
+    provider: openai
+    tier: paid
+    context: 128000
+    supports_tools: true
+    display_name: "OpenAI GPT-4o Mini"
+  - slug: "openai/gpt-5"
+    provider: openai
+    tier: paid
+    context: 128000
+    supports_tools: true
+    display_name: "OpenAI GPT-5"
+  - slug: "openai/gpt-5-nano"
+    provider: openai
+    tier: paid
+    context: 128000
+    supports_tools: true
+    display_name: "OpenAI GPT-5 Nano"
+
+  # === Anthropic (paid) ===
+  - slug: "anthropic/claude-sonnet-4-5"
+    provider: anthropic
+    tier: paid
+    context: 200000
+    supports_tools: true
+    display_name: "Anthropic Claude Sonnet 4.5"
+
+defaults:
+  judge_model: "openrouter/openai/gpt-oss-20b:free"
+  agent_model: "openrouter/meta-llama/llama-3.3-70b-instruct:free"

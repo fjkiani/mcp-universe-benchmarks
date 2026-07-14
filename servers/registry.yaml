@@ -1,0 +1,76 @@
+# MCP Server Registry
+# Maps server names (as referenced in task JSON files) to launch commands.
+# Each server is a FastMCP-based stdio server launched as a subprocess.
+
+servers:
+  google-search:
+    command: "python -m servers.google_search"
+    description: "Web search with deterministic mock results"
+
+  fetch:
+    command: "python -m servers.fetch"
+    description: "URL fetching with mock page content"
+
+  calendar:
+    command: "python -m servers.calendar"
+    description: "Event calendar for identity/governance tasks"
+
+  task-management:
+    command: "python -m servers.task_management"
+    description: "Task and session storage"
+
+  google-sheets:
+    command: "python -m servers.google_sheets"
+    description: "Google Sheets operations with mock data"
+
+  google-docs:
+    command: "python -m servers.google_docs"
+    description: "Google Docs operations with mock data"
+
+  google-slides:
+    command: "python -m servers.google_slides"
+    description: "Google Slides operations with mock data"
+
+  date:
+    command: "python -m servers.date"
+    description: "Current time and date calculations"
+
+  pdf-generator:
+    command: "python -m servers.pdf_generator"
+    description: "PDF document generation"
+
+  gitlab:
+    command: "python -m servers.gitlab"
+    description: "GitLab project/issue/MR operations"
+
+  email:
+    command: "python -m servers.email"
+    description: "Email send and search"
+
+  file-storage:
+    command: "python -m servers.file_storage"
+    description: "File upload/download storage"
+
+  notion:
+    command: "python -m servers.notion"
+    description: "Notion page operations"
+
+  currency-converter:
+    command: "python -m servers.currency_converter"
+    description: "Currency conversion with fixed rates"
+
+  flight-delay:
+    command: "python -m servers.flight_delay"
+    description: "Flight delay probability predictions"
+
+  stripe:
+    command: "python -m servers.stripe"
+    description: "Stripe payment processing"
+
+  slack:
+    command: "python -m servers.slack"
+    description: "Slack messaging"
+
+  stock-portfolio:
+    command: "python -m servers.stock_portfolio"
+    description: "Stock portfolio with captured real market data"
