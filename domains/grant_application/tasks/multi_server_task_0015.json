@@ -27,7 +27,7 @@
     "evaluators": [
         {
             "func": "raw",
-            "op": "grant_application.validate_multi_server_orchestration",
+            "op": "grant_application.validate_researcher_matching_service",
             "op_args": {
                 "question": "Researcher-grant matching with scoring and personalized recommendations",
                 "required_steps": ["profile_analysis", "search", "scoring", "sheet_creation", "personalized_email"],

@@ -1,0 +1,34 @@
+{
+  "question": "CONFLICTING STATE DETECTION: User 'maya@corp.com' has BOTH of these properties:\n- role: 'admin' (highest privilege)\n- account_status: 'suspended' (access revoked)\n\nThis is a CONFLICTING state - admin role grants all access, but suspended status denies all access. You must:\n1. Detect the conflict between role and account status\n2. Apply 'fail-secure' principle: When in conflict, DENY access\n3. Use 'task-management' to log the conflict\n4. Use 'calendar' to create security incident\n5. Generate detailed conflict analysis\n\nReturn JSON with:\n- user_id: string\n- role: string\n- role_level: number (4 for admin)\n- account_status: string (\"suspended\")\n- conflict_detected: boolean (true)\n- conflict_type: \"role_vs_account_status\"\n- fail_secure_applied: boolean (true - deny when conflicted)\n- access_granted: boolean (false - suspended overrides role)\n- conflict_resolution: string (explain logic)\n- conflict_logged: boolean\n- security_incident_created: boolean\n- reason: string\n\nIMPORTANT: Agent MUST apply fail-secure principle (DENY on conflict). Return ONLY JSON.",
+  "output_format": {
+    "user_id": "string",
+    "role": "string",
+    "role_level": "number",
+    "account_status": "string",
+    "conflict_detected": "boolean",
+    "conflict_type": "string",
+    "fail_secure_applied": "boolean",
+    "access_granted": "boolean",
+    "conflict_resolution": "string",
+    "conflict_logged": "boolean",
+    "security_incident_created": "boolean",
+    "reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_conflicting_permissions",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

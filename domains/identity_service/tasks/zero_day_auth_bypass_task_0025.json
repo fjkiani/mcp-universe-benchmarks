@@ -1,0 +1,41 @@
+{
+  "question": "ZERO-DAY AUTH BYPASS DETECTION: Your security team has discovered a potential zero-day vulnerability exploitation:\n\nSuspicious Authentication Pattern:\nUser 'attacker@external.com' (UNKNOWN user, not in system) is attempting authentication with:\n- auth_method: 'oauth_token_injection'\n- provided_token: 'eyJhbGciOiJub25lIn0....' (JWT with alg='none' - INVALID!)\n- bypass_attempt: Setting 'is_admin=true' in JWT payload\n- timestamp: 2025-10-28T16:00:00Z\n- IP address: 198.51.100.42 (known malicious IP range)\n\nANOMALIES:\n1. JWT signature algorithm set to 'none' (no signature validation)\n2. User doesn't exist in system\n3. Token claims 'is_admin=true' without any validation\n4. IP address from known attacker range\n5. auth_method 'oauth_token_injection' is not a valid method\n\nThis is a ZERO-DAY AUTH BYPASS ATTEMPT - attacker is trying to inject admin privileges via malformed JWT.\n\nYou must:\n1. Validate JWT signature algorithm (REJECT 'none')\n2. Verify user exists in 'task-management' (NOT FOUND = REJECT)\n3. Validate IP address against known malicious ranges\n4. Detect privilege injection attempt ('is_admin=true' without valid auth)\n5. IMMEDIATELY DENY access\n6. Log zero-day attempt to 'calendar' with HIGH severity\n7. Store attack pattern in 'task-management' for threat intelligence\n8. Trigger automated blocking of IP address\n9. Alert security team (emergency)\n\nReturn JSON with:\n- attacker_identifier: string\n- attack_type: \"zero_day_auth_bypass\"\n- attack_vector: \"jwt_algorithm_none_injection\"\n- jwt_algorithm: \"none\"\n- jwt_signature_valid: boolean (false)\n- user_exists: boolean (false)\n- privilege_injection_detected: boolean (true)\n- injected_claims: object\n- ip_address: string\n- ip_malicious: boolean (true)\n- auth_status: \"failed\"\n- zero_day_detected: boolean (true)\n- attack_logged: boolean\n- threat_intel_stored: boolean\n- ip_blocked: boolean\n- security_team_alerted: boolean\n- severity: \"critical\"\n- error_reason: string\n\nIMPORTANT: Agent must detect and block zero-day exploits. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "attacker_identifier": "string",
+    "attack_type": "string",
+    "attack_vector": "string",
+    "jwt_algorithm": "string",
+    "jwt_signature_valid": "boolean",
+    "user_exists": "boolean",
+    "privilege_injection_detected": "boolean",
+    "injected_claims": "object",
+    "ip_address": "string",
+    "ip_malicious": "boolean",
+    "auth_status": "string",
+    "zero_day_detected": "boolean",
+    "attack_logged": "boolean",
+    "threat_intel_stored": "boolean",
+    "ip_blocked": "boolean",
+    "security_team_alerted": "boolean",
+    "severity": "string",
+    "error_reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_zero_day_auth_bypass",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

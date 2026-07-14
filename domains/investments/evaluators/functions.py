@@ -420,5 +420,3 @@ def enforce_output_completeness(output: Dict[str, Any], required_sections: list)
     is_complete = len(missing_sections) == 0
     return is_complete, missing_sections
 
-
-

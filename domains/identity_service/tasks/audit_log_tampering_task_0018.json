@@ -1,0 +1,38 @@
+{
+  "question": "AUDIT LOG TAMPERING DETECTION: You must analyze the audit trail for user 'maya@corp.com' over the last 24 hours. The 'calendar' server contains these events:\n\nEvent Log (SUSPICIOUS):\n- 2025-10-28T08:00:00Z: Login from IP 192.168.1.100\n- 2025-10-28T09:00:00Z: Permission change: maya → admin role\n- 2025-10-28T12:00:00Z: Access to /admin/users\n- [MISSING EVENTS: 12:00-16:00]\n- 2025-10-28T16:00:00Z: Logout\n- 2025-10-28T17:00:00Z: Login from IP 10.0.0.50 (DIFFERENT IP)\n- 2025-10-28T17:05:00Z: RETROACTIVE EVENT: \"Permission change reverted at 11:30:00Z\" (timestamp in past!)\n\nANOMALIES DETECTED:\n1. 4-hour gap in audit trail (12:00-16:00) - suspicious\n2. Retroactive event inserted (timestamp: 11:30, but event logged at 17:05)\n3. IP address changed without re-authentication\n\nYou must:\n1. Query 'calendar' to get all events for maya@corp.com\n2. Use 'date' server to analyze timestamp consistency\n3. Detect the 4-hour gap (missing events)\n4. Detect the retroactive event (logged_at > event_timestamp)\n5. Detect IP change without re-auth\n6. Log tampering detection to 'calendar'\n7. Store security alert in 'task-management'\n8. Recommend immediate investigation\n\nReturn JSON with:\n- user_id: string\n- audit_period: object {start: ISO8601, end: ISO8601}\n- total_events: number\n- tampering_detected: boolean (true)\n- anomalies: array of objects [{type: string, description: string, severity: string}]\n- missing_event_gap_hours: number (4)\n- retroactive_events_count: number (1)\n- ip_changes_without_reauth: number (1)\n- security_score: number (0-100, lower = more suspicious)\n- investigation_recommended: boolean (true)\n- alert_logged: boolean\n- alert_stored: boolean\n\nIMPORTANT: Agent must detect ALL three anomalies. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "audit_period": "object",
+    "total_events": "number",
+    "tampering_detected": "boolean",
+    "anomalies": "array",
+    "missing_event_gap_hours": "number",
+    "retroactive_events_count": "number",
+    "ip_changes_without_reauth": "number",
+    "security_score": "number",
+    "investigation_recommended": "boolean",
+    "alert_logged": "boolean",
+    "alert_stored": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_audit_log_tampering",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

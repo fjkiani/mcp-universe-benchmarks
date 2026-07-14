@@ -1,0 +1,38 @@
+{
+  "question": "User 'jack@corp.com' with role 'contractor' requests access to 'prod_database'. Contractors have time-restricted access: Monday-Friday, 9AM-5PM PST only. You must:\n1. Use 'date' server to get current time and day of week\n2. Check if current time falls within allowed window\n3. Log the access attempt to 'calendar'\n4. Store the time-based decision in 'task-management'\n\nGiven: Current time is 2025-10-28T22:30:00Z (Tuesday 10:30 PM UTC = 3:30 PM PST - ALLOWED)\n\nReturn JSON with:\n- user_id: string\n- user_role: string\n- resource: string\n- current_time: ISO8601 timestamp\n- current_day: string (e.g., \"Tuesday\")\n- current_hour_pst: number (e.g., 15 for 3 PM)\n- allowed_days: array of strings\n- allowed_hours: string (e.g., \"9-17\")\n- time_window_valid: boolean (true)\n- access_granted: boolean (true if contractor AND time valid)\n- decision_logged: boolean\n- decision_stored: boolean\n- reason: string\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "user_role": "string",
+    "resource": "string",
+    "current_time": "ISO8601 timestamp",
+    "current_day": "string",
+    "current_hour_pst": "number",
+    "allowed_days": "array of strings",
+    "allowed_hours": "string",
+    "time_window_valid": "boolean",
+    "access_granted": "boolean",
+    "decision_logged": "boolean",
+    "decision_stored": "boolean",
+    "reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_time_based_access",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

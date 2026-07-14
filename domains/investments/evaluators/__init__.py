@@ -18,5 +18,3 @@ __all__ = [
     "enforce_output_completeness"
 ]
 
-
-

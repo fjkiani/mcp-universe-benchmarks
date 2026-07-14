@@ -1,0 +1,25 @@
+{
+  "question": "Generate an audit log for a failed login attempt by user 'hacker@evil.com' at timestamp '2025-10-28T14:30:00Z' from IP '192.168.1.100'. The attempt failed due to 'Invalid credentials'. Risk level is 'high' due to suspicious IP. Return ONLY this JSON object with NO markdown, NO explanations:\n\n{\n  \"event_id\": \"evt_001\",\n  \"event_type\": \"failed_login\",\n  \"user_id\": \"hacker@evil.com\",\n  \"timestamp\": \"2025-10-28T14:30:00Z\",\n  \"ip_address\": \"192.168.1.100\",\n  \"details\": {\n    \"reason\": \"Invalid credentials\",\n    \"risk_level\": \"high\"\n  },\n  \"compliance_flags\": [\"suspicious_ip\", \"multiple_failures\"]\n}",
+  "output_format": {
+    "event_id": "string",
+    "event_type": "string",
+    "user_id": "string",
+    "timestamp": "ISO8601 timestamp string",
+    "ip_address": "string",
+    "details": "object with reason and risk_level",
+    "compliance_flags": "array of strings"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_audit_response",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {"name": "calendar"},
+    {"name": "date"}
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

@@ -1,0 +1,35 @@
+{
+  "question": "User 'frank@corp.com' completed password auth at 2025-10-28T15:00:00Z. MFA code was sent. You must:\n1. Use 'date' server to get current time\n2. Calculate MFA timeout (5 minutes from password auth)\n3. If current time > timeout, auth fails with 'MFA expired'\n4. If within timeout, store MFA attempt in 'task-management'\n5. Log the event to 'calendar'\n6. Generate session token only if MFA completes within timeout\n\nGiven: Current time is 2025-10-28T15:06:00Z (6 minutes later - EXPIRED!)\n\nReturn JSON with:\n- user_id: string\n- auth_status: \"failed\" or \"success\"\n- mfa_required: boolean\n- mfa_timeout_at: ISO8601 timestamp\n- mfa_expired: boolean (true if past timeout)\n- session_token: string or null\n- session_expiry: ISO8601 or null\n- stored_in_task_manager: boolean\n- logged_to_calendar: boolean\n- error_reason: string if failed\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "auth_status": "string",
+    "mfa_required": "boolean",
+    "mfa_timeout_at": "ISO8601 timestamp",
+    "mfa_expired": "boolean",
+    "session_token": "string or null",
+    "session_expiry": "ISO8601 or null",
+    "stored_in_task_manager": "boolean",
+    "logged_to_calendar": "boolean",
+    "error_reason": "string or null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_mfa_timeout",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

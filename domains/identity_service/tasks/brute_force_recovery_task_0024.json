@@ -1,0 +1,39 @@
+{
+  "question": "BRUTE FORCE LOCKOUT RECOVERY WORKFLOW: User 'chris@corp.com' has been locked out after 3 failed login attempts:\n\nLockout History:\n- Attempt 1: 2025-10-28T14:00:00Z, Password: 'wrong1', IP: 203.0.113.45\n- Attempt 2: 2025-10-28T14:00:15Z, Password: 'wrong2', IP: 203.0.113.45\n- Attempt 3: 2025-10-28T14:00:30Z, Password: 'wrong3', IP: 203.0.113.45\n- Account locked: 2025-10-28T14:00:31Z\n\nRecovery Request:\n- Current time: 2025-10-28T14:30:00Z\n- User is calling support: \"I forgot my password, please unlock my account\"\n- Support agent: 'support@corp.com'\n- Verification method: Email + SMS 2FA\n\nYou must implement a SECURE recovery workflow:\n1. Query 'task-management' for lockout history\n2. Verify lockout reason (brute force vs legitimate forgotten password)\n3. Check if 30-minute cooldown has passed (yes: 14:30 - 14:00 = 30 min)\n4. Require multi-factor verification:\n   - Email verification code to chris@corp.com\n   - SMS verification code to registered phone\n5. Generate temporary unlock token (valid 15 minutes)\n6. Require immediate password reset upon unlock\n7. Log recovery workflow to 'calendar'\n8. Monitor for abuse (max 3 recovery requests/day)\n\nReturn JSON with:\n- user_id: string\n- lockout_reason: \"brute_force_detected\"\n- lockout_time: ISO8601\n- recovery_request_time: ISO8601\n- cooldown_period_minutes: number (30)\n- cooldown_satisfied: boolean (true)\n- verification_methods_required: array [\"email\", \"sms\"]\n- temporary_unlock_token: string\n- unlock_token_expiry: ISO8601 (15 min)\n- password_reset_required: boolean (true)\n- recovery_logged: boolean\n- abuse_check_passed: boolean\n- recovery_approved: boolean\n\nIMPORTANT: Agent must balance security with user recovery needs. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "lockout_reason": "string",
+    "lockout_time": "ISO8601",
+    "recovery_request_time": "ISO8601",
+    "cooldown_period_minutes": "number",
+    "cooldown_satisfied": "boolean",
+    "verification_methods_required": "array",
+    "temporary_unlock_token": "string",
+    "unlock_token_expiry": "ISO8601",
+    "password_reset_required": "boolean",
+    "recovery_logged": "boolean",
+    "abuse_check_passed": "boolean",
+    "recovery_approved": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_brute_force_recovery",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

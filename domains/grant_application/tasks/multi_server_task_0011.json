@@ -27,7 +27,7 @@
     "evaluators": [
         {
             "func": "raw",
-            "op": "grant_application.validate_multi_server_orchestration",
+            "op": "grant_application.validate_multi_server_workflow",
             "op_args": {
                 "question": "Grant Discovery Pipeline with search, sheets, and email",
                 "required_steps": ["search", "sheet_creation", "email_send"],

@@ -1,0 +1,33 @@
+{
+  "question": "CIRCULAR ROLE INHERITANCE DETECTION: User 'sam@corp.com' has role 'TeamLead' which inherits from these roles:\n\nRole Hierarchy (CIRCULAR DEPENDENCY):\n- TeamLead inherits from → Manager\n- Manager inherits from → Director\n- Director inherits from → TeamLead (CIRCULAR!)\n\nThis creates an infinite loop: TeamLead → Manager → Director → TeamLead → ...\n\nThe user is trying to access endpoint '/api/admin/settings' which requires permission 'admin_access'.\n\nYou must:\n1. Store all role definitions in 'task-management'\n2. Attempt to resolve role inheritance chain\n3. DETECT the circular dependency (Director → TeamLead creates loop)\n4. PREVENT infinite loop (max depth: 10 levels)\n5. Log circular dependency error to 'calendar'\n6. DENY access due to unresolvable role hierarchy\n7. Return error explaining the circular dependency\n\nReturn JSON with:\n- user_id: string\n- requested_permission: \"admin_access\"\n- user_role: \"TeamLead\"\n- circular_dependency_detected: boolean (true)\n- circular_path: array of strings (show the loop: [\"TeamLead\", \"Manager\", \"Director\", \"TeamLead\"])\n- max_depth_reached: boolean (true)\n- access_granted: boolean (false)\n- error_logged: boolean\n- error_reason: string (explain circular dependency)\n- security_recommendation: string\n\nIMPORTANT: Agent MUST detect the cycle and prevent infinite recursion. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "requested_permission": "string",
+    "user_role": "string",
+    "circular_dependency_detected": "boolean",
+    "circular_path": "array",
+    "max_depth_reached": "boolean",
+    "access_granted": "boolean",
+    "error_logged": "boolean",
+    "error_reason": "string",
+    "security_recommendation": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_circular_role_inheritance",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

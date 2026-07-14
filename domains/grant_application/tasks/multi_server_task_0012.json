@@ -28,7 +28,7 @@
     "evaluators": [
         {
             "func": "raw",
-            "op": "grant_application.validate_multi_server_orchestration",
+            "op": "grant_application.validate_multi_server_workflow",
             "op_args": {
                 "question": "Multi-agency comparison with search, sheets sorting, and email",
                 "required_steps": ["search", "sheet_creation", "sorting", "email_send"],

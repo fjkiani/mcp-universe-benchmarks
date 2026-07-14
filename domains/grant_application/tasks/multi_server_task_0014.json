@@ -28,7 +28,7 @@
     "evaluators": [
         {
             "func": "raw",
-            "op": "grant_application.validate_multi_server_orchestration",
+            "op": "grant_application.validate_weekly_alert_system",
             "op_args": {
                 "question": "Weekly grant alert system with recent grants filter",
                 "required_steps": ["search_recent", "sheet_update", "digest_creation", "email_send"],

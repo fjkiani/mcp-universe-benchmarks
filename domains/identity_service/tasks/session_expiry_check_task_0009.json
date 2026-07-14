@@ -1,0 +1,32 @@
+{
+  "question": "User 'henry@corp.com' has active session 'sess_henry_001' created at 2025-10-28T14:00:00Z with 1-hour expiry. Current time is 2025-10-28T15:30:00Z. You must:\n1. Use 'date' server to compare current time vs expiry\n2. Search 'calendar' for session creation event\n3. Calculate if session is still valid (expires at 15:00:00Z)\n4. If expired, calculate how long ago it expired\n5. Log the expiry check to calendar\n\nReturn JSON with:\n- user_id: string\n- session_token: string\n- session_created_at: ISO8601 timestamp\n- session_expiry: ISO8601 timestamp\n- current_time: ISO8601 timestamp\n- is_valid: boolean (false - expired 30 minutes ago!)\n- expired_minutes_ago: number or null\n- calendar_event_found: boolean\n- expiry_check_logged: boolean\n- error_reason: string if invalid\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "session_token": "string",
+    "session_created_at": "ISO8601 timestamp",
+    "session_expiry": "ISO8601 timestamp",
+    "current_time": "ISO8601 timestamp",
+    "is_valid": "boolean",
+    "expired_minutes_ago": "number or null",
+    "calendar_event_found": "boolean",
+    "expiry_check_logged": "boolean",
+    "error_reason": "string or null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_session_expiry",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

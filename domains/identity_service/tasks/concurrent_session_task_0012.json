@@ -1,0 +1,36 @@
+{
+  "question": "User 'karen@corp.com' is logging in. Policy: Only ONE active session allowed per user. You must:\n1. Search 'task-management' for existing active sessions for this user\n2. If active session found (not expired), NEW login should FAIL with 'concurrent session' error\n3. Use 'date' server to check if existing session is expired\n4. Log the concurrent session detection to 'calendar'\n\nGiven: Existing session 'sess_karen_old' created at 2025-10-28T14:00:00Z, expires at 15:00:00Z\nCurrent time: 2025-10-28T14:30:00Z (session still valid!)\n\nReturn JSON with:\n- user_id: string\n- auth_status: \"failed\" (concurrent session detected)\n- existing_session_found: boolean (true)\n- existing_session_token: string\n- existing_session_expiry: ISO8601 timestamp\n- existing_session_valid: boolean (true - not expired yet)\n- new_session_token: null (cannot create)\n- concurrent_session_detected: boolean (true)\n- searched_task_manager: boolean\n- detection_logged: boolean\n- error_reason: string\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "auth_status": "string",
+    "existing_session_found": "boolean",
+    "existing_session_token": "string or null",
+    "existing_session_expiry": "ISO8601 timestamp or null",
+    "existing_session_valid": "boolean",
+    "new_session_token": "string or null",
+    "concurrent_session_detected": "boolean",
+    "searched_task_manager": "boolean",
+    "detection_logged": "boolean",
+    "error_reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_concurrent_session",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

@@ -1,0 +1,30 @@
+{
+  "task_id": "document_gen_task_0054",
+  "description": "Generate budget, timeline, and narrative with complex inter-document dependencies. Personnel hiring decisions in budget must align with recruitment timeline and narrative explanations.",
+  "prompt": "You are a grant proposal coordinator. Generate three documents that demonstrate complex project planning with inter-document dependencies.\n\n**Scenario:**\nA 3-year NSF project with staggered personnel hiring:\n- Year 1: PI only (existing, no hiring needed)\n- Year 2: Hire 2 graduate students (recruitment starts Month 10)\n- Year 3: Hire 1 postdoc (recruitment starts Month 22)\n\n**Generate:**\n\n1. **Budget (3 years):**\n   - Year 1: PI 1 month ($12,000), Equipment ($30,000), Travel ($5,000)\n   - Year 2: PI 1 month ($12,000), 2 Grad students starting Month 13 (pro-rated: 12/12 months × $35,000 each), Travel ($5,000)\n   - Year 3: PI 1 month ($12,000), 2 Grad students full year ($35,000 each), 1 Postdoc starting Month 25 (pro-rated: 8/12 months × $65,000), Travel ($8,000)\n\n2. **Timeline with specific milestones:**\n   - Month 1: Project kickoff\n   - Month 10: Begin grad student recruitment (job posting)\n   - Month 11: Grad student interviews\n   - Month 12: Grad student offers made\n   - Month 13: 2 Grad students start work\n   - Month 22: Begin postdoc recruitment\n   - Month 23: Postdoc interviews  \n   - Month 24: Postdoc offer made\n   - Month 25: Postdoc starts work\n   - Month 36: Project completion\n\n3. **Personnel Narrative** explaining:\n   - Why grad students don't start until Month 13 (need 3-month recruitment cycle)\n   - Why postdoc doesn't start until Month 25 (same reason)\n   - How the 3-month gap for hiring is built into the timeline\n   - Why budget shows pro-rated amounts for Year 2 grad students and Year 3 postdoc\n\n**Critical Cross-Document Requirements:**\n- Budget Year 2 grad student amount must be $70,000 total (2 × $35,000 full year, starting Month 13 = 12 full months)\n- Budget Year 3 postdoc must be pro-rated: 8/12 × $65,000 = $43,333.33\n- Timeline must show 3-month recruitment window BEFORE each start date\n- Narrative must explicitly reference the timeline months and budget pro-ration\n\nOutput all three in a single JSON object.",
+  "output_format": {
+    "type": "object",
+    "properties": {
+      "budget": {
+        "type": "object",
+        "properties": {
+          "year_1": "object",
+          "year_2": "object",
+          "year_3": "object"
+        }
+      },
+      "timeline": {
+        "type": "object",
+        "properties": {
+          "milestones": "array"
+        }
+      },
+      "personnel_narrative": "string"
+    }
+  },
+  "required_mcp_servers": [],
+  "evaluator": "validate_personnel_timeline_dependency",
+  "expected_complexity": "high",
+  "category": "document_generation"
+}
+

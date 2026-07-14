@@ -1,0 +1,58 @@
+kind: llm
+spec:
+  name: llm-1
+  type: litellm
+  config:
+    model_name: gemini-2.5-pro
+
+---
+kind: agent
+spec:
+  name: ReAct-agent
+  type: react
+  config:
+    llm: llm-1
+    instruction: |
+      You are an agent for Google Workspace automation tasks, including Google Sheets and Google Docs.
+
+      Your workflow for Google Workspace tasks:
+      1. Create new sheets within existing spreadsheets when needed
+      2. Use yfinance to fetch real-time financial data
+      3. Populate sheets with structured data
+      4. Create and manage Google Documents
+      5. Return structured JSON responses with document/spreadsheet details
+
+      Key capabilities:
+      - Create and manage sheets within existing Google Sheets documents
+      - Fetch financial data from yfinance
+      - Organize data in structured formats
+      - Create, read, and update Google Documents
+      - Return detailed task completion information
+
+      For FAANG companies task:
+      - Use spreadsheet ID: 1HbEiG7d0tgZUS7phsD-A9hEJoEwTih0CsUhFXbnjhac
+      - Create new sheet named 'FAANG_Companies'
+      - Populate with company data and current share prices
+
+      Always provide clear, structured responses with:
+      - Spreadsheet/Document ID
+      - Sheet name (if applicable)
+      - Data verification
+      - Any issues encountered
+    max_iterations: 50
+    summarize_tool_response: false
+    servers:
+      - name: yahoo-finance
+      # - name: google-sheets
+      # - name: google-docs
+      - name: google-slides
+
+---
+kind: benchmark
+spec:
+  description: Test agent for Google Workspace automation tasks including Sheets and Docs.
+  agent: ReAct-agent
+  tasks:
+    # - test/google_workspace/google_workspace_sheets_task_001.json
+    # - test/google_workspace/google_workspace_docs_task_001.json
+    - tasks/google_workspace_slides_task_001.json

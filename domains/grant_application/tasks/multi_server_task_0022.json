@@ -19,7 +19,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_budget_calendar_workflow",
         "op_args": {
             "budget_cap": null,
             "inflation_rate": 0.03,

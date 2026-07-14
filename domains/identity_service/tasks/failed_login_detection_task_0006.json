@@ -1,0 +1,29 @@
+{
+  "question": "User 'eve@corp.com' failed to log in with invalid password at 2025-10-28T14:30:00Z. You must:\n1. Use 'date' server to get current timestamp\n2. Log this failed attempt to 'calendar' server\n3. Check calendar for previous failed attempts in last 5 minutes\n4. If 3+ failures detected in 5 min window, set lockout=true\n\nReturn JSON with:\n- user_id: string\n- attempt_timestamp: ISO8601 string\n- auth_status: \"failed\"\n- failed_attempts_count: number (total failures in 5 min window)\n- lockout_triggered: boolean (true if 3+ failures)\n- lockout_until: ISO8601 timestamp or null (if locked, add 15 min)\n- error_reason: string\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "attempt_timestamp": "ISO8601 timestamp string",
+    "auth_status": "string (failed)",
+    "failed_attempts_count": "number",
+    "lockout_triggered": "boolean",
+    "lockout_until": "ISO8601 timestamp or null",
+    "error_reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_failed_login_detection",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

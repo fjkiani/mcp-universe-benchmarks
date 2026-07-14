@@ -1,0 +1,29 @@
+{
+  "question": "User 'grace@corp.com' has role 'engineer'. Role hierarchy is: admin > manager > engineer > viewer. Resource 'code_review' requires 'engineer' or higher. You must:\n1. Use 'task-management' to check role hierarchy (simulate lookup)\n2. Validate if user's role meets requirement (engineer >= engineer)\n3. Store the permission check result\n4. Return detailed permission breakdown\n\nRole hierarchy (for your logic):\n- admin: level 4 (highest)\n- manager: level 3\n- engineer: level 2\n- viewer: level 1 (lowest)\n\nReturn JSON with:\n- user_id: string\n- user_role: string\n- user_role_level: number\n- resource: string\n- required_role: string\n- required_role_level: number\n- access_granted: boolean (true if user_level >= required_level)\n- inheritance_chain: array of roles user inherits from\n- stored_in_task_manager: boolean\n- reason: string\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "user_role": "string",
+    "user_role_level": "number",
+    "resource": "string",
+    "required_role": "string",
+    "required_role_level": "number",
+    "access_granted": "boolean",
+    "inheritance_chain": "array of strings",
+    "stored_in_task_manager": "boolean",
+    "reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_role_inheritance",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

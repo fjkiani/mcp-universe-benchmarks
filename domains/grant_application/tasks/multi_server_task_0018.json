@@ -17,7 +17,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_pdf_generation_workflow",
         "op_args": {
             "required_sections": ["Personnel", "Equipment", "Travel", "Materials & Supplies", "Consultants", "Other Direct Costs", "Indirect Costs"],
             "expected_pages": null,

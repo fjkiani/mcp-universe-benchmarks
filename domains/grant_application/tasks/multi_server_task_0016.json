@@ -16,7 +16,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_pdf_generation_workflow",
         "op_args": {
             "required_sections": ["Eligibility", "Budget Guidelines", "Page Limits", "Review Criteria", "Key Deadlines"],
             "expected_pages": 2,

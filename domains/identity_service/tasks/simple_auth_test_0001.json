@@ -1,0 +1,25 @@
+{
+  "question": "A user 'alice@corp.com' attempts to log in. The authentication succeeds and MFA is required. Generate a session token 'sess_abc123' that expires in 1 hour. Return ONLY this JSON object with NO markdown, NO explanations:\n\n{\n  \"user_id\": \"alice@corp.com\",\n  \"auth_status\": \"success\",\n  \"mfa_required\": true,\n  \"session_token\": \"sess_abc123\",\n  \"session_expiry\": \"2025-10-28T18:30:00Z\",\n  \"error_reason\": null\n}",
+  "output_format": {
+    "user_id": "string",
+    "auth_status": "string (success or failed)",
+    "mfa_required": "boolean",
+    "session_token": "string or null",
+    "session_expiry": "ISO8601 timestamp string",
+    "error_reason": "string or null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_auth_response",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {"name": "task-management"},
+    {"name": "calendar"},
+    {"name": "date"}
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

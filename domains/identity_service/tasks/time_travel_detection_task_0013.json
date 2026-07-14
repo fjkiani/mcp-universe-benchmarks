@@ -1,0 +1,37 @@
+{
+  "question": "IMPOSSIBLE SCENARIO DETECTION: User 'leo@corp.com' presents a session token with these properties:\n- session_created_at: 2025-10-28T18:00:00Z\n- Current time (from 'date' server): 2025-10-28T16:00:00Z\n\nThe session was created 2 hours IN THE FUTURE! This is impossible (time travel). You must:\n1. Use 'date' server to get current time\n2. Compare session creation time vs current time\n3. Detect time travel anomaly (created_at > current_time)\n4. Log this security anomaly to 'calendar'\n5. Store the anomaly in 'task-management' for audit\n\nReturn JSON with:\n- user_id: string\n- session_token: string\n- session_created_at: ISO8601 timestamp\n- current_time: ISO8601 timestamp\n- time_difference_hours: number (negative if future)\n- time_travel_detected: boolean (true)\n- anomaly_type: \"impossible_future_timestamp\"\n- auth_status: \"failed\"\n- anomaly_logged: boolean\n- anomaly_stored: boolean\n- security_alert: string\n- error_reason: string\n\nIMPORTANT: Agent MUST detect the impossibility. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "session_token": "string",
+    "session_created_at": "ISO8601 timestamp",
+    "current_time": "ISO8601 timestamp",
+    "time_difference_hours": "number",
+    "time_travel_detected": "boolean",
+    "anomaly_type": "string",
+    "auth_status": "string",
+    "anomaly_logged": "boolean",
+    "anomaly_stored": "boolean",
+    "security_alert": "string",
+    "error_reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_time_travel_detection",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

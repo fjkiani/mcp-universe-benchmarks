@@ -1,0 +1,34 @@
+{
+  "category": "document_management",
+  "question": "Work with the existing Google Document with ID '1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4'. First, read the current content of this document, then update it by adding a comprehensive analysis of the FAANG companies. The document should include: 1) An introduction section, 2) Company overview for each FAANG company (Apple, Amazon, Netflix, Google/Alphabet, Meta/Facebook), 3) Financial metrics section, and 4) Investment recommendations. Use professional formatting and ensure the content is well-structured. Append this new content to the existing document. And use left alignment for the text. IMPORTANT: Set the document title to 'Investment Analysis'.",
+  "output_format": {
+      "document_id": "1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4",
+      "title": "[DOCUMENT_TITLE]",
+      "content_sections": [
+          "Introduction",
+          "Company Overview",
+          "Financial Metrics",
+          "Investment Recommendations"
+      ],
+      "word_count": "[ESTIMATED_WORD_COUNT]",
+      "operation": "document_update"
+  },
+  "evaluators": [
+      {
+          "func": "json",
+          "op": "google_docs.check_document_content",
+          "op_args": {
+              "expected_text": "FAANG",
+              "min_length": 500
+          }
+      },
+      {
+          "func": "json",
+          "op": "google_docs.check_document_title",
+          "op_args": {
+              "expected_title": "Investment Analysis",
+              "case_sensitive": false
+          }
+      }
+  ]
+}

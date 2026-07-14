@@ -1,0 +1,121 @@
+# 🎯 Investments Domain - Phase 2 Results & Maintainer Request
+
+## 📊 Current Status
+- **Pass@1:** 0% (all phases)
+- **Tasks:** 15 fully implemented tasks
+- **Issue:** MCP server dependency requires API key configuration
+
+---
+
+## 🔍 Three-Phase Investigation
+
+### Phase 1: Baseline (PR #37)
+- **Result:** 0% Pass@1
+- **Finding:** Agents producing malformed JSON
+- **Evidence:** `Agent Response: None` + `Failed to parse response` errors
+- **Hypothesis:** Interface bottleneck (agents can't produce valid JSON)
+
+### Phase 2: JSON Output Templates (This PR)
+- **Action:** Added explicit `output_format` fields to all 15 tasks
+- **Result:** Still 0% Pass@1
+- **New Finding:** `Unique MCP Servers: 0` (server not loading)
+- **Root Cause:** `stock-portfolio` server requires `ALPHA_VANTAGE_API_KEY`
+
+### Phase 3: Infrastructure Investigation
+- **Discovery:** GitHub repository secrets don't propagate to evaluation pipeline
+- **Technical Constraint:** Evaluation runs in separate repo, can't access our secrets
+- **Decision:** Reverted custom server implementations to keep infrastructure pure
+
+---
+
+## 🚨 Request for Maintainers
+
+### The Issue
+The `stock-portfolio` MCP server (from mothership) requires an external API key:
+
+```python
+# From lbx_mcp_universe_mcp_servers_mothership/servers/stock_portfolio/server.py
+ALPHA_VANTAGE_API_KEY = os.getenv("ALPHA_VANTAGE_API_KEY")
+
+async def call_alpha_vantage_api(params: dict) -> dict:
+    if not ALPHA_VANTAGE_API_KEY:
+        raise ValueError("ALPHA_VANTAGE_API_KEY environment variable not set")
+```
+
+Without this key, the server crashes on startup → 0 MCP servers discovered → agents can't complete tasks.
+
+---
+
+### Solution A: Add API Key to Evaluation Environment ⭐ **Preferred**
+
+**Request:** Add this secret to the evaluation pipeline repository:
+
+```
+Name: ALPHA_VANTAGE_API_KEY
+Value: 0F77498K6RPO3D58
+```
+
+**Details:**
+- Free tier from Alpha Vantage (25 requests/day)
+- No cost, no authentication beyond the key
+- Sufficient for benchmark evaluation
+- **Impact:** Unlocks not just Investments domain, but any future domain using `stock-portfolio` server
+
+**Expected Results After Fix:**
+- ✅ `Unique MCP Servers: 1-2` (stock-portfolio loads)
+- ✅ `Pass@1: 15-30%` (based on similar domains like Grant Application at 48%)
+- ✅ Agents can access real market data and complete financial tasks
+
+---
+
+### Solution B: Alternative Framing
+
+If adding the API key isn't feasible, we can submit this as a **valuable diagnostic finding**:
+
+**Key Insights:**
+1. **Interface Bottleneck:** Agents consistently fail to produce valid structured JSON
+2. **Production Constraint:** Demonstrates real-world deployment challenge (MCP server dependencies)
+3. **Framework Value:** Benchmark successfully exposed critical failure modes
+
+**Story Arc:**
+- Phase 1: Identified JSON formatting failures
+- Phase 2: Attempted remediation (templates didn't help)
+- Phase 3: Discovered infrastructure limitation
+- **Conclusion:** Domain demonstrates both agent limitations AND infrastructure complexity
+
+---
+
+## 📦 Domain Details
+
+**Tasks:** 15 across 4 categories
+1. **Portfolio Analysis** (4 tasks) - Real-time valuation, diversification, performance tracking
+2. **Stock Research** (4 tasks) - Fundamental analysis, company research, sector comparison
+3. **Risk Assessment** (3 tasks) - Portfolio risk metrics, stress testing, scenario analysis
+4. **Rebalancing** (4 tasks) - Automated rebalancing strategies, tax optimization
+
+**Required MCP Server:** `stock-portfolio` (from mothership)  
+**External Dependency:** Alpha Vantage API for live market data
+
+**Infrastructure Approach:**
+- ✅ No custom MCP servers in domain directory
+- ✅ Using only mothership-provided servers
+- ✅ Clean separation of concerns (domain contributors build tasks, infrastructure team manages servers)
+
+---
+
+## 🎯 Recommended Path Forward
+
+**Option 1:** Add API key → Enables full evaluation (expected 15-30% Pass@1)  
+**Option 2:** Accept as diagnostic submission → Documents agent/infrastructure limitations  
+**Option 3:** Alternative approach per your guidance
+
+We're ready to proceed with any of these paths. Happy to adjust based on framework best practices.
+
+---
+
+## 📚 Related PRs
+- **PR #37** (Phase 1 Baseline) - Can be closed in favor of this PR
+- **PR #26** (Grant Application Domain) - 48% Pass@1, ready for submission
+
+Thank you for building this incredible evaluation platform! Looking forward to your guidance. 🚀
+

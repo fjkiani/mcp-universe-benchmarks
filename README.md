@@ -22,16 +22,18 @@ uv run alignerr_mcp --help
 uv run alignerr_mcp list
 ```
 
-## 🏆 Reference Implementation Included
+## Domains (consolidated)
 
-This template ships a **reference domain** [**web_search**](domains/web_search) and additional examples such as [**google_workspace**](domains/google_workspace).
+| Domain | Notes |
+|--------|--------|
+| [web_search](domains/web_search) | Reference implementation |
+| [google_workspace](domains/google_workspace) / [google_slides](domains/google_slides) | Workspace + legacy slides subset |
+| [grant_application](domains/grant_application) | 55 tasks (incl. document_gen 0051–0055) |
+| [investments](domains/investments) | Portfolio/risk tasks + local `mcp_servers/` |
+| [identity_service](domains/identity_service) | 25 auth/security tasks (from Alignerr identity repos) |
+| currency_converter, flight_delay, gitlab_mlops, governance_traps | Existing monorepo domains |
 
-- High-quality task sets
-- **Domain-specific evaluators**
-- **Complete documentation**
-- **Best practices demonstrated**
-
-Use this as your guide when creating new domains!
+Provenance of the old split repos: [archive/SOURCE_MAP.md](archive/SOURCE_MAP.md).
 
 
 ## Contribution

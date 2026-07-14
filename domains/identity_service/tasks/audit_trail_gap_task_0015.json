@@ -1,0 +1,35 @@
+{
+  "question": "AUDIT TRAIL INTEGRITY CHECK: You must validate the audit trail for user 'noah@corp.com' between 14:00-16:00 on 2025-10-28. You must:\n1. Search 'calendar' for ALL events for this user in that time window\n2. Check for suspicious gaps (>30 min between events during active session)\n3. Detect missing mandatory events (login without logout, access without auth)\n4. Use 'date' server to calculate time gaps\n5. Generate compliance report\n\nGiven events (from calendar):\n- 14:00:00Z: login_success\n- 14:05:00Z: access_granted (resource: database)\n- 15:45:00Z: logout\n\n**PROBLEM**: 100-minute gap between 14:05 and 15:45 with NO activity during an active session. This is suspicious - user should have some activity or session should have timed out at 15:00 (1 hr expiry).\n\nReturn JSON with:\n- user_id: string\n- audit_window_start: ISO8601 timestamp\n- audit_window_end: ISO8601 timestamp\n- events_found: number\n- event_list: array of objects with {timestamp, event_type}\n- gaps_detected: boolean (true)\n- gap_details: array of objects with {start, end, duration_minutes}\n- suspicious_gap_found: boolean (true if >30 min)\n- missing_events: array of strings (e.g., [\"session_timeout_event\"])\n- integrity_status: \"failed\" or \"passed\"\n- compliance_violations: array of strings\n- calendar_searched: boolean\n- reason: string\n\nIMPORTANT: Agent MUST detect the 100-minute suspicious gap. Return ONLY JSON.",
+  "output_format": {
+    "user_id": "string",
+    "audit_window_start": "ISO8601 timestamp",
+    "audit_window_end": "ISO8601 timestamp",
+    "events_found": "number",
+    "event_list": "array of event objects",
+    "gaps_detected": "boolean",
+    "gap_details": "array of gap objects",
+    "suspicious_gap_found": "boolean",
+    "missing_events": "array of strings",
+    "integrity_status": "string",
+    "compliance_violations": "array of strings",
+    "calendar_searched": "boolean",
+    "reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_audit_trail_gap",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

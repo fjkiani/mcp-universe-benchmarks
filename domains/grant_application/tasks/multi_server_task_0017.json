@@ -17,7 +17,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_pdf_generation_workflow",
         "op_args": {
             "required_sections": ["NSF CAREER", "NIH R01", "DOE Early Career"],
             "expected_pages": null,

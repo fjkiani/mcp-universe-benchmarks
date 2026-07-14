@@ -1,0 +1,38 @@
+{
+  "task_id": "document_gen_task_0053",
+  "description": "Generate a complete 5-year budget with 3% annual escalation, 55% F&A rate calculation, and 20% cost-share requirement. All financial calculations must be exact to the dollar.",
+  "prompt": "You are a grant financial specialist. Generate a detailed 5-year NIH R01 budget with complex financial calculations.\n\n**Base Year 1 Budget:**\n- Personnel (MTDC): $200,000\n  - PI: 2 months summer salary ($24,000)\n  - 2 Postdocs: $60,000 each\n  - 1 Grad student: $35,000\n  - Benefits at 30%: calculate\n- Equipment (NOT in MTDC): $50,000\n- Travel (MTDC): $10,000  \n- Materials & Supplies (MTDC): $40,000\n- Consultant (MTDC): $15,000\n\n**Required Calculations (MUST BE EXACT):**\n\n1. **Calculate MTDC (Modified Total Direct Costs):**\n   - Sum: Personnel + Travel + Materials + Consultant + first $25K of equipment\n   - Equipment $50K: only first $25K counts toward MTDC\n\n2. **Calculate F&A (Facilities & Administrative) at 55% of MTDC:**\n   - F&A = MTDC × 0.55\n   - Must be calculated to the exact dollar (no rounding to nearest thousand)\n\n3. **Calculate Total Project Cost for Year 1:**\n   - Total = Direct Costs + F&A\n\n4. **Apply 3% Annual Escalation to Years 2-5:**\n   - Year 2 = Year 1 × 1.03\n   - Year 3 = Year 2 × 1.03\n   - Year 4 = Year 3 × 1.03\n   - Year 5 = Year 4 × 1.03\n   - Recalculate F&A each year based on escalated MTDC\n\n5. **Calculate 5-Year Total Project Cost**\n\n6. **Calculate 20% Cost-Share Requirement:**\n   - Cost-share = 5-Year Total × 0.20\n   - NIH portion = 5-Year Total × 0.80\n   - University portion = Cost-share amount\n\n**Output Requirements:**\n- Show all calculations step-by-step\n- Provide year-by-year breakdown\n- All amounts must be exact to the dollar ($XXX,XXX.XX format)\n- Include verification that all numbers add up correctly\n\nOutput as structured JSON with all calculations shown.",
+  "output_format": {
+    "type": "object",
+    "properties": {
+      "year_1": {
+        "type": "object",
+        "properties": {
+          "direct_costs": "object",
+          "mtdc": "number",
+          "f_and_a": "number",
+          "total": "number"
+        }
+      },
+      "year_2": "object",
+      "year_3": "object",
+      "year_4": "object",
+      "year_5": "object",
+      "five_year_summary": {
+        "type": "object",
+        "properties": {
+          "total_project_cost": "number",
+          "cost_share_required": "number",
+          "nih_portion": "number",
+          "university_portion": "number"
+        }
+      },
+      "calculations_verification": "string"
+    }
+  },
+  "required_mcp_servers": [],
+  "evaluator": "validate_complex_budget_math",
+  "expected_complexity": "high",
+  "category": "document_generation"
+}
+

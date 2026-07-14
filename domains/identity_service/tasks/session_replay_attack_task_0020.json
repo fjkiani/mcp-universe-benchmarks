@@ -1,0 +1,40 @@
+{
+  "question": "SESSION REPLAY ATTACK DETECTION: User 'eve@corp.com' presents a session token for authentication:\n\nSession Token Properties:\n- token: 'abc123def456ghi789'\n- original_creation_time: 2025-10-28T10:00:00Z\n- original_expiry_time: 2025-10-28T11:00:00Z (1 hour session)\n- first_use_time: 2025-10-28T10:05:00Z\n- logout_time: 2025-10-28T10:30:00Z (user logged out)\n\nCurrent Authentication Attempt:\n- current_time: 2025-10-28T10:45:00Z\n- presented_token: 'abc123def456ghi789' (SAME token)\n- request_ip: 10.0.0.99\n\nANOMALY: The user logged out at 10:30, but is trying to re-use the SAME token at 10:45. This is a SESSION REPLAY ATTACK.\n\nEven though the token hasn't technically expired yet (expiry: 11:00), it was INVALIDATED at logout (10:30).\n\nYou must:\n1. Query 'task-management' to check token history (logout event at 10:30)\n2. Use 'date' server to get current time (10:45)\n3. DETECT that token was used AFTER logout (replay attack)\n4. Check if token is in 'revoked_tokens' list\n5. REJECT authentication (auth_status: \"failed\")\n6. Log replay attack to 'calendar'\n7. Store security alert in 'task-management'\n8. Recommend password reset\n\nReturn JSON with:\n- user_id: string\n- session_token: string\n- original_expiry: ISO8601\n- logout_time: ISO8601\n- current_time: ISO8601\n- token_used_after_logout: boolean (true)\n- minutes_after_logout: number (15)\n- replay_attack_detected: boolean (true)\n- token_revoked: boolean (true)\n- auth_status: \"failed\"\n- attack_logged: boolean\n- alert_stored: boolean\n- recommended_action: \"force_password_reset\"\n- error_reason: string\n\nIMPORTANT: Agent must detect replay attack even though token hasn't expired. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "session_token": "string",
+    "original_expiry": "ISO8601",
+    "logout_time": "ISO8601",
+    "current_time": "ISO8601",
+    "token_used_after_logout": "boolean",
+    "minutes_after_logout": "number",
+    "replay_attack_detected": "boolean",
+    "token_revoked": "boolean",
+    "auth_status": "string",
+    "attack_logged": "boolean",
+    "alert_stored": "boolean",
+    "recommended_action": "string",
+    "error_reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_session_replay_attack",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

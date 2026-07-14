@@ -1,0 +1,39 @@
+{
+  "question": "DISTRIBUTED AUTH CONFLICT RESOLUTION: User 'jordan@corp.com' exists in MULTIPLE authentication sources with CONFLICTING role assignments:\n\nAuth Source 1 (LDAP):\n- user_id: 'jordan@corp.com'\n- roles: ['employee', 'developer']\n- last_sync: 2025-10-28T08:00:00Z\n- priority: 1 (lowest)\n\nAuth Source 2 (OAuth/Google):\n- user_id: 'jordan@corp.com'\n- roles: ['manager', 'developer']\n- last_sync: 2025-10-28T09:30:00Z\n- priority: 2 (medium)\n\nAuth Source 3 (Local DB - Emergency Override):\n- user_id: 'jordan@corp.com'\n- roles: ['temp_admin'] (emergency access granted during outage)\n- last_sync: 2025-10-28T10:00:00Z\n- priority: 3 (highest - override)\n\nCONFLICT: Which roles does jordan ACTUALLY have?\n- LDAP says: employee, developer\n- OAuth says: manager, developer\n- Local says: temp_admin\n\nYou must:\n1. Query all 3 auth sources from 'task-management'\n2. Use 'date' server to check which source has most recent sync\n3. Apply priority rules: Local DB (3) > OAuth (2) > LDAP (1)\n4. RESOLVE conflict: Choose Local DB roles (highest priority)\n5. Log conflict resolution to 'calendar'\n6. Set expiry for 'temp_admin' role (4 hours from grant time)\n7. Return merged/resolved role set\n\nReturn JSON with:\n- user_id: string\n- auth_sources_found: number (3)\n- conflicts_detected: boolean (true)\n- conflict_type: \"multiple_role_assignments\"\n- resolved_roles: array (from highest priority source)\n- resolution_method: \"priority_based\"\n- winning_source: \"local_db\"\n- losing_sources: array [\"ldap\", \"oauth\"]\n- priority_order: array [3, 2, 1]\n- most_recent_sync: ISO8601\n- temp_role_expiry: ISO8601\n- conflict_logged: boolean\n- access_granted: boolean\n\nIMPORTANT: Agent must resolve conflicts using priority rules. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "auth_sources_found": "number",
+    "conflicts_detected": "boolean",
+    "conflict_type": "string",
+    "resolved_roles": "array",
+    "resolution_method": "string",
+    "winning_source": "string",
+    "losing_sources": "array",
+    "priority_order": "array",
+    "most_recent_sync": "ISO8601",
+    "temp_role_expiry": "ISO8601",
+    "conflict_logged": "boolean",
+    "access_granted": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_distributed_auth_conflict",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

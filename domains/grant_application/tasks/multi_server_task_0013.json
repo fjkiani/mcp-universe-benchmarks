@@ -30,7 +30,7 @@
     "evaluators": [
         {
             "func": "raw",
-            "op": "grant_application.validate_multi_server_orchestration",
+            "op": "grant_application.validate_eligibility_filter_workflow",
             "op_args": {
                 "question": "Eligibility filter with conditional email alerts",
                 "required_steps": ["search", "filtering", "sheet_creation", "conditional_email"],

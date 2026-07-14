@@ -1,0 +1,39 @@
+{
+  "question": "CONCURRENT MFA RACE CONDITION: User 'alex@corp.com' initiates MFA login from TWO devices simultaneously:\n\nDevice A (iPhone):\n- MFA request timestamp: 2025-10-28T10:00:00Z\n- Device ID: 'iphone_123'\n- MFA code: '123456'\n\nDevice B (Laptop):\n- MFA request timestamp: 2025-10-28T10:00:02Z (2 seconds later)\n- Device ID: 'laptop_789'\n- MFA code: '789012'\n\nBoth devices are requesting MFA for the SAME user session. This is a race condition. You must:\n1. Use 'date' server to get current time\n2. Store BOTH MFA requests in 'task-management' with timestamps\n3. Detect that TWO concurrent MFA requests exist for same user\n4. Apply race condition resolution: FIRST request wins (earliest timestamp)\n5. Accept Device A (earlier), REJECT Device B (race condition detected)\n6. Log the race condition to 'calendar' as security event\n7. Create session ONLY for winning device\n\nReturn JSON with:\n- user_id: string\n- winning_device: string (device that won the race)\n- rejected_device: string (device rejected due to race)\n- mfa_timestamp_winner: ISO8601\n- mfa_timestamp_loser: ISO8601\n- time_difference_ms: number (milliseconds between requests)\n- race_condition_detected: boolean (true)\n- auth_status: \"success\" (for winning device)\n- session_token: string (non-null for winner)\n- session_expiry: ISO8601\n- race_logged: boolean\n- rejected_device_message: string\n- error_reason: null\n\nIMPORTANT: Agent must detect race, pick winner, reject loser. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "winning_device": "string",
+    "rejected_device": "string",
+    "mfa_timestamp_winner": "ISO8601",
+    "mfa_timestamp_loser": "ISO8601",
+    "time_difference_ms": "number",
+    "race_condition_detected": "boolean",
+    "auth_status": "string",
+    "session_token": "string",
+    "session_expiry": "ISO8601",
+    "race_logged": "boolean",
+    "rejected_device_message": "string",
+    "error_reason": "null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_concurrent_mfa_race",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

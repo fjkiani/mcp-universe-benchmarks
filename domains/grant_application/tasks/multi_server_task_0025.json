@@ -19,7 +19,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_budget_calendar_workflow",
         "op_args": {
             "personnel_positions": ["Postdoc", "Grad Student", "Undergrad"],
             "expected_personnel_count": 7,

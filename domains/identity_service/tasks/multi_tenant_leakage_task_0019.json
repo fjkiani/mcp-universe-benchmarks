@@ -1,0 +1,35 @@
+{
+  "question": "MULTI-TENANT PERMISSION LEAKAGE DETECTION: User 'alice@tenant-a.com' (Tenant A) is attempting to access resource '/data/customers/tenant-b/reports.xlsx' which belongs to Tenant B.\n\nTenant Configuration:\n- Tenant A: tenant_id='tenant-a', users=['alice@tenant-a.com', 'bob@tenant-a.com']\n- Tenant B: tenant_id='tenant-b', users=['charlie@tenant-b.com', 'diana@tenant-b.com']\n\nAlice has role 'admin' within Tenant A (full access to Tenant A resources).\n\nThe resource path '/data/customers/tenant-b/reports.xlsx' clearly belongs to Tenant B (tenant-b in path).\n\nYou must:\n1. Parse the resource path to extract tenant_id='tenant-b'\n2. Compare user's tenant (tenant-a) vs resource's tenant (tenant-b)\n3. DETECT cross-tenant access attempt (LEAKAGE)\n4. DENY access (even though alice is admin in her tenant)\n5. Log security violation to 'calendar'\n6. Store violation in 'task-management' for audit\n7. Alert Tenant B's security team\n\nReturn JSON with:\n- user_id: string\n- user_tenant: \"tenant-a\"\n- requested_resource: string\n- resource_tenant: \"tenant-b\"\n- cross_tenant_access_detected: boolean (true)\n- user_role_in_own_tenant: \"admin\"\n- access_granted: boolean (false)\n- denial_reason: \"cross_tenant_access_violation\"\n- security_violation_logged: boolean\n- violation_stored: boolean\n- tenant_b_alerted: boolean\n- leakage_severity: \"critical\"\n\nIMPORTANT: Agent must enforce strict tenant isolation. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "user_tenant": "string",
+    "requested_resource": "string",
+    "resource_tenant": "string",
+    "cross_tenant_access_detected": "boolean",
+    "user_role_in_own_tenant": "string",
+    "access_granted": "boolean",
+    "denial_reason": "string",
+    "security_violation_logged": "boolean",
+    "violation_stored": "boolean",
+    "tenant_b_alerted": "boolean",
+    "leakage_severity": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_multi_tenant_leakage",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

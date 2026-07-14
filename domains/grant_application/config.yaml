@@ -1,17 +1,9 @@
 kind: llm
 spec:
   name: llm-1
-  type: litellm
+  type: labelbox
   config:
     model_name: openai/gpt-4o
-
----
-kind: llm
-spec:
-  name: llm-grant-evaluator
-  type: litellm
-  config:
-    model_name: openai/gpt-4o-mini
 
 ---
 kind: agent
@@ -127,3 +119,4 @@ spec:
     - tasks/edge_case_task_0049.json
     - tasks/edge_case_task_0050.json
 
+# Updated Wed Oct 22 18:08:34 EDT 2025

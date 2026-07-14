@@ -1,0 +1,32 @@
+{
+  "question": "User 'charlie@corp.com' successfully authenticates with password. You must:\n1. Get current timestamp using 'date' server\n2. Calculate session expiry (1 hour from now) using 'date' server\n3. Store the session in 'task-management' server with fields: user_id, session_token='sess_charlie_001', timestamp, expiry\n4. Log the login event to 'calendar' server\n\nReturn JSON with:\n- user_id: string\n- auth_status: \"success\"\n- session_token: string\n- session_expiry: ISO8601 timestamp\n- stored_in_task_manager: boolean (true if stored successfully)\n- logged_to_calendar: boolean (true if logged successfully)\n- error_reason: null\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "auth_status": "string (success or failed)",
+    "session_token": "string",
+    "session_expiry": "ISO8601 timestamp string",
+    "stored_in_task_manager": "boolean",
+    "logged_to_calendar": "boolean",
+    "error_reason": "string or null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_auth_with_storage",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

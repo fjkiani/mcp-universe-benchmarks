@@ -1,0 +1,40 @@
+{
+  "question": "PERMISSION ESCALATION CHAIN DETECTION: User 'intern@corp.com' has gained 'admin' role through a CHAIN of escalations:\n\nEscalation Chain:\nDay 1: intern → employee (normal promotion)\nDay 2: employee → team_lead (manager assignment)\nDay 3: team_lead → manager (acting manager during vacation)\nDay 4: manager → director (emergency coverage)\nDay 5: director → admin (system granted during director role)\n\nFinal State: intern → admin (5-step escalation in 5 days!)\n\nThis is SUSPICIOUS: A user went from 'intern' to 'admin' in 5 days through a chain of rapid promotions.\n\nYou must:\n1. Query 'task-management' for full role history\n2. Query 'calendar' for role change events\n3. Use 'date' server to calculate escalation velocity\n4. Detect escalation chain (5 role changes in 5 days)\n5. Calculate escalation risk score (intern → admin = HIGH RISK)\n6. Apply least-privilege check: Does intern need admin?\n7. FLAG for security review (auto-revoke or manual review?)\n8. Log escalation detection to 'calendar'\n\nReturn JSON with:\n- user_id: string\n- initial_role: \"intern\"\n- current_role: \"admin\"\n- escalation_chain: array of objects [{role: string, granted_at: ISO8601, granted_by: string}]\n- total_escalations: number (5)\n- escalation_time_days: number (5)\n- escalation_velocity: string (\"1.0 roles/day\")\n- escalation_detected: boolean (true)\n- risk_level: \"critical\"\n- risk_score: number (0-100, higher = riskier)\n- least_privilege_violated: boolean (true)\n- recommended_action: \"manual_security_review\"\n- temporary_revocation_applied: boolean\n- escalation_logged: boolean\n\nIMPORTANT: Agent must detect suspicious escalation patterns. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "initial_role": "string",
+    "current_role": "string",
+    "escalation_chain": "array",
+    "total_escalations": "number",
+    "escalation_time_days": "number",
+    "escalation_velocity": "string",
+    "escalation_detected": "boolean",
+    "risk_level": "string",
+    "risk_score": "number",
+    "least_privilege_violated": "boolean",
+    "recommended_action": "string",
+    "temporary_revocation_applied": "boolean",
+    "escalation_logged": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_permission_escalation_chain",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

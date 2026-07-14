@@ -22,7 +22,7 @@
     ],
     "evaluators": [{
         "func": "raw",
-        "op": "grant_application.validate_multi_server_orchestration",
+        "op": "grant_application.validate_budget_calendar_workflow",
         "op_args": {
             "budget_cap": 1250000,
             "required_categories": ["Personnel", "Equipment", "Travel", "Materials", "Other"],

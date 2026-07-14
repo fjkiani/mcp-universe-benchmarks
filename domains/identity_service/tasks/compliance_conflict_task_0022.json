@@ -1,0 +1,37 @@
+{
+  "question": "COMPLIANCE FRAMEWORK CONFLICT RESOLUTION: You must generate a compliance report for 'healthcorp.com' which operates under THREE conflicting regulatory frameworks:\n\nGDPR (Europe - Strictest):\n- Requires: Data deletion within 30 days of request\n- Requires: Explicit user consent for ALL data processing\n- Requires: Right to be forgotten (complete data erasure)\n\nSOC2 (USA - Security Focused):\n- Requires: Audit logs retained for 7 YEARS\n- Requires: Immutable audit trail (cannot delete)\n- Requires: All access events logged permanently\n\nHIPAA (Healthcare - USA):\n- Requires: Patient data retained for 6 YEARS minimum\n- Requires: Access logs for 6 years\n- Requires: Cannot delete medical records\n\nCONFLICT SCENARIO:\nUser 'patient123@healthcorp.com' (EU citizen, US patient) requests:\n1. \"Delete all my data\" (GDPR Right to be Forgotten)\n\nBUT:\n- SOC2 requires keeping audit logs for 7 years (conflict!)\n- HIPAA requires keeping medical records for 6 years (conflict!)\n\nYou must:\n1. Identify ALL three frameworks applying to this user\n2. Detect the conflicts between GDPR deletion vs SOC2/HIPAA retention\n3. Apply priority rules: GDPR > HIPAA > SOC2 (user rights > data retention)\n4. Create resolution plan:\n   - Delete personal identifiers (satisfy GDPR)\n   - Anonymize audit logs (satisfy SOC2)\n   - Pseudonymize medical records (satisfy HIPAA)\n5. Log compliance conflict to 'calendar'\n6. Store resolution plan in 'task-management'\n\nReturn JSON with:\n- user_id: string\n- user_location: \"EU\"\n- applicable_frameworks: array [\"GDPR\", \"SOC2\", \"HIPAA\"]\n- conflicts_detected: boolean (true)\n- conflict_details: array of objects\n- resolution_strategy: \"hierarchical_compliance_with_anonymization\"\n- gdpr_satisfied: boolean (true - via pseudonymization)\n- soc2_satisfied: boolean (true - via anonymized logs)\n- hipaa_satisfied: boolean (true - via pseudonymized records)\n- data_fully_deleted: boolean (false - anonymized instead)\n- anonymization_applied: boolean (true)\n- compliance_score: number (0-100)\n- conflict_logged: boolean\n- resolution_stored: boolean\n\nIMPORTANT: Agent must balance competing requirements. Return ONLY valid JSON, no markdown.",
+  "output_format": {
+    "user_id": "string",
+    "user_location": "string",
+    "applicable_frameworks": "array",
+    "conflicts_detected": "boolean",
+    "conflict_details": "array",
+    "resolution_strategy": "string",
+    "gdpr_satisfied": "boolean",
+    "soc2_satisfied": "boolean",
+    "hipaa_satisfied": "boolean",
+    "data_fully_deleted": "boolean",
+    "anonymization_applied": "boolean",
+    "compliance_score": "number",
+    "conflict_logged": "boolean",
+    "resolution_stored": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_compliance_conflict",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
+

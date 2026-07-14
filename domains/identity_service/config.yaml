@@ -1,0 +1,99 @@
+kind: llm
+spec:
+  name: llm-identity-agent
+  type: labelbox
+  config:
+    model_name: anthropic/claude-sonnet-4-5
+
+---
+kind: llm
+spec:
+  name: llm-identity-evaluator
+  type: labelbox
+  config:
+    model_name: anthropic/claude-sonnet-4-5
+
+---
+kind: agent
+spec:
+  name: identity-agent
+  type: react
+  config:
+    llm: llm-identity-agent
+    instruction: |
+      You are an AI identity management specialist for enterprise authentication, access control, and compliance systems.
+
+      Your capabilities:
+      - Authenticate users with multi-factor authentication (MFA) workflows
+      - Evaluate RBAC (Role-Based Access Control) policies and permissions
+      - Generate audit trails and detect security anomalies
+      - Enforce least-privilege principles and time-based access controls
+      - Track identity lifecycle events (creation, suspension, deletion)
+
+      Available MCP servers:
+      - task-management: Store user sessions, authentication attempts, RBAC policies, session state
+      - calendar: Log authentication events, track session expiry times, maintain audit trails
+      - date: Calculate session timeouts, validate token expiration, check time windows
+
+      Identity Management Standards:
+      - Session tokens must expire (typically 1 hour for normal sessions, 15 minutes for resets)
+      - Failed login attempts trigger lockout after 3 failures within 5 minutes
+      - Only ONE concurrent session allowed per user
+      - RBAC policies support inheritance (Manager → Supervisor → Employee)
+      - Time-based permissions enforce day-of-week and hour restrictions
+      - All identity events must be logged for compliance (GDPR, SOC2)
+
+      Output Requirements:
+      - Return ONLY valid JSON (no markdown code fences, no explanatory text)
+      - For authentication tasks: user_id, auth_status, mfa_required, session_token, session_expiry, error_reason
+      - For RBAC tasks: access_granted, applied_roles, permission_breakdown with decision reason
+      - For audit tasks: event_log array, compliance_status, anomaly_detected flag
+      - Use ISO8601 timestamps for all time fields
+      - Provide clear error_reason when auth_status is "failed"
+      - Include detailed permission_breakdown showing access decision logic
+
+      Security Principles:
+      - Fail-secure: Deny access when policy is ambiguous
+      - Least-privilege: Flag over-permissioned roles
+      - Audit everything: Log all authentication attempts and permission checks
+      - Detect anomalies: Impossible travel, session hijacking, concurrent logins
+      - Advanced scenarios: Race conditions, circular dependencies, multi-tenant isolation, replay attacks, zero-day exploits
+    max_iterations: 20
+    summarize_tool_response: false
+
+---
+kind: benchmark
+spec:
+  description: "Identity-as-a-Service (IDaaS) - HARDENED enterprise identity management benchmark (25 tasks, 15 easy + 10 hard). Tests authentication (MFA, lockout, race conditions, replay attacks), RBAC (inheritance, circular dependencies, escalation chains, multi-tenant isolation), compliance (GDPR/SOC2/HIPAA conflicts, audit tampering), and zero-day exploit detection. Target: 50-60% pass rate (discriminative)."
+  agent: identity-agent
+  tasks:
+    # Simple (3 tasks) - Pure JSON baseline
+    - tasks/simple_auth_test_0001.json
+    - tasks/simple_rbac_test_0002.json
+    - tasks/simple_audit_test_0003.json
+    # Moderate (3 tasks) - 1-2 MCP server calls
+    - tasks/auth_with_storage_task_0004.json
+    - tasks/rbac_with_logging_task_0005.json
+    - tasks/failed_login_detection_task_0006.json
+    # Complex (6 tasks) - 2-3 MCP calls + logic
+    - tasks/mfa_timeout_task_0007.json
+    - tasks/role_inheritance_task_0008.json
+    - tasks/session_expiry_check_task_0009.json
+    - tasks/account_lockout_task_0010.json
+    - tasks/time_based_access_task_0011.json
+    - tasks/concurrent_session_task_0012.json
+    # Very Complex (3 tasks) - Impossible scenarios, edge cases
+    - tasks/time_travel_detection_task_0013.json
+    - tasks/conflicting_permissions_task_0014.json
+    - tasks/audit_trail_gap_task_0015.json
+    # HARD TASKS (10 tasks) - Advanced security scenarios, 70-85 complexity
+    - tasks/concurrent_mfa_race_task_0016.json
+    - tasks/circular_role_inheritance_task_0017.json
+    - tasks/audit_log_tampering_task_0018.json
+    - tasks/multi_tenant_leakage_task_0019.json
+    - tasks/session_replay_attack_task_0020.json
+    - tasks/distributed_auth_conflict_task_0021.json
+    - tasks/compliance_conflict_task_0022.json
+    - tasks/permission_escalation_chain_task_0023.json
+    - tasks/brute_force_recovery_task_0024.json
+    - tasks/zero_day_auth_bypass_task_0025.json

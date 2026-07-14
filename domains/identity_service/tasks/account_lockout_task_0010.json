@@ -1,0 +1,31 @@
+{
+  "question": "User 'iris@corp.com' is attempting to log in. You must:\n1. Search 'calendar' for failed login attempts by this user in last 5 minutes\n2. Use 'date' server to check time windows\n3. If 3+ failed attempts found, account is LOCKED for 15 minutes from last failure\n4. Log this lockout check to calendar\n\nGiven history (from calendar):\n- 2025-10-28T15:50:00Z: failed login (iris@corp.com)\n- 2025-10-28T15:51:00Z: failed login (iris@corp.com)\n- 2025-10-28T15:52:00Z: failed login (iris@corp.com)\nCurrent time: 2025-10-28T15:53:00Z\n\nReturn JSON with:\n- user_id: string\n- current_time: ISO8601 timestamp\n- failed_attempts_found: number (should be 3)\n- lockout_triggered: boolean (true)\n- lockout_reason: string\n- lockout_until: ISO8601 timestamp (15:52:00 + 15 min = 16:07:00)\n- auth_status: \"locked\"\n- calendar_searched: boolean\n- lockout_logged: boolean\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "current_time": "ISO8601 timestamp",
+    "failed_attempts_found": "number",
+    "lockout_triggered": "boolean",
+    "lockout_reason": "string",
+    "lockout_until": "ISO8601 timestamp",
+    "auth_status": "string",
+    "calendar_searched": "boolean",
+    "lockout_logged": "boolean"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_account_lockout",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "calendar"
+    },
+    {
+      "name": "date"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

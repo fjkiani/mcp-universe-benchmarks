@@ -1,0 +1,30 @@
+{
+  "question": "User 'diana@corp.com' with role 'manager' requests access to resource 'payroll_reports'. The resource requires 'manager' or 'admin' role. You must:\n1. Check if user's role matches required roles\n2. Log the access decision to 'calendar' server with timestamp\n3. Store the permission check in 'task-management' server\n\nReturn JSON with:\n- user_id: string\n- resource: string\n- user_role: string\n- required_roles: array of strings\n- access_granted: boolean (true if manager/admin)\n- decision_logged: boolean (true if logged to calendar)\n- decision_stored: boolean (true if stored in task-management)\n- reason: string explaining decision\n\nIMPORTANT: Return ONLY valid JSON, no markdown, no explanations.",
+  "output_format": {
+    "user_id": "string",
+    "resource": "string",
+    "user_role": "string",
+    "required_roles": "array of strings",
+    "access_granted": "boolean",
+    "decision_logged": "boolean",
+    "decision_stored": "boolean",
+    "reason": "string"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_rbac_with_logging",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {
+      "name": "task-management"
+    },
+    {
+      "name": "calendar"
+    }
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}

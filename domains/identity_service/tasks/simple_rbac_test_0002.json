@@ -1,0 +1,24 @@
+{
+  "question": "User 'bob@corp.com' with role 'viewer' requests access to resource 'financial_reports' which requires 'editor' role. Access is denied. Return ONLY this JSON object with NO markdown, NO explanations:\n\n{\n  \"user_id\": \"bob@corp.com\",\n  \"resource\": \"financial_reports\",\n  \"user_roles\": [\"viewer\"],\n  \"required_roles\": [\"editor\"],\n  \"access_granted\": false,\n  \"denial_reason\": \"Insufficient permissions: requires editor role\"\n}",
+  "output_format": {
+    "user_id": "string",
+    "resource": "string",
+    "user_roles": "array of strings",
+    "required_roles": "array of strings",
+    "access_granted": "boolean",
+    "denial_reason": "string or null"
+  },
+  "evaluators": [
+    {
+      "func": "raw",
+      "op": "identity.validate_rbac_response",
+      "op_args": {}
+    }
+  ],
+  "mcp_servers": [
+    {"name": "task-management"},
+    {"name": "calendar"}
+  ],
+  "category": "identity_management",
+  "use_specified_server": true
+}
