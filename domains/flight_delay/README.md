@@ -7,5 +7,5 @@
 | Evaluators | `evaluators/` |
 
 ```bash
-uv run alignerr_mcp validate --domain flight_delay
+python -m mcpbench validate --domain flight_delay
 ```

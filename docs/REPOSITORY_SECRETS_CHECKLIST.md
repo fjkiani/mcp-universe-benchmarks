@@ -2,20 +2,23 @@
 
 Use GitHub Actions → Secrets (or your vault). **Do not commit real values.**
 
-### CI / submodules
+### LLM / gateway (as needed by domain configs and benchmark runs)
 
-- `GH_ACCESS_TOKEN_WORKFLOW` — checkout private Alignerr submodules in Actions
-
-### LLM / gateway (as needed by domain configs)
-
-- `OPENAI_API_KEY` / `ANTHROPIC_API_KEY` / `OPENROUTER_API_KEY` / `LABELBOX_API_KEY`
-- Other model keys only if your `config.yaml` references them
+- `OPENROUTER_API_KEY` — OpenRouter free + paid models
+- `GROQ_API_KEY` — Groq-hosted models
+- `GEMINI_API_KEY` — Google Gemini models
+- `OPENAI_API_KEY` — OpenAI models
+- `ANTHROPIC_API_KEY` — Anthropic models
 
 ### MCP servers (domain-dependent)
 
 - Search: `SERP_API_KEY`
 - Google Workspace: service account file (local path; do not commit keys)
-- GitHub/GitLab domains: `GITHUB_PERSONAL_ACCESS_TOKEN`
-- Finance: `EXCHANGERATE_API_KEY`, `ALPHA_VANTAGE_API_KEY`
+- GitHub/GitLab domains: `GITHUB_TOKEN`
+- Finance: `ALPHA_VANTAGE_API_KEY`
+
+### Git
+
+- `GITHUB_TOKEN` — push commits to remote
 
 Copy values into local `.env` from `.env.example`. Never paste secrets into tracked files.

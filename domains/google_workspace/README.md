@@ -7,5 +7,5 @@
 | Evaluators | `evaluators/` |
 
 ```bash
-uv run alignerr_mcp validate --domain google_workspace
+python -m mcpbench validate --domain google_workspace
 ```

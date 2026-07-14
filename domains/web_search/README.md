@@ -10,7 +10,7 @@ Reference implementation for MCP search + fetch benchmarks.
 | Servers | google-search, fetch |
 
 ```bash
-uv run alignerr_mcp validate --domain web_search
+python -m mcpbench validate --domain web_search
 ```
 
 Copy this domain’s structure when creating new domains. Formats: `STRUCTURE_GUIDE.md`.

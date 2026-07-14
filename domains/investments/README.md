@@ -10,5 +10,5 @@ Portfolio analysis, stock research, rebalancing, and risk tasks. Includes local 
 | Local servers | `mcp_servers/stock_portfolio`, `mcp_servers/stock_portfolio_mock` |
 
 ```bash
-uv run alignerr_mcp validate --domain investments
+python -m mcpbench validate --domain investments
 ```

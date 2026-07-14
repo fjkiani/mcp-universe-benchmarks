@@ -7,5 +7,5 @@
 | Evaluators | `evaluators/` |
 
 ```bash
-uv run alignerr_mcp validate --domain governance_traps
+python -m mcpbench validate --domain governance_traps
 ```

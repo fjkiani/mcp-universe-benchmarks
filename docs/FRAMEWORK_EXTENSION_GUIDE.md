@@ -1,78 +1,82 @@
 # Framework extension guide — CLI, servers, domains, CI/CD
 
-How the **MCP benchmark stack** fits together, submodule pins, and how to **extend / test**.
+How the **MCP benchmark stack** fits together and how to **extend / test**.
 
 ## 1. Layers
 
 | Layer | Location | Role |
 |--------|----------|------|
 | **Benchmark definitions** | `domains/<name>/` | `config.yaml`, `tasks/*.json`, `evaluators/` |
-| **Runner & agents** | `lbx_mcp_universe_cli/` (submodule) | `alignerr_mcp`, LLM registry, ReAct agent |
-| **Tool servers** | `lbx_mcp_universe_mcp_servers_mothership/servers/` (submodule) | Per-server packages |
-| **CI** | `.github/workflows/` | Domain lint/validate, secret scan, mothership sync |
+| **Runner & agents** | `mcpbench/` | `python -m mcpbench` — CLI, LLM registry, ReAct agent, Pass@K |
+| **Tool servers** | `servers/` | 18 mock FastMCP servers (stdio transport) |
+| **Validator** | `scripts/validate.py` | AST-based domain structure validation |
+| **Compat shim** | `scripts/eval_compat.py` | `compare_func`/`eval_func` decorators |
+| **CI** | `.github/workflows/` | Domain validation, secret scan |
 | **Fast feedback** | `local_tests/` | MCP/tool/task checks without a full agent run |
 
-Domain configs use **`type: litellm`** for OpenAI-compatible / LiteLLM gateways.
+Domain configs use **`type: litellm`** for LiteLLM-routed models. Supported providers: OpenRouter, Groq, Google Gemini, OpenAI, Anthropic.
 
-## 2. Submodule pins
+## 2. Model routing
 
-GitHub can show a submodule as “grey” when the pinned commit is **not** on the submodule’s **default branch**.
+Models are routed via LiteLLM. The registry lives at `mcpbench/models.yaml` with 17 verified model slugs. Free-tier models are available through OpenRouter.
 
-### Policy
+```bash
+python -m mcpbench list-models
+```
 
-- **`lbx_mcp_universe_cli`** — `origin/main`  
-  After update: commit the new submodule SHA in this parent repo.
-- **`lbx_mcp_universe_mcp_servers_mothership`** — `origin/feature/healthcare-servers` until those servers merge to upstream `main`  
-  That branch = upstream `main` + healthcare servers (`twilio_hipaa`, `assemblyai`, `videosdk`, `nexhealth`).
-
-`.gitmodules` sets `branch = …` for `git submodule update --remote`.
-
-To clear grey pins: merge healthcare into upstream `main` (or your fork’s `main`) and repoint.
+To add a model, append to `mcpbench/models.yaml` with the correct LiteLLM provider prefix.
 
 ## 3. Extend
 
 ### Domain
 
 ```bash
-uv run alignerr_mcp create-domain --name your_domain
+cp -r domains/web_search domains/your_domain
 ```
 
 Edit `config.yaml`, `tasks/*.json`, `evaluators/functions.py` (`@compare_func`). Patterns: `web_search`, `gitlab_mlops`.
 
 ### MCP servers
 
-Change code **inside** the mothership submodule, commit there, then bump the parent submodule SHA.
+Add a new server in `servers/your_server.py` following the FastMCP pattern, then register it in `servers/registry.yaml`:
 
-```bash
-uv run alignerr_mcp servers install <server_name>
+```yaml
+servers:
+  your-server:
+    command: "python -m servers.your_server"
+    description: "Your server description"
 ```
 
 ## 4. Test
 
 | Goal | Command |
 |------|---------|
-| Validate / run | `uv run alignerr_mcp validate --domain <name>` |
-| Pass@k | `uv run alignerr_mcp validate --domain <name> --runs 3` |
-| List / env | `uv run alignerr_mcp list`, `uv run alignerr_mcp env status` |
+| Validate one domain | `python -m mcpbench validate --domain <name>` |
+| Validate all domains | `python -m mcpbench validate --all` |
+| List models | `python -m mcpbench list-models` |
+| Run benchmark | `python -m mcpbench run --domain <name> --models <slug>` |
+| Pass@K | `python -m mcpbench run --domain <name> --models <slug> --runs 3` |
+| Dry run | `python -m mcpbench run --domain <name> --models <slug> --dry-run` |
 | Local smoke | `python3 local_tests/run_all_tests.py` |
 | CI | `.github/workflows/ci.yml` on `domains/**` |
-
-Private submodules may need `GH_ACCESS_TOKEN_WORKFLOW` in Actions secrets.
 
 ## 5. Workflows
 
 | Workflow | Purpose |
 |----------|---------|
-| `ci.yml` | Domain lint + optional agent eval |
+| `ci.yml` | Domain validation + optional benchmark run |
 | `secret-scan.yml` | Block secret patterns |
-| `sync-to-mother.yml` | Sync domains to aggregator repo (if enabled) |
 
-## 6. Known gaps
+## 6. Evaluator signatures
 
-1. `domains/base.py` — historical; file-based domains + CLI run path are authoritative.
-2. Align remaining task fields to `TaskConfig` (`mcp_servers`, data in `question`).
-3. Validate `governance_traps/config.yaml` against the multi-doc `spec:` schema.
-4. If Alignerr submodule URLs are private/moved, fork and update `.gitmodules`.
+The runner normalizes 4 evaluator calling conventions:
+
+1. `(llm_response, expected_values, op_args)` — 3+ params
+2. `(llm_response)` — single param
+3. `(llm_response, *args, **kwargs)` — variadic, `args[1]` = op_args
+4. `(llm_response, op_args)` — 2 params
+
+All evaluators must return `Tuple[bool, str]` (passed, feedback).
 
 ## 7. Docs map
 
@@ -81,5 +85,3 @@ Private submodules may need `GH_ACCESS_TOKEN_WORKFLOW` in Actions secrets.
 - [STRUCTURE_GUIDE.md](../STRUCTURE_GUIDE.md)
 - [AGENTS.md](../AGENTS.md)
 - [REPOSITORY_SECRETS_CHECKLIST.md](REPOSITORY_SECRETS_CHECKLIST.md)
-
-**TL;DR:** Framework = CLI submodule + mothership submodule + `domains/` + CI.

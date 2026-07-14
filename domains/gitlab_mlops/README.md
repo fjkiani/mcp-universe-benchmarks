@@ -9,5 +9,5 @@ GitLab project / MR / issue / pipeline / release tasks.
 | Evaluators | `evaluators/` (structured error types) |
 
 ```bash
-uv run alignerr_mcp validate --domain gitlab_mlops
+python -m mcpbench validate --domain gitlab_mlops
 ```

@@ -7,5 +7,5 @@
 | Evaluators | `evaluators/functions.py` |
 
 ```bash
-uv run alignerr_mcp validate --domain currency_converter
+python -m mcpbench validate --domain currency_converter
 ```

@@ -4,7 +4,7 @@
 **/.venv/
 **/venv/
 **/backend/venv/
-**/lbx_mcp_universe_cli/.venv/
+
 
 **/__pycache__/
 **/*.pyc

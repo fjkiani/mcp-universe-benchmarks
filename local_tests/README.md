@@ -9,5 +9,5 @@ python3 local_tests/test_tasks.py
 python3 local_tests/test_evaluators.py
 ```
 
-Full domain eval: `uv run alignerr_mcp validate --domain <name>`.
+Full domain eval: `python -m mcpbench validate --domain <name>`.
 Results under `results/` are gitignored.

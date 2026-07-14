@@ -9,7 +9,7 @@ Benchmark domain for multi-server grant-application workflows.
 | Evaluators | `evaluators/functions.py` |
 
 ```bash
-uv run alignerr_mcp validate --domain grant_application
+python -m mcpbench validate --domain grant_application
 ```
 
 Follow `STRUCTURE_GUIDE.md` for schema. Reference patterns: `domains/web_search/`, `domains/gitlab_mlops/`.
