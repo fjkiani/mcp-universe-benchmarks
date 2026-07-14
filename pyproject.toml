@@ -1,20 +1,20 @@
 [project]
 name = "mcp-universe-benchmarks"
 version = "0.1.0"
-description = "MCP Universe agent benchmarks — domains, CLI submodule, MCP servers submodule"
+description = "MCP Universe agent benchmarks — domains, validator, mock MCP servers, benchmark runner"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">=3.11"
 authors = [
-    { name = "LBX MCP Team" }
+    { name = "MCP Universe Team" }
 ]
 dependencies = [
-    # Alignerr CLI (installed from git submodule)
-    "alignerr-cli",
-    # Code tools for MCP universe
-    "lb-code-tools",
-    # Template dependencies
     "pydantic>=2.10.0",
     "pyyaml>=6.0.0",
+    "mcp>=1.0.0",
+    "litellm>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "openai>=1.0.0",
+    "typer>=0.12.0",
 ]
 
 [project.optional-dependencies]
@@ -24,21 +24,20 @@ dev = [
     "black>=23.0.0",
 ]
 
-# UV configuration for local development
-[tool.uv]
-
-# Tell UV to install CLI from submodule path
-[tool.uv.sources]
-alignerr-cli = { path = "lbx_mcp_universe_cli", editable = true }
-lb-code-tools = { path = "./lbx_mcp_universe_cli/lbx_cli/libs/lb_code_tools-0.1.0-py3-none-any.whl" }
+[project.scripts]
+mcpbench = "mcpbench.cli:app"
 
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["domains"]
+packages = ["domains", "scripts", "mcpbench", "servers"]
 
 [tool.black]
 line-length = 100
-target-version = ['py312']
+target-version = ['py311']
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["local_tests"]

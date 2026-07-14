@@ -46,15 +46,18 @@ class EvaluatorTester:
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             
-            # Find all evaluator functions (decorated with @compare_func)
+            # Find all evaluator functions (decorated with @compare_func or @eval_func)
             evaluators = {}
             for name in dir(module):
                 obj = getattr(module, name)
                 if callable(obj) and hasattr(obj, "__name__"):
                     # Check if it's an async function (evaluators are async)
                     if asyncio.iscoroutinefunction(obj):
-                        # Check if name suggests it's an evaluator
-                        if name.startswith("validate_"):
+                        # Check if it has an evaluator name attribute (set by our decorators)
+                        if hasattr(obj, "_evaluator_name"):
+                            evaluators[obj._evaluator_name] = obj
+                        # Also check if name suggests it's an evaluator (backward compat)
+                        elif name.startswith("validate_") or name.startswith("check_") or name.startswith("evaluate_"):
                             evaluators[name] = obj
             
             return {

@@ -1,15 +1,25 @@
-Run Results (Pass@K)
-Agent Response:
-{"user_id": "alice@corp.com", "auth_status": "pending_mfa", "mfa_required": true, "session_token": null, "session_expiry": "2025-10-29T16:55:47.204501+00:00", "error_reason": null}
-Evaluation Result:
-❌
-Evaluation
-Reason:
-auth_status must be 'success' or 'failed', got: 'pending_mfa'
-Agent Response:
-{"user_id":"alice@corp.com","auth_status":"success","mfa_required":true,"session_token":null,"session_expiry":"2025-10-29T16:55:46.054738+00:00","error_reason":null}
-Evaluation Result:
-❌
-Evaluation
-Reason:
-Successful auth MUST provide non-empty session_token
+{
+    "category": "Risk Assessment",
+    "question": "Assess the risk profile of a portfolio with the following holdings: AAPL (40%), GOOGL (30%), TSLA (20%), BND (10%). Calculate beta, volatility, Sharpe ratio, VaR at 95% confidence, and provide a risk rating.",
+    "use_specified_server": true,
+    "mcp_servers": [
+        {
+            "name": "stock-portfolio"
+        }
+    ],
+    "output_format": {
+        "portfolio_beta": "numeric",
+        "portfolio_volatility": "numeric",
+        "sharpe_ratio": "numeric",
+        "var_95": "numeric",
+        "risk_rating": "string",
+        "recommendations": "array"
+    },
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "investments.validate_risk_assessment",
+            "op_args": {}
+        }
+    ]
+}

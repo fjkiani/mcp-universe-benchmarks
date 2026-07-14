@@ -35,7 +35,7 @@ class MCPServerTester:
     def __init__(self, servers_path: Optional[str] = None):
         self.servers_path = Path(servers_path or os.getenv(
             "MCP_SERVERS_PATH",
-            Path(__file__).parent.parent / "lbx_mcp_universe_mcp_servers_mothership" / "servers"
+            Path(__file__).parent.parent / "domains" / "investments" / "mcp_servers"
         ))
         self.results = []
         
@@ -77,7 +77,7 @@ class MCPServerTester:
                 return result
             
             # Check if server has required files
-            required_files = ["server.py", "pyproject.toml", "__init__.py"]
+            required_files = ["server.py", "__init__.py"]
             missing_files = [f for f in required_files if not (server_dir / f).exists()]
             if missing_files:
                 result["status"] = "error"

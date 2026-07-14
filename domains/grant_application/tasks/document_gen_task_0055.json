@@ -1,42 +1,48 @@
 {
-  "task_id": "document_gen_task_0055",
-  "description": "Generate a compliance checklist by extracting specific requirements from an actual RFP document, then verify against a draft proposal and flag missing items.",
-  "prompt": "You are a grant compliance specialist. You will receive an RFP excerpt and a draft proposal. Generate a detailed compliance checklist and identify gaps.\n\n**RFP Excerpt (NIH R01):**\n\n\"Applications must include:\n1. Project Summary/Abstract (30 lines maximum, plain language)\n2. Project Narrative (1 page maximum)\n3. Specific Aims (1 page)\n4. Research Strategy (12 pages maximum):\n   - Significance\n   - Innovation  \n   - Approach (must include preliminary data)\n5. Bibliography & References Cited (no page limit)\n6. Facilities & Other Resources (no page limit)\n7. Equipment (no page limit)\n8. Other Attachments:\n   - Data Management Plan (1 page)\n   - Authentication of Key Resources Plan (1 page)\n   - Resource Sharing Plan (1 page)\n9. Required if human subjects: IRB approval letter\n10. Required if vertebrate animals: IACUC approval letter\n11. Budget Justification (no page limit, but modular budgets ≤$250K don't require detailed justification)\n12. Biographical Sketches (5 pages per person, NIH format required)\"\n\n**Draft Proposal Inventory (what's ready):**\n- Project Summary (25 lines) ✓\n- Specific Aims (1 page) ✓\n- Research Strategy - Significance (3 pages) ✓\n- Research Strategy - Innovation (2 pages) ✓  \n- Research Strategy - Approach (8 pages, includes prelim data) ✓\n- Bibliography (4 pages) ✓\n- Facilities (2 pages) ✓\n- Equipment (1 page) ✓\n- Data Management Plan (1 page) ✓\n- Budget (modular, $250K) ✓\n- PI Biosketch (5 pages) ✓\n- Human subjects research planned (IRB in progress, not approved yet)\n\n**Your Tasks:**\n\n1. **Extract ALL specific requirements from the RFP** (not generic, actual NIH R01 requirements)\n\n2. **Create detailed compliance checklist** with:\n   - Requirement name\n   - Page limit (if specified)\n   - Format requirements (if specified)\n   - Status (READY, MISSING, INCOMPLETE)\n   - Priority (REQUIRED, RECOMMENDED, OPTIONAL)\n\n3. **Identify gaps and issues:**\n   - Missing: Project Narrative (REQUIRED)\n   - Missing: Authentication of Key Resources Plan (REQUIRED)\n   - Missing: Resource Sharing Plan (REQUIRED)  \n   - Incomplete: IRB approval letter (REQUIRED for human subjects, currently in progress)\n   - Missing: Budget Justification (NOT required for modular ≤$250K, so OK)\n\n4. **Flag critical path items:**\n   - IRB approval is a BLOCKER (can't submit without it)\n   - 3 missing required documents must be created before submission\n\nOutput a structured compliance report with:\n- Complete checklist\n- Missing items highlighted\n- Critical path analysis\n- Submission readiness assessment (GO / NO-GO)",
-  "output_format": {
-    "type": "object",
-    "properties": {
-      "compliance_checklist": {
-        "type": "array",
-        "items": {
-          "requirement": "string",
-          "page_limit": "string",
-          "format_requirements": "string",
-          "status": "string",
-          "priority": "string"
-        }
-      },
-      "gaps_identified": {
-        "type": "array",
-        "items": {
-          "item": "string",
-          "severity": "string",
-          "action_needed": "string"
-        }
-      },
-      "critical_path_items": "array",
-      "submission_readiness": {
+    "task_id": "document_gen_task_0055",
+    "description": "Generate a compliance checklist by extracting specific requirements from an actual RFP document, then verify against a draft proposal and flag missing items.",
+    "output_format": {
         "type": "object",
         "properties": {
-          "status": "string",
-          "blockers": "array",
-          "estimated_days_to_ready": "number"
+            "compliance_checklist": {
+                "type": "array",
+                "items": {
+                    "requirement": "string",
+                    "page_limit": "string",
+                    "format_requirements": "string",
+                    "status": "string",
+                    "priority": "string"
+                }
+            },
+            "gaps_identified": {
+                "type": "array",
+                "items": {
+                    "item": "string",
+                    "severity": "string",
+                    "action_needed": "string"
+                }
+            },
+            "critical_path_items": "array",
+            "submission_readiness": {
+                "type": "object",
+                "properties": {
+                    "status": "string",
+                    "blockers": "array",
+                    "estimated_days_to_ready": "number"
+                }
+            }
         }
-      }
-    }
-  },
-  "required_mcp_servers": [],
-  "evaluator": "validate_compliance_verification",
-  "expected_complexity": "high",
-  "category": "document_generation"
+    },
+    "expected_complexity": "high",
+    "category": "document_generation",
+    "question": "You are a grant compliance specialist. You will receive an RFP excerpt and a draft proposal. Generate a detailed compliance checklist and identify gaps.\n\n**RFP Excerpt (NIH R01):**\n\n\"Applications must include:\n1. Project Summary/Abstract (30 lines maximum, plain language)\n2. Project Narrative (1 page maximum)\n3. Specific Aims (1 page)\n4. Research Strategy (12 pages maximum):\n   - Significance\n   - Innovation  \n   - Approach (must include preliminary data)\n5. Bibliography & References Cited (no page limit)\n6. Facilities & Other Resources (no page limit)\n7. Equipment (no page limit)\n8. Other Attachments:\n   - Data Management Plan (1 page)\n   - Authentication of Key Resources Plan (1 page)\n   - Resource Sharing Plan (1 page)\n9. Required if human subjects: IRB approval letter\n10. Required if vertebrate animals: IACUC approval letter\n11. Budget Justification (no page limit, but modular budgets \u2264$250K don't require detailed justification)\n12. Biographical Sketches (5 pages per person, NIH format required)\"\n\n**Draft Proposal Inventory (what's ready):**\n- Project Summary (25 lines) \u2713\n- Specific Aims (1 page) \u2713\n- Research Strategy - Significance (3 pages) \u2713\n- Research Strategy - Innovation (2 pages) \u2713  \n- Research Strategy - Approach (8 pages, includes prelim data) \u2713\n- Bibliography (4 pages) \u2713\n- Facilities (2 pages) \u2713\n- Equipment (1 page) \u2713\n- Data Management Plan (1 page) \u2713\n- Budget (modular, $250K) \u2713\n- PI Biosketch (5 pages) \u2713\n- Human subjects research planned (IRB in progress, not approved yet)\n\n**Your Tasks:**\n\n1. **Extract ALL specific requirements from the RFP** (not generic, actual NIH R01 requirements)\n\n2. **Create detailed compliance checklist** with:\n   - Requirement name\n   - Page limit (if specified)\n   - Format requirements (if specified)\n   - Status (READY, MISSING, INCOMPLETE)\n   - Priority (REQUIRED, RECOMMENDED, OPTIONAL)\n\n3. **Identify gaps and issues:**\n   - Missing: Project Narrative (REQUIRED)\n   - Missing: Authentication of Key Resources Plan (REQUIRED)\n   - Missing: Resource Sharing Plan (REQUIRED)  \n   - Incomplete: IRB approval letter (REQUIRED for human subjects, currently in progress)\n   - Missing: Budget Justification (NOT required for modular \u2264$250K, so OK)\n\n4. **Flag critical path items:**\n   - IRB approval is a BLOCKER (can't submit without it)\n   - 3 missing required documents must be created before submission\n\nOutput a structured compliance report with:\n- Complete checklist\n- Missing items highlighted\n- Critical path analysis\n- Submission readiness assessment (GO / NO-GO)",
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "validate_compliance_verification",
+            "op_args": {}
+        }
+    ],
+    "mcp_servers": [],
+    "use_specified_server": true
 }
-

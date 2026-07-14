@@ -24,7 +24,7 @@ from test_evaluators import EvaluatorTester
 
 
 async def run_all_tests(
-    domain: str = "healthcare_receptionist",
+    domain: str = "investments",
     servers_path: str = None,
     domains_path: str = None,
     output_dir: str = None
@@ -56,7 +56,7 @@ async def run_all_tests(
     server_tester = MCPServerTester(servers_path=servers_path)
     
     # Test healthcare-specific servers
-    healthcare_servers = ["twilio_hipaa", "assemblyai", "videosdk", "nexhealth"]
+    healthcare_servers = None  # Auto-discover from domain mcp_servers dir
     server_results = await server_tester.run_tests(server_names=healthcare_servers)
     all_results["tests"]["mcp_servers"] = server_results
     
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--domain",
         type=str,
-        default="healthcare_receptionist",
+        default="investments",
         help="Domain to test"
     )
     parser.add_argument(

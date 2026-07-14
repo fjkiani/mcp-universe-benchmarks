@@ -4,7 +4,10 @@ Evaluation functions for currency_converter domain
 # pylint: disable=broad-exception-caught,unused-argument
 import json
 from typing import Any, Tuple
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+except ImportError:
+    from scripts.eval_compat import compare_func
 
 
 ##################################################################################

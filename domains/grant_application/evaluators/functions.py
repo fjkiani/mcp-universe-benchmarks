@@ -8,7 +8,10 @@ These evaluators use a multi-layered approach:
 4. Environment detection (separate agent failures from API/permission errors)
 """
 
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+except ImportError:
+    from scripts.eval_compat import compare_func
 from typing import Tuple, Any
 import json
 import re

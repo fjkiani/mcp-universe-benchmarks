@@ -6,13 +6,26 @@ import os
 import json
 from pathlib import Path
 from typing import Any, Tuple
-import google.auth
-from google.oauth2 import service_account
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from google.auth.transport.requests import Request
-from googleapiclient.discovery import build
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func, FunctionResult
+try:
+    import google.auth
+    from google.oauth2 import service_account
+    from google.oauth2.credentials import Credentials
+    from google_auth_oauthlib.flow import InstalledAppFlow
+    from google.auth.transport.requests import Request
+    from googleapiclient.discovery import build
+    GOOGLE_APIS_AVAILABLE = True
+except ImportError:
+    GOOGLE_APIS_AVAILABLE = False
+    google = None
+    service_account = None
+    Credentials = None
+    InstalledAppFlow = None
+    Request = None
+    build = None
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+except ImportError:
+    from scripts.eval_compat import compare_func
 
 # Constants
 SCOPES = [

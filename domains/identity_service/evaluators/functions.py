@@ -11,7 +11,10 @@ KEY LEARNINGS FROM INVESTMENTS DOMAIN:
 """
 import json
 from typing import Tuple, Any
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+except ImportError:
+    from scripts.eval_compat import compare_func
 
 
 def unwrap_pydantic_and_parse_json(agent_response: Any) -> Tuple[bool, Any, str]:

@@ -4,8 +4,11 @@ Evaluation functions for flight delay tasks
 # pylint: disable=broad-exception-caught,unused-argument
 import json
 from typing import Any, Tuple
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
-from lbx_cli.mcpuniverse.common.context import Context
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+    from lbx_cli.mcpuniverse.common.context import Context
+except ImportError:
+    from scripts.eval_compat import compare_func, Context
 
 
 ##################################################################################

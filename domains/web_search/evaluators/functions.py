@@ -5,8 +5,11 @@ Evaluation functions for web search tasks
 from typing import Any
 from openai import OpenAI
 from dotenv import load_dotenv
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
-from lbx_cli.mcpuniverse.common.context import Context
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+    from lbx_cli.mcpuniverse.common.context import Context
+except ImportError:
+    from scripts.eval_compat import compare_func, Context
 
 load_dotenv()
 

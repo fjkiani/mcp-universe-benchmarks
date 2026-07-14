@@ -4,8 +4,6 @@ spec:
   type: litellm
   config:
     model_name: openai/gpt-5-nano
-
-
 ---
 kind: llm
 spec:
@@ -20,10 +18,11 @@ spec:
   type: react
   config:
     llm: llm-1
-    instruction: You are an agent for web searching. If you don't have enough information to answer the question, you can use the google-search tool. If you want to obtain the information with a specific URL, you can use the fetch tool.
+    instruction: You are an agent for web searching. If you don't have enough information
+      to answer the question, you can use the google-search tool. If you want to obtain
+      the information with a specific URL, you can use the fetch tool.
     max_iterations: 20
     summarize_tool_response: false
-
 ---
 kind: agent
 spec:
@@ -31,7 +30,9 @@ spec:
   type: react
   config:
     llm: llm-2
-    instruction: You are an agent for web searching. If you don't have enough information to answer the question, you can use the google-search tool. If you want to obtain the information with a specific URL, you can use the fetch tool.
+    instruction: You are an agent for web searching. If you don't have enough information
+      to answer the question, you can use the google-search tool. If you want to obtain
+      the information with a specific URL, you can use the fetch tool.
     max_iterations: 20
     summarize_tool_response: false
 ---
@@ -40,11 +41,65 @@ spec:
   description: Test agent for google search tasks.
   agent: ReAct-agent
   tasks:
-    - tasks/info_search_task_0001.json
+  - tasks/info_search_task_0001.json
+  - tasks/info_search_task_0002.json
+  - tasks/info_search_task_0003.json
+  - tasks/info_search_task_0004.json
+  - tasks/info_search_task_0005.json
+  - tasks/info_search_task_0006.json
+  - tasks/info_search_task_0007.json
+  - tasks/info_search_task_0008.json
+  - tasks/info_search_task_0009.json
+  - tasks/info_search_task_0010.json
+  - tasks/info_search_task_0011.json
+  - tasks/info_search_task_0012.json
+  - tasks/info_search_task_0013.json
+  - tasks/info_search_task_0014.json
+  - tasks/info_search_task_0015.json
+  - tasks/info_search_task_0016.json
+  - tasks/info_search_task_0017.json
+  - tasks/info_search_task_0018.json
+  - tasks/info_search_task_0019.json
+  - tasks/info_search_task_0020.json
+  - tasks/info_search_task_0021.json
+  - tasks/info_search_task_0022.json
+  - tasks/info_search_task_0023.json
+  - tasks/info_search_task_0024.json
+  - tasks/info_search_task_0025.json
+  - tasks/info_search_task_0026.json
+  - tasks/info_search_task_0027.json
+  - tasks/info_search_task_0028.json
+  - tasks/info_search_task_0029.json
+  - tasks/info_search_task_0030.json
+  - tasks/info_search_task_0031.json
+  - tasks/info_search_task_0032.json
+  - tasks/info_search_task_0033.json
+  - tasks/info_search_task_0034.json
+  - tasks/info_search_task_0035.json
+  - tasks/info_search_task_0036.json
+  - tasks/info_search_task_0037.json
+  - tasks/info_search_task_0038.json
+  - tasks/info_search_task_0039.json
+  - tasks/info_search_task_0040.json
+  - tasks/info_search_task_0041.json
+  - tasks/info_search_task_0042.json
+  - tasks/info_search_task_0043.json
+  - tasks/info_search_task_0044.json
+  - tasks/info_search_task_0045.json
+  - tasks/info_search_task_0046.json
+  - tasks/info_search_task_0047.json
+  - tasks/info_search_task_0048.json
+  - tasks/info_search_task_0049.json
+  - tasks/info_search_task_0050.json
+  - tasks/multi-server_task_google_search_notion_0001.json
+  - tasks/multi-server_task_google_search_notion_0002.json
+  - tasks/multi-server_task_google_search_notion_0003.json
+  - tasks/multi-server_task_google_search_notion_0004.json
+  - tasks/multi-server_task_google_search_notion_0005.json
 ---
 kind: benchmark
 spec:
   description: Test agent for google search tasks.
   agent: ReAct-agent-2
   tasks:
-    - tasks/info_search_task_0001.json
+  - tasks/info_search_task_0001.json

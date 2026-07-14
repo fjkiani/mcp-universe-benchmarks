@@ -1,58 +1,39 @@
 {
-  "id": "stock_research_0008",
-  "question": "Research the most recent earnings report for this company and generate an investment analysis memo covering financial performance, guidance, and investment recommendation.",
-  "category": "Stock Research & Valuation",
-  "difficulty": "very_hard",
-  "description": "Research earnings report and generate investment memo with recent news analysis",
-  "input": {
-    "ticker": "META",
-    "research_depth": "full_analysis",
-    "include_news": true,
-    "lookback_period": "30_days"
-  },
-  "expected_output": {
-    "ticker": "string",
-    "quarter": "string",
-    "eps_actual": "numeric",
-    "eps_estimate": "numeric",
-    "eps_surprise": "numeric",
-    "revenue_actual": "numeric",
-    "revenue_estimate": "numeric",
-    "revenue_surprise": "numeric",
-    "guidance_raised": "boolean",
-    "analyst_reaction": "string",
-    "recommendation": "string"
-  },
-  "required_mcp_servers": [
-    "stock-portfolio",
-    "google-search",
-    "pdf-generator"
-  ],
-  "task_type": "comprehensive_research",
-  "evaluation_criteria": {
-    "earnings_data_accuracy": "Correct EPS/revenue vs estimates",
-    "news_analysis_depth": "Identify and analyze recent material news",
-    "sentiment_assessment": "Accurate bullish/bearish sentiment classification",
-    "analyst_tracking": "Correctly track recent rating changes",
-    "investment_memo_quality": "Professional, balanced, actionable analysis",
-    "bull_bear_balance": "Present both sides of investment case",
-    "pdf_generation": "Successfully create formatted research report"
-  },
-  "test_data_note": "Multi-server task requiring earnings data, news search, and PDF generation",
-  "output_format": {
-    "description": "Return valid JSON with flat structure",
-    "example": {
-      "ticker": "AAPL",
-      "quarter": "Q1 2025",
-      "eps_actual": 2.15,
-      "eps_estimate": 2.1,
-      "eps_surprise": 2.4,
-      "revenue_actual": 95000000000,
-      "revenue_estimate": 93000000000,
-      "revenue_surprise": 2.2,
-      "guidance_raised": true,
-      "analyst_reaction": "Positive - strong iPhone sales",
-      "recommendation": "Buy on earnings beat"
-    }
-  }
+    "question": "Research the most recent earnings report for this company and generate an investment analysis memo covering financial performance, guidance, and investment recommendation.",
+    "category": "Stock Research & Valuation",
+    "output_format": {
+        "description": "Return valid JSON with flat structure",
+        "example": {
+            "ticker": "AAPL",
+            "quarter": "Q1 2025",
+            "eps_actual": 2.15,
+            "eps_estimate": 2.1,
+            "eps_surprise": 2.4,
+            "revenue_actual": 95000000000,
+            "revenue_estimate": 93000000000,
+            "revenue_surprise": 2.2,
+            "guidance_raised": true,
+            "analyst_reaction": "Positive - strong iPhone sales",
+            "recommendation": "Buy on earnings beat"
+        }
+    },
+    "mcp_servers": [
+        {
+            "name": "stock-portfolio"
+        },
+        {
+            "name": "google-search"
+        },
+        {
+            "name": "pdf-generator"
+        }
+    ],
+    "use_specified_server": true,
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "investments.validate_stock_research",
+            "op_args": {}
+        }
+    ]
 }

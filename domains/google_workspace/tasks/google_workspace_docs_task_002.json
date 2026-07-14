@@ -1,10 +1,15 @@
 {
-  "category": "value_investing",
-  "question": "Find a Investment Analysis document in the this seed folder: 1hlaYYv7EdN2eEy0nvQR6pPWOuGFezE99. Then make a short summary of the document and update the document with id 1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4 with it. IMPORTANT: set the document title to the same as the original document",
-  "output_format": {
-    "document_id": "1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4",
-    "title": "[DOCUMENT_TITLE]"
-  },
-  "evaluators": [
-  ]
+    "category": "value_investing",
+    "question": "Find a Investment Analysis document in the this seed folder: 1hlaYYv7EdN2eEy0nvQR6pPWOuGFezE99. Then make a short summary of the document and update the document with id 1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4 with it. IMPORTANT: set the document title to the same as the original document",
+    "output_format": {
+        "document_id": "1AeA8CNVOYWYpUr1NYtw9aqyObRP_6CEGvS1BS7ZUZh4",
+        "title": "[DOCUMENT_TITLE]"
+    },
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "google_docs.check_document_title",
+            "op_args": {}
+        }
+    ]
 }

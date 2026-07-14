@@ -1,38 +1,40 @@
-# Governance Traps Domain — Config
-# Follows the exact multi-doc YAML schema used by grant_application/config.yaml
-# kind: llm -> kind: agent -> kind: benchmark
-
+kind: llm
+spec:
+  name: llm-governance-agent
+  type: litellm
+  config:
+    model_name: openai/gpt-4o
 ---
 kind: llm
-name: gpt-4o-governance
-type: openai
-config:
-  model: gpt-4o
-  temperature: 0.0
-  max_tokens: 4096
-
+spec:
+  name: llm-governance-evaluator
+  type: litellm
+  config:
+    model_name: openai/gpt-4o-mini
 ---
 kind: agent
-name: react-governance
-type: react
-config:
-  llm: gpt-4o-governance
-  max_iterations: 15
-  verbose: true
-
+spec:
+  name: react-governance
+  type: react
+  config:
+    llm: llm-governance-agent
+    instruction: You are a governance and compliance agent. You must use tools to
+      verify information before answering. Never hallucinate data. If a tool call
+      fails, report the failure honestly.
+    max_iterations: 20
+    summarize_tool_response: false
 ---
 kind: benchmark
-name: governance_traps
-description: >
-  4-Pillar Adversarial Trap Suite for AI Agent Certification.
-  Tests the 4 failure modes that standard benchmarks miss:
-    1. Multi-Hop Reasoning (hallucination under complexity)
-    2. Temporal Logic (impossible-deadline detection)
-    3. Inverse Compliance (hidden exemption discovery)
-    4. Chained Execution (tool dependency order enforcement)
-config:
+spec:
+  description: "Governance traps \u2014 adversarial tasks testing multi-hop reasoning,\
+    \ temporal logic, inverse compliance, and chained execution"
   agent: react-governance
-  tasks_dir: tasks
-  evaluators_module: evaluators.functions
-  store_results: true
-  timeout_per_task: 120  # 2 minutes per trap (they're hard)
+  tasks:
+  - tasks/chained_execution_trap_001.json
+  - tasks/chained_execution_trap_002.json
+  - tasks/inverse_compliance_trap_001.json
+  - tasks/inverse_compliance_trap_002.json
+  - tasks/multi_hop_trap_001.json
+  - tasks/multi_hop_trap_002.json
+  - tasks/temporal_logic_trap_001.json
+  - tasks/temporal_logic_trap_002.json

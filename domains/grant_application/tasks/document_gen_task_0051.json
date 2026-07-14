@@ -1,33 +1,39 @@
 {
-  "task_id": "document_gen_task_0051",
-  "description": "Generate budget JSON, budget narrative, and project timeline with full cross-document consistency. All dollar amounts and dates must match exactly across all three documents.",
-  "prompt": "You are a grant proposal assistant. Generate three interconnected documents for an NSF CAREER proposal:\n\n1. **Budget JSON** with the following structure:\n   - Personnel: PI (1 month summer, $12,000), 2 grad students (12 months each, $35,000/year)\n   - Equipment: High-performance computing cluster ($80,000 in Year 1)\n   - Travel: 2 conferences/year ($5,000/year)\n   - Materials: Lab supplies ($15,000/year)\n   - Total per year for 5 years\n\n2. **Budget Narrative** (1-2 pages) that:\n   - Justifies each budget item\n   - References EXACT dollar amounts from the budget JSON\n   - Explains timing (e.g., \"Equipment purchase in Year 1: $80,000\")\n\n3. **Project Timeline** with milestones that:\n   - Shows when equipment is purchased (must align with budget Year 1)\n   - Shows when personnel start (grad students start Month 1)\n   - Shows when travel occurs (conferences in months 6, 18, 30, 42, 54)\n\nCRITICAL REQUIREMENTS:\n- Every dollar amount in the narrative must EXACTLY match the budget JSON\n- Every date/year reference in narrative must align with timeline milestones\n- Equipment purchase timing in timeline must match budget allocation\n- Graduate student hiring in timeline must match personnel budget start date\n\nOutput all three documents in a single JSON object:\n{\n  \"budget_json\": {...},\n  \"budget_narrative\": \"...\",\n  \"timeline\": {...}\n}",
-  "output_format": {
-    "type": "object",
-    "properties": {
-      "budget_json": {
+    "task_id": "document_gen_task_0051",
+    "description": "Generate budget JSON, budget narrative, and project timeline with full cross-document consistency. All dollar amounts and dates must match exactly across all three documents.",
+    "output_format": {
         "type": "object",
         "properties": {
-          "personnel": "object",
-          "equipment": "object",
-          "travel": "object",
-          "materials": "object",
-          "years": "array"
+            "budget_json": {
+                "type": "object",
+                "properties": {
+                    "personnel": "object",
+                    "equipment": "object",
+                    "travel": "object",
+                    "materials": "object",
+                    "years": "array"
+                }
+            },
+            "budget_narrative": "string",
+            "timeline": {
+                "type": "object",
+                "properties": {
+                    "milestones": "array",
+                    "project_duration": "string"
+                }
+            }
         }
-      },
-      "budget_narrative": "string",
-      "timeline": {
-        "type": "object",
-        "properties": {
-          "milestones": "array",
-          "project_duration": "string"
+    },
+    "expected_complexity": "high",
+    "category": "document_generation",
+    "question": "You are a grant proposal assistant. Generate three interconnected documents for an NSF CAREER proposal:\n\n1. **Budget JSON** with the following structure:\n   - Personnel: PI (1 month summer, $12,000), 2 grad students (12 months each, $35,000/year)\n   - Equipment: High-performance computing cluster ($80,000 in Year 1)\n   - Travel: 2 conferences/year ($5,000/year)\n   - Materials: Lab supplies ($15,000/year)\n   - Total per year for 5 years\n\n2. **Budget Narrative** (1-2 pages) that:\n   - Justifies each budget item\n   - References EXACT dollar amounts from the budget JSON\n   - Explains timing (e.g., \"Equipment purchase in Year 1: $80,000\")\n\n3. **Project Timeline** with milestones that:\n   - Shows when equipment is purchased (must align with budget Year 1)\n   - Shows when personnel start (grad students start Month 1)\n   - Shows when travel occurs (conferences in months 6, 18, 30, 42, 54)\n\nCRITICAL REQUIREMENTS:\n- Every dollar amount in the narrative must EXACTLY match the budget JSON\n- Every date/year reference in narrative must align with timeline milestones\n- Equipment purchase timing in timeline must match budget allocation\n- Graduate student hiring in timeline must match personnel budget start date\n\nOutput all three documents in a single JSON object:\n{\n  \"budget_json\": {...},\n  \"budget_narrative\": \"...\",\n  \"timeline\": {...}\n}",
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "validate_cross_document_consistency",
+            "op_args": {}
         }
-      }
-    }
-  },
-  "required_mcp_servers": [],
-  "evaluator": "validate_cross_document_consistency",
-  "expected_complexity": "high",
-  "category": "document_generation"
+    ],
+    "mcp_servers": [],
+    "use_specified_server": true
 }
-

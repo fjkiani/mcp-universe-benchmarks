@@ -1,26 +1,32 @@
 {
-  "task_id": "document_gen_task_0052",
-  "description": "Generate a 15-page NSF CAREER project description with strict formatting compliance: Arial 11pt, 1-inch margins, exactly 15 pages, proper section structure.",
-  "prompt": "You are a grant proposal assistant. Generate a complete NSF CAREER Project Description following EXACT NSF formatting requirements:\n\n**Formatting Requirements (STRICT):**\n- Font: Arial, 11pt (or Times New Roman 12pt, Palatino Linotype 10pt)\n- Margins: 1 inch on all sides\n- Page limit: EXACTLY 15 pages (not 14, not 16)\n- Line spacing: Single-spaced or greater\n- Section headers: Bold and clearly labeled\n\n**Required Sections:**\n1. Introduction (1 page)\n2. Background and Significance (2-3 pages)\n3. Research Plan (8-10 pages)\n   - Aim 1 with methods\n   - Aim 2 with methods  \n   - Aim 3 with methods\n4. Education Plan (2-3 pages)\n5. Broader Impacts (1 page)\n6. Results from Prior NSF Support (1 page if applicable, or state \"N/A\")\n\n**Content Topic:** Machine learning for climate model uncertainty quantification\n\n**Critical Requirements:**\n- State the formatting at the beginning: \"[FORMATTED: Arial 11pt, 1-inch margins, 15 pages]\"\n- Include page markers: \"--- Page 1 ---\", \"--- Page 2 ---\", etc.\n- Each section must have clear headers\n- Must total exactly 15 pages of content\n- References cited should be in a separate section (not counted in 15 pages)\n\nOutput the formatted document as a string with explicit page markers.",
-  "output_format": {
-    "type": "object",
-    "properties": {
-      "project_description": "string",
-      "formatting_metadata": {
+    "task_id": "document_gen_task_0052",
+    "description": "Generate a 15-page NSF CAREER project description with strict formatting compliance: Arial 11pt, 1-inch margins, exactly 15 pages, proper section structure.",
+    "output_format": {
         "type": "object",
         "properties": {
-          "font": "string",
-          "font_size": "string",
-          "margins": "string",
-          "page_count": "number",
-          "sections": "array"
+            "project_description": "string",
+            "formatting_metadata": {
+                "type": "object",
+                "properties": {
+                    "font": "string",
+                    "font_size": "string",
+                    "margins": "string",
+                    "page_count": "number",
+                    "sections": "array"
+                }
+            }
         }
-      }
-    }
-  },
-  "required_mcp_servers": [],
-  "evaluator": "validate_nsf_formatting_compliance",
-  "expected_complexity": "high",
-  "category": "document_generation"
+    },
+    "expected_complexity": "high",
+    "category": "document_generation",
+    "question": "You are a grant proposal assistant. Generate a complete NSF CAREER Project Description following EXACT NSF formatting requirements:\n\n**Formatting Requirements (STRICT):**\n- Font: Arial, 11pt (or Times New Roman 12pt, Palatino Linotype 10pt)\n- Margins: 1 inch on all sides\n- Page limit: EXACTLY 15 pages (not 14, not 16)\n- Line spacing: Single-spaced or greater\n- Section headers: Bold and clearly labeled\n\n**Required Sections:**\n1. Introduction (1 page)\n2. Background and Significance (2-3 pages)\n3. Research Plan (8-10 pages)\n   - Aim 1 with methods\n   - Aim 2 with methods  \n   - Aim 3 with methods\n4. Education Plan (2-3 pages)\n5. Broader Impacts (1 page)\n6. Results from Prior NSF Support (1 page if applicable, or state \"N/A\")\n\n**Content Topic:** Machine learning for climate model uncertainty quantification\n\n**Critical Requirements:**\n- State the formatting at the beginning: \"[FORMATTED: Arial 11pt, 1-inch margins, 15 pages]\"\n- Include page markers: \"--- Page 1 ---\", \"--- Page 2 ---\", etc.\n- Each section must have clear headers\n- Must total exactly 15 pages of content\n- References cited should be in a separate section (not counted in 15 pages)\n\nOutput the formatted document as a string with explicit page markers.",
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "validate_nsf_formatting_compliance",
+            "op_args": {}
+        }
+    ],
+    "mcp_servers": [],
+    "use_specified_server": true
 }
-

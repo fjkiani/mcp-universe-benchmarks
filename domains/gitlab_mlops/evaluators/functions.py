@@ -1,5 +1,8 @@
 """Evaluator functions for GitLab MLOps domain"""
-from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+try:
+    from lbx_cli.mcpuniverse.evaluator.functions import compare_func
+except ImportError:
+    from scripts.eval_compat import compare_func
 from typing import Tuple, Any
 import json
 from .error_types import ErrorType

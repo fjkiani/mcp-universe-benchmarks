@@ -1,83 +1,34 @@
 {
-  "id": "risk_assessment_0010",
-  "question": "Build a correlation matrix for all portfolio holdings and identify diversification opportunities and concentration risks.",
-  "category": "Risk Assessment",
-  "difficulty": "very_hard",
-  "description": "Build correlation matrix and identify diversification opportunities",
-  "input": {
-    "holdings": [
-      {
-        "ticker": "AAPL",
-        "shares": 100
-      },
-      {
-        "ticker": "GOOGL",
-        "shares": 50
-      },
-      {
-        "ticker": "MSFT",
-        "shares": 75
-      },
-      {
-        "ticker": "TSLA",
-        "shares": 25
-      },
-      {
-        "ticker": "JPM",
-        "shares": 60
-      },
-      {
-        "ticker": "JNJ",
-        "shares": 40
-      },
-      {
-        "ticker": "XOM",
-        "shares": 30
-      },
-      {
-        "ticker": "GLD",
-        "shares": 20
-      }
+    "question": "Build a correlation matrix for all portfolio holdings and identify diversification opportunities and concentration risks.",
+    "category": "Risk Assessment",
+    "output_format": {
+        "description": "Return valid JSON with flat structure",
+        "example": {
+            "aapl_googl_correlation": 0.75,
+            "aapl_msft_correlation": 0.82,
+            "aapl_tsla_correlation": 0.45,
+            "googl_msft_correlation": 0.78,
+            "googl_tsla_correlation": 0.38,
+            "msft_tsla_correlation": 0.42,
+            "avg_correlation": 0.6,
+            "diversification_score": 65,
+            "recommendation": "Good diversification across tech holdings"
+        }
+    },
+    "mcp_servers": [
+        {
+            "name": "stock-portfolio"
+        },
+        {
+            "name": "google-sheets"
+        }
     ],
-    "correlation_period": "1_year"
-  },
-  "expected_output": {
-    "aapl_googl_correlation": "numeric",
-    "aapl_msft_correlation": "numeric",
-    "aapl_tsla_correlation": "numeric",
-    "googl_msft_correlation": "numeric",
-    "googl_tsla_correlation": "numeric",
-    "msft_tsla_correlation": "numeric",
-    "avg_correlation": "numeric",
-    "diversification_score": "numeric",
-    "recommendation": "string"
-  },
-  "required_mcp_servers": [
-    "stock-portfolio",
-    "google-sheets"
-  ],
-  "task_type": "correlation_analysis",
-  "evaluation_criteria": {
-    "correlation_calculation_accuracy": "Correct pairwise correlation calculations",
-    "matrix_completeness": "All pairwise correlations present",
-    "cluster_identification": "Correctly identify groups of correlated stocks",
-    "diversification_scoring": "Valid diversification score methodology",
-    "recommendation_quality": "Actionable suggestions to improve diversification",
-    "spreadsheet_visualization": "Create readable correlation heatmap"
-  },
-  "test_data_note": "Complex matrix calculation across 8 assets",
-  "output_format": {
-    "description": "Return valid JSON with flat structure",
-    "example": {
-      "aapl_googl_correlation": 0.75,
-      "aapl_msft_correlation": 0.82,
-      "aapl_tsla_correlation": 0.45,
-      "googl_msft_correlation": 0.78,
-      "googl_tsla_correlation": 0.38,
-      "msft_tsla_correlation": 0.42,
-      "avg_correlation": 0.6,
-      "diversification_score": 65,
-      "recommendation": "Good diversification across tech holdings"
-    }
-  }
+    "use_specified_server": true,
+    "evaluators": [
+        {
+            "func": "raw",
+            "op": "investments.validate_risk_assessment",
+            "op_args": {}
+        }
+    ]
 }
