@@ -18,3 +18,12 @@
 **/.DS_Store
 
 .specstory/
+archive/
+docs/archive/
+.cursor/plans/
+**/STATUS.md
+**/STATUS_SUMMARY.txt
+**/*_SUMMARY.md
+**/*_COMPLETE.md
+**/PROJECT_AUDIT.md
+adversarial_test_results.json

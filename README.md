@@ -1,6 +1,8 @@
 # MCP Universe benchmarks (template)
 
-Monorepo for **MCP-backed agent benchmarks**: domains live under `domains/`, execution goes through the bundled CLI submodule, and tools ship in the mothership submodule. See [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md), [REPO_LAYOUT.md](REPO_LAYOUT.md), and [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md) (submodules, CI/CD, extend, test, gaps).
+Monorepo for **MCP-backed agent benchmarks**: domains live under `domains/`, execution goes through the bundled CLI submodule, and tools ship in the mothership submodule.
+
+Start here: [BENCHMARK_FRAMEWORK.md](BENCHMARK_FRAMEWORK.md) · [STRUCTURE_GUIDE.md](STRUCTURE_GUIDE.md) · [AGENTS.md](AGENTS.md) · [docs/FRAMEWORK_EXTENSION_GUIDE.md](docs/FRAMEWORK_EXTENSION_GUIDE.md)
 
 ## 🚀 Quick Start
 
@@ -32,9 +34,6 @@ uv run alignerr_mcp list
 | [investments](domains/investments) | Portfolio/risk tasks + local `mcp_servers/` |
 | [identity_service](domains/identity_service) | 25 auth/security tasks (from Alignerr identity repos) |
 | currency_converter, flight_delay, gitlab_mlops, governance_traps | Existing monorepo domains |
-
-Provenance of the old split repos: [archive/SOURCE_MAP.md](archive/SOURCE_MAP.md).
-
 
 ## Contribution
 

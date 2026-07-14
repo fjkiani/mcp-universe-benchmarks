@@ -41,6 +41,18 @@ Thumbs.db
 # SpecStory / IDE chat exports (do not commit)
 .specstory/
 
+# Documentation / agent slop — do not reintroduce
+archive/
+docs/archive/
+.cursor/plans/
+**/STATUS.md
+**/STATUS_SUMMARY.txt
+**/*_SUMMARY.md
+**/*_COMPLETE.md
+**/PROJECT_AUDIT.md
+adversarial_test_results.json
+_purge_slop.sh
+
 # Never commit files named *SECRETS_VALUES* or real API literals
 **/GITHUB_SECRETS_VALUES.md
 **/*_SECRETS_VALUES.md
