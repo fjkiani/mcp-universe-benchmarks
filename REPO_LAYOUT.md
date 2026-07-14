@@ -6,15 +6,15 @@
 │   ├── */tasks/*.json
 │   ├── */config.yaml
 │   └── */evaluators/
-├── AGENTS.md                   # AI allowlist — prefer domains, ignore slop
+├── AGENTS.md                   # AI allowlist
 ├── BENCHMARK_FRAMEWORK.md
 ├── STRUCTURE_GUIDE.md
 ├── lbx_mcp_universe_cli/       # Submodule — CLI & runner
 ├── lbx_mcp_universe_mcp_servers_mothership/  # Submodule — MCP servers
 ├── central/                    # Registry / sync helpers
-├── tests/, local_tests/
+├── tests/, local_tests/        # Tests (results/ gitignored)
 ├── frontend/, backend/         # Optional product demos
-├── docs/                       # Lean guides only (see docs/README.md)
+├── docs/                       # FRAMEWORK_EXTENSION + secrets checklist only
 ├── .github/workflows/
 └── pyproject.toml / uv.lock
 ```

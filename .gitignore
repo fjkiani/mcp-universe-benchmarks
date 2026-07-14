@@ -44,14 +44,20 @@ Thumbs.db
 # Documentation / agent slop — do not reintroduce
 archive/
 docs/archive/
+docs/healthcare-receptionist/
+docs/development/
+docs/architecture/
 .cursor/plans/
 **/STATUS.md
 **/STATUS_SUMMARY.txt
 **/*_SUMMARY.md
 **/*_COMPLETE.md
+**/*_BREAKDOWN.md
 **/PROJECT_AUDIT.md
 adversarial_test_results.json
-_purge_slop.sh
+local_tests/results/*
+!local_tests/results/.gitignore
+_purge_slop*.sh
 
 # Never commit files named *SECRETS_VALUES* or real API literals
 **/GITHUB_SECRETS_VALUES.md

@@ -9,6 +9,7 @@ File-based **MCP agent benchmarks**. Canonical work product is under `domains/`.
 - `domains/**/tasks/*.json`
 - `domains/**/config.yaml`
 - `domains/**/evaluators/*.py`
+- `domains/**/README.md` (short domain notes only)
 - `STRUCTURE_GUIDE.md`
 - `BENCHMARK_FRAMEWORK.md`
 - `REPO_LAYOUT.md`
@@ -21,20 +22,19 @@ File-based **MCP agent benchmarks**. Canonical work product is under `domains/`.
 
 ## Never cite or imitate (slop)
 
-- Anything named `*STATUS*`, `*SUMMARY*`, `*COMPLETE*`, `*AUDIT*`, `*PLAN*` unless the user names that file
-- Historical dumps: `archive/`, `docs/archive/`, `.cursor/plans/`, sprint deliverable trees
+- Anything named `*STATUS*`, `*SUMMARY*`, `*COMPLETE*`, `*AUDIT*`, `*BREAKDOWN*`, `*PLAN*` unless the user names that file
+- `archive/`, `docs/archive/`, `docs/healthcare-receptionist/`, `docs/development/`, `docs/architecture/`
+- `.cursor/plans/`, sprint deliverable trees
 - Product-marketing / landing-page copy
-- Speculative roadmaps unrelated to the open task
+- Committed run artifacts under `local_tests/results/`
 
 ## How to extend a domain
 
 1. Copy structure from `domains/web_search` or `domains/gitlab_mlops`.
 2. Match existing JSON schema and evaluator patterns exactly.
-3. Validate: `uv run alignerr_mcp validate --domain <name>`
-4. Do not invent parallel docs trees. One domain README is enough.
+3. Keep domain README short (purpose + how to validate). No proposal/status novels.
+4. Validate: `uv run alignerr_mcp validate --domain <name>`
 
 ## Optional surfaces
 
 `frontend/` and `backend/` are product demos — out of the critical path for `alignerr_mcp validate`. Touch them only when asked.
-
-Healthcare product notes (if needed): `docs/healthcare-receptionist/00–09-*.md` only — skip legacy sprint folders (removed).

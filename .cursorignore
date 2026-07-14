@@ -27,3 +27,8 @@ docs/archive/
 **/*_COMPLETE.md
 **/PROJECT_AUDIT.md
 adversarial_test_results.json
+docs/healthcare-receptionist/
+docs/development/
+docs/architecture/
+**/*_BREAKDOWN.md
+local_tests/results/
