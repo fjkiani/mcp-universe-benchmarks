@@ -117,6 +117,120 @@ def run(
         typer.echo(results_json)
 
 
+@app.command()
+def stress(
+    category: str = typer.Option(..., "--category", "-c",
+        help="baseline | adversarial | faults | concurrency | ratelimit"),
+    domain: str = typer.Option(..., "--domain", "-d", help="Domain to run"),
+    models: str = typer.Option(..., "--models", "-m",
+        help="Comma-separated model slugs"),
+    runs: int = typer.Option(3, "--runs", "-r",
+        help="Runs per (task, model) — controls pass@k"),
+    perturbation: str = typer.Option("baseline", "--perturbation",
+        help="baseline | prompt_injection | contradictory | noisy_prefix | gold_swap | all"),
+    concurrency: int = typer.Option(1, "--concurrency",
+        help="For --category concurrency: parallel-run level"),
+    max_tasks: int = typer.Option(0, "--max-tasks",
+        help="If >0, only run first N tasks of the domain (for smoke tests)"),
+    worker_id: str = typer.Option("worker-0", "--worker-id",
+        help="Worker tag written into every run record"),
+    out_dir: str = typer.Option("/mnt/results/stress", "--out-dir",
+        help="Root output directory"),
+    fault_seed: int = typer.Option(0, "--fault-seed",
+        help="RNG seed for fault injection (category=faults)"),
+    dry_run: bool = typer.Option(False, "--dry-run",
+        help="Skip real LLM calls; just exercise the pipeline"),
+):
+    """Run a stress-test category and append JSONL to <out-dir>/<worker-id>/runs.jsonl."""
+    import asyncio
+    sys.path.insert(0, str(REPO_ROOT))
+    from mcpbench.stress import StressRunner
+    from mcpbench.perturbations import apply_perturbation, PERTURBATIONS
+    from mcpbench.fault_injection import FaultInjector
+
+    model_list = [m.strip() for m in models.split(",")]
+    out_path = Path(out_dir) / worker_id / "runs.jsonl"
+
+    # perturbation set
+    if category == "adversarial":
+        perts = list(PERTURBATIONS.keys()) if perturbation == "all" else [perturbation]
+        if "baseline" in perts:
+            perts.remove("baseline")
+    else:
+        perts = ["baseline"]
+
+    # fault injection hook
+    tool_hook = None
+    if category == "faults":
+        injector = FaultInjector(seed=fault_seed)
+        tool_hook = injector.hook
+
+    # NOTE: max_tasks caps the tasks per benchmark spec (per model), not the
+    # total across all models. Applied inside StressRunner via slice.
+    task_filter = None
+
+    all_results = []
+    for pid in perts:
+        # For adversarial category we need to mutate loaded tasks. We do that
+        # by monkeypatching StressRunner._load_tasks.
+        runner = StressRunner(
+            repo_root=REPO_ROOT,
+            domain=domain,
+            models=model_list,
+            runs_per_model=runs,
+            concurrent_runs=1,
+            dry_run=dry_run,
+            out_path=out_path,
+            worker_id=worker_id,
+            category=category,
+            perturbation_id=pid,
+            tool_call_hook=tool_hook,
+            task_filter=task_filter,
+        )
+
+        # max_tasks: slice each benchmark's task list — applied per-load,
+        # so every (model × benchmark) pass respects the cap independently.
+        if max_tasks > 0:
+            original_load = runner._load_tasks
+            def _sliced(bm, _orig=original_load, _n=max_tasks):
+                return _orig(bm)[:_n]
+            runner._load_tasks = _sliced
+
+        if pid != "baseline":
+            base_load = runner._load_tasks
+            def _wrapped(bm, _base=base_load):
+                tasks = _base(bm)
+                return [apply_perturbation(pid, t) for t in tasks]
+            runner._load_tasks = _wrapped
+
+        result = runner.run()
+        # tag concurrency runs
+        if category == "concurrency":
+            for r in result["results"]:
+                r["concurrency"] = concurrency
+        all_results.append(result)
+
+    typer.echo(json.dumps({
+        "category": category,
+        "worker_id": worker_id,
+        "domain": domain,
+        "n_runs": sum(len(r["results"]) for r in all_results),
+        "runs_jsonl": str(out_path),
+    }, indent=2))
+
+
+@app.command()
+def aggregate(
+    root: str = typer.Option("/mnt/results/stress", "--root",
+        help="Stress root — one subdirectory per worker with runs.jsonl"),
+):
+    """Merge all workers' JSONL, compute stats, write report_stress.md + figures."""
+    sys.path.insert(0, str(REPO_ROOT))
+    from mcpbench.aggregate import run_aggregation
+    summary = run_aggregation(Path(root))
+    typer.echo(json.dumps(summary, indent=2))
+
+
 @app.command(name="list-models")
 def list_models(
     provider: Optional[str] = typer.Option(None, "--provider", "-p", help="Filter by provider"),

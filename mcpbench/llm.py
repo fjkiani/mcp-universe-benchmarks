@@ -1,4 +1,5 @@
 """Unified LLM call wrapper — routes through LiteLLM to any provider."""
+import asyncio
 import os
 from typing import Any, Optional
 
@@ -17,6 +18,11 @@ async def call_llm(
     max_tokens: int = 4096,
     **kwargs,
 ) -> Any:
+    # Optional per-call throttle to survive burst rate limits (Groq etc.).
+    # Set MCPBENCH_LLM_SLEEP=1.5 to sleep 1.5s before each call.
+    sleep_s = float(os.getenv("MCPBENCH_LLM_SLEEP", "0") or "0")
+    if sleep_s > 0:
+        await asyncio.sleep(sleep_s)
     """Call an LLM via LiteLLM with automatic provider routing.
 
     Model slug prefixes:

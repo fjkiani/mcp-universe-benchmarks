@@ -20,19 +20,19 @@ from typing import Tuple, Optional, List
 
 # Try importing from lbx_cli (live mode), fall back to stubs (mock mode)
 try:
-try:
     from lbx_cli.mcpuniverse.evaluator.functions import eval_func, FunctionResult
 except ImportError:
-    from scripts.eval_compat import eval_func, FunctionResult
-except ImportError:
-    # Stub for environments without the CLI installed
-    def eval_func(name=None):
-        def decorator(fn):
-            return fn
-        return decorator
-    class FunctionResult:
-        def __init__(self, result=None):
-            self.result = result
+    try:
+        from scripts.eval_compat import eval_func, FunctionResult
+    except ImportError:
+        # Stub for environments without the CLI installed
+        def eval_func(name=None):
+            def decorator(fn):
+                return fn
+            return decorator
+        class FunctionResult:
+            def __init__(self, result=None):
+                self.result = result
 
 
 def _parse_response(x) -> Optional[dict]:
