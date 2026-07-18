@@ -197,6 +197,15 @@ class StressRunner(BenchmarkRunner):
                     finish_reason = getattr(choice, "finish_reason", None) or finish_reason
                     msg = choice.message
 
+                    # Snapshot best-effort answer BEFORE going into tool branch —
+                    # so if we hit iteration cap, we retain the last content/reasoning.
+                    _cand = (
+                        (msg.content or "").strip()
+                        or (getattr(msg, "reasoning_content", None) or "").strip()
+                    )
+                    if _cand:
+                        llm_response = _cand
+
                     if hasattr(msg, "tool_calls") and msg.tool_calls:
                         messages.append(msg.model_dump())
                         for tc in msg.tool_calls:
@@ -236,7 +245,15 @@ class StressRunner(BenchmarkRunner):
                                 "content": str(result),
                             })
                     else:
-                        llm_response = msg.content or ""
+                        # Fall back to reasoning_content for reasoning-style
+                        # models (Gemma 4 via Gemini API, o1-style OpenAI, etc.)
+                        # whose final answer stays in reasoning_content when
+                        # max_tokens budget is consumed during thinking.
+                        llm_response = (
+                            (msg.content or "").strip()
+                            or (getattr(msg, "reasoning_content", None) or "").strip()
+                            or ""
+                        )
                         break
         except asyncio.CancelledError:
             error = "CancelledError (likely MCP anyio cleanup)"

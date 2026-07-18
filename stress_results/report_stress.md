@@ -1,16 +1,18 @@
 # Stress Report — mcp-universe-benchmarks
 
-Total runs: **695**  
-Category mix: {'baseline': 48, 'concurrency': 62, 'adversarial': 352, 'faults': 33, 'ratelimit': 200}
+Total runs: **909**  
+Category mix: {'baseline': 262, 'concurrency': 62, 'adversarial': 352, 'faults': 33, 'ratelimit': 200}
 
 ## Model leaderboard (baseline)
 
 | Model | n | pass rate | pass@1 | pass@3 | pass@5 | p50 ms | p95 ms | p99 ms |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|
-| gemini/gemini-2.5-flash | 16 | 0.19 | 0.19 | 1.00 | 1.00 | 6162 | 24648 | 28221 |
-| gemini/gemini-2.5-flash-lite | 16 | 0.12 | 0.12 | 1.00 | 1.00 | 5218 | 10102 | 10987 |
-| groq/llama-3.3-70b-versatile | 70 | 0.00 | 0.00 | 0.89 | 0.89 | 2310 | 4779 | 6108 |
-| groq/openai/gpt-oss-20b | 8 | 0.00 | 0.00 | 1.00 | 1.00 | 3948 | 9698 | 10408 |
+| gemini/gemma-4-31b-it | 8 | 0.50 | 0.50 | 1.00 | 1.00 | 122466 | 364459 | 410626 |
+| gemini/gemma-4-26b-a4b-it | 8 | 0.50 | 0.50 | 1.00 | 1.00 | 125727 | 342469 | 349748 |
+| gemini/gemini-2.5-flash | 82 | 0.07 | 0.05 | 0.82 | 1.00 | 7242 | 21888 | 29114 |
+| gemini/gemini-2.5-flash-lite | 82 | 0.05 | 0.03 | 0.82 | 1.00 | 6744 | 9733 | 11208 |
+| groq/openai/gpt-oss-20b | 41 | 0.02 | 0.03 | 1.00 | 1.00 | 6565 | 11193 | 11525 |
+| groq/llama-3.3-70b-versatile | 103 | 0.00 | 0.00 | 0.97 | 0.97 | 2409 | 8988 | 9154 |
 | openai/gpt-oss-20b:free | 0 | 0.00 | 0.00 | 0.00 | 0.00 | 0 | 0 | 0 |
 | nvidia/nemotron-3-nano-30b-a3b:free | 0 | 0.00 | 0.00 | 0.00 | 0.00 | 0 | 0 | 0 |
 | qwen/qwen3-coder:free | 0 | 0.00 | 0.00 | 0.00 | 0.00 | 0 | 0 | 0 |
@@ -25,10 +27,12 @@ Category mix: {'baseline': 48, 'concurrency': 62, 'adversarial': 352, 'faults': 
 
 ![Failure heatmap](figures/failure_heatmap.png)
 
-- **groq/llama-3.3-70b-versatile** — {'wrong_answer': 1, 'rate_limit': 7}
-- **gemini/gemini-2.5-flash** — {'hallucination': 2, 'wrong_answer': 2, 'none': 3, 'rate_limit': 8, 'refusal': 1}
-- **groq/openai/gpt-oss-20b** — {'rate_limit': 7, 'unknown_error': 1}
-- **gemini/gemini-2.5-flash-lite** — {'hallucination': 2, 'wrong_answer': 1, 'rate_limit': 11, 'none': 2}
+- **gemini/gemma-4-31b-it** — {'none': 4, 'wrong_answer': 2, 'refusal': 2}
+- **gemini/gemma-4-26b-a4b-it** — {'wrong_answer': 2, 'none': 4, 'refusal': 2}
+- **groq/llama-3.3-70b-versatile** — {'wrong_answer': 2, 'rate_limit': 39}
+- **gemini/gemini-2.5-flash** — {'hallucination': 4, 'wrong_answer': 4, 'none': 6, 'rate_limit': 66, 'refusal': 2}
+- **groq/openai/gpt-oss-20b** — {'rate_limit': 36, 'unknown_error': 2, 'hallucination': 2, 'none': 1}
+- **gemini/gemini-2.5-flash-lite** — {'hallucination': 4, 'wrong_answer': 2, 'rate_limit': 72, 'none': 4}
 
 ## Robustness delta (perturbed vs baseline)
 
@@ -38,10 +42,10 @@ Negative Δ = perturbation hurt the model.
 
 | Model | Perturbation | n | baseline | perturbed | Δ |
 |---|---|---:|---:|---:|---:|
-| gemini/gemini-2.5-flash-lite | contradictory | 8 | 0.12 | 0.50 | +0.38 |
-| gemini/gemini-2.5-flash-lite | gold_swap | 8 | 0.12 | 0.00 | -0.12 |
-| gemini/gemini-2.5-flash-lite | noisy_prefix | 8 | 0.12 | 0.00 | -0.12 |
-| gemini/gemini-2.5-flash-lite | prompt_injection | 8 | 0.12 | 0.38 | +0.25 |
+| gemini/gemini-2.5-flash-lite | contradictory | 8 | 0.05 | 0.50 | +0.45 |
+| gemini/gemini-2.5-flash-lite | gold_swap | 8 | 0.05 | 0.00 | -0.05 |
+| gemini/gemini-2.5-flash-lite | noisy_prefix | 8 | 0.05 | 0.00 | -0.05 |
+| gemini/gemini-2.5-flash-lite | prompt_injection | 8 | 0.05 | 0.38 | +0.33 |
 | groq/llama-3.3-70b-versatile | contradictory | 8 | 0.00 | 0.12 | +0.12 |
 | groq/llama-3.3-70b-versatile | gold_swap | 8 | 0.00 | 0.00 | +0.00 |
 | groq/llama-3.3-70b-versatile | noisy_prefix | 8 | 0.00 | 0.00 | +0.00 |
@@ -100,4 +104,4 @@ Runs in category=`faults` had the MCP tool responses randomly corrupted (empty s
 
 ## Provenance
 
-Raw runs: `runs.jsonl` (695 lines). See per-worker JSONLs under this directory.
+Raw runs: `runs.jsonl` (909 lines). See per-worker JSONLs under this directory.

@@ -1,45 +1,65 @@
 {
-  "n_runs": 695,
+  "n_runs": 909,
   "leaderboard": {
+    "gemini/gemma-4-31b-it": {
+      "n_runs": 8,
+      "pass_rate": 0.5,
+      "pass@1_mean": 0.5,
+      "pass@3_mean": 1.0,
+      "pass@5_mean": 1.0,
+      "p50_ms": 122466.0,
+      "p95_ms": 364458.9499999999,
+      "p99_ms": 410626.18999999994
+    },
+    "gemini/gemma-4-26b-a4b-it": {
+      "n_runs": 8,
+      "pass_rate": 0.5,
+      "pass@1_mean": 0.5,
+      "pass@3_mean": 1.0,
+      "pass@5_mean": 1.0,
+      "p50_ms": 125727.0,
+      "p95_ms": 342469.05,
+      "p99_ms": 349748.20999999996
+    },
     "groq/llama-3.3-70b-versatile": {
-      "n_runs": 70,
+      "n_runs": 103,
       "pass_rate": 0.0,
       "pass@1_mean": 0.0,
-      "pass@3_mean": 0.8888888888888888,
-      "pass@5_mean": 0.8888888888888888,
-      "p50_ms": 2309.5,
-      "p95_ms": 4779.049999999994,
-      "p99_ms": 6108.210000000001
+      "pass@3_mean": 0.9705882352941176,
+      "pass@5_mean": 0.9705882352941176,
+      "p50_ms": 2409.0,
+      "p95_ms": 8987.8,
+      "p99_ms": 9154.42
     },
     "gemini/gemini-2.5-flash": {
-      "n_runs": 16,
-      "pass_rate": 0.1875,
-      "pass@1_mean": 0.1875,
-      "pass@3_mean": 1.0,
+      "n_runs": 82,
+      "pass_rate": 0.07317073170731707,
+      "pass@1_mean": 0.045454545454545456,
+      "pass@3_mean": 0.8181818181818182,
       "pass@5_mean": 1.0,
-      "p50_ms": 6161.5,
-      "p95_ms": 24647.75,
-      "p99_ms": 28220.75
+      "p50_ms": 7242.0,
+      "p95_ms": 21888.0,
+      "p99_ms": 29114.0
     },
     "groq/openai/gpt-oss-20b": {
-      "n_runs": 8,
-      "pass_rate": 0.0,
-      "pass@1_mean": 0.0,
+      "n_runs": 41,
+      "pass_rate": 0.024390243902439025,
+      "pass@1_mean": 0.030303030303030304,
       "pass@3_mean": 1.0,
       "pass@5_mean": 1.0,
-      "p50_ms": 3947.5,
-      "p95_ms": 9698.399999999998,
-      "p99_ms": 10408.48
+      "p50_ms": 6565.0,
+      "p95_ms": 11193.0,
+      "p99_ms": 11525.4
     },
     "gemini/gemini-2.5-flash-lite": {
-      "n_runs": 16,
-      "pass_rate": 0.125,
-      "pass@1_mean": 0.125,
-      "pass@3_mean": 1.0,
+      "n_runs": 82,
+      "pass_rate": 0.04878048780487805,
+      "pass@1_mean": 0.030303030303030304,
+      "pass@3_mean": 0.8181818181818182,
       "pass@5_mean": 1.0,
-      "p50_ms": 5217.5,
-      "p95_ms": 10101.75,
-      "p99_ms": 10986.75
+      "p50_ms": 6744.5,
+      "p95_ms": 9733.0,
+      "p99_ms": 11208.0
     },
     "openrouter/openai/gpt-oss-20b:free": {
       "n_runs": 0,
@@ -93,26 +113,38 @@
     }
   },
   "failures": {
+    "gemini/gemma-4-31b-it": {
+      "none": 4,
+      "wrong_answer": 2,
+      "refusal": 2
+    },
+    "gemini/gemma-4-26b-a4b-it": {
+      "wrong_answer": 2,
+      "none": 4,
+      "refusal": 2
+    },
     "groq/llama-3.3-70b-versatile": {
-      "wrong_answer": 1,
-      "rate_limit": 7
+      "wrong_answer": 2,
+      "rate_limit": 39
     },
     "gemini/gemini-2.5-flash": {
-      "hallucination": 2,
-      "wrong_answer": 2,
-      "none": 3,
-      "rate_limit": 8,
-      "refusal": 1
+      "hallucination": 4,
+      "wrong_answer": 4,
+      "none": 6,
+      "rate_limit": 66,
+      "refusal": 2
     },
     "groq/openai/gpt-oss-20b": {
-      "rate_limit": 7,
-      "unknown_error": 1
+      "rate_limit": 36,
+      "unknown_error": 2,
+      "hallucination": 2,
+      "none": 1
     },
     "gemini/gemini-2.5-flash-lite": {
-      "hallucination": 2,
-      "wrong_answer": 1,
-      "rate_limit": 11,
-      "none": 2
+      "hallucination": 4,
+      "wrong_answer": 2,
+      "rate_limit": 72,
+      "none": 4
     }
   },
   "robustness_delta": {
@@ -222,27 +254,27 @@
     },
     "gemini/gemini-2.5-flash-lite": {
       "prompt_injection": {
-        "baseline_rate": 0.125,
+        "baseline_rate": 0.04878048780487805,
         "perturbed_rate": 0.375,
-        "delta": 0.25,
+        "delta": 0.32621951219512196,
         "n": 8
       },
       "contradictory": {
-        "baseline_rate": 0.125,
+        "baseline_rate": 0.04878048780487805,
         "perturbed_rate": 0.5,
-        "delta": 0.375,
+        "delta": 0.45121951219512196,
         "n": 8
       },
       "noisy_prefix": {
-        "baseline_rate": 0.125,
+        "baseline_rate": 0.04878048780487805,
         "perturbed_rate": 0.0,
-        "delta": -0.125,
+        "delta": -0.04878048780487805,
         "n": 8
       },
       "gold_swap": {
-        "baseline_rate": 0.125,
+        "baseline_rate": 0.04878048780487805,
         "perturbed_rate": 0.0,
-        "delta": -0.125,
+        "delta": -0.04878048780487805,
         "n": 8
       }
     }
